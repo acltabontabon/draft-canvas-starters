@@ -1,0 +1,26 @@
+{
+  "id": "event-driven",
+  "name": "Event-Driven",
+  "category": "architecture",
+  "summary": "Pub/sub: a topic fanning out to per-subscriber queues",
+  "aliases": [
+    "event driven",
+    "event-driven",
+    "events",
+    "event architecture",
+    "pub sub",
+    "publish subscribe",
+    "messaging",
+    "fan out",
+    "asynchronous",
+    "eda"
+  ],
+  "tags": [
+    "pub/sub",
+    "topic",
+    "queues",
+    "dead letter"
+  ],
+  "featured": true,
+  "order": 40
+}

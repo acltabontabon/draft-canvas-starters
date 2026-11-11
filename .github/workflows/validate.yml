@@ -1,0 +1,48 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run catalog:check
+
+  app:
+    name: Opens cleanly in Draft Canvas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: starters
+      - uses: actions/checkout@v4
+        with:
+          repository: acltabontabon/draft-canvas
+          path: app
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+        working-directory: app
+      - name: Check every starter against the app
+        working-directory: app
+        run: |
+          if [ ! -f tests/starter-files.test.ts ]; then
+            echo "This Draft Canvas has no starter check yet."
+            exit 0
+          fi
+          npx vitest run tests/starter-files.test.ts
+        env:
+          STARTERS_DIR: ${{ github.workspace }}/starters

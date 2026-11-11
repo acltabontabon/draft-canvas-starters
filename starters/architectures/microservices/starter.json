@@ -1,0 +1,20 @@
+{
+  "id": "microservices",
+  "name": "Microservices",
+  "category": "architecture",
+  "summary": "Independently deployed services, each owning its data",
+  "aliases": [
+    "microservices",
+    "microservice",
+    "distributed services",
+    "independent services",
+    "api gateway"
+  ],
+  "tags": [
+    "services",
+    "api gateway",
+    "database per service"
+  ],
+  "featured": true,
+  "order": 30
+}

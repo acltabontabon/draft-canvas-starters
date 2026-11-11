@@ -1,0 +1,12 @@
+{
+  "name": "draft-canvas-starters",
+  "private": true,
+  "description": "Ready-made architecture diagrams for Draft Canvas",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "catalog": "node scripts/catalog.mjs",
+    "catalog:check": "node scripts/catalog.mjs --check"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "order-processing",
+  "name": "Order processing",
+  "category": "example",
+  "summary": "Follow an order from the API through a queue to storage",
+  "aliases": [
+    "order example"
+  ],
+  "tags": [
+    "example",
+    "queue",
+    "worker"
+  ],
+  "featured": false,
+  "order": 140
+}

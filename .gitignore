@@ -1,0 +1,4 @@
+node_modules/
+.DS_Store
+/sheet.html
+/view.html

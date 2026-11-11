@@ -1,0 +1,21 @@
+{
+  "id": "transactional-outbox",
+  "name": "Transactional Outbox",
+  "category": "pattern",
+  "summary": "Persist state and event intent atomically, publish after",
+  "aliases": [
+    "outbox",
+    "transactional outbox",
+    "outbox pattern",
+    "dual write",
+    "reliable publish"
+  ],
+  "tags": [
+    "outbox",
+    "reliable messaging",
+    "events",
+    "consistency"
+  ],
+  "featured": false,
+  "order": 130
+}

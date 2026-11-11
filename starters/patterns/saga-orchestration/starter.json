@@ -1,0 +1,23 @@
+{
+  "id": "saga-orchestration",
+  "name": "Saga \u2013 Orchestration",
+  "category": "pattern",
+  "summary": "Local transactions and compensation, one coordinator",
+  "aliases": [
+    "saga",
+    "saga orchestration",
+    "orchestrated saga",
+    "orchestrator",
+    "distributed transaction",
+    "compensating transaction",
+    "compensation"
+  ],
+  "tags": [
+    "saga",
+    "orchestrator",
+    "compensation",
+    "distributed transaction"
+  ],
+  "featured": false,
+  "order": 110
+}

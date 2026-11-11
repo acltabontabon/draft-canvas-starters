@@ -1,0 +1,22 @@
+{
+  "id": "saga-choreography",
+  "name": "Saga \u2013 Choreography",
+  "category": "pattern",
+  "summary": "Local transactions chained by events, with no coordinator",
+  "aliases": [
+    "saga choreography",
+    "choreographed saga",
+    "choreography",
+    "event-driven saga",
+    "no orchestrator",
+    "reactive saga"
+  ],
+  "tags": [
+    "saga",
+    "choreography",
+    "events",
+    "compensation"
+  ],
+  "featured": false,
+  "order": 120
+}

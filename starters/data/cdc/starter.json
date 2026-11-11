@@ -1,0 +1,22 @@
+{
+  "id": "cdc",
+  "name": "Change Data Capture",
+  "category": "data",
+  "summary": "Capture committed changes once, fan out to derived views",
+  "aliases": [
+    "cdc",
+    "change data capture",
+    "cdc pipeline",
+    "change stream",
+    "log-based replication",
+    "debezium"
+  ],
+  "tags": [
+    "change data capture",
+    "replication",
+    "derived views",
+    "search index"
+  ],
+  "featured": false,
+  "order": 100
+}

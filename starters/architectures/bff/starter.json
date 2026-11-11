@@ -1,0 +1,21 @@
+{
+  "id": "bff",
+  "name": "Backend for Frontend",
+  "category": "architecture",
+  "summary": "A backend per frontend, over shared capabilities",
+  "aliases": [
+    "bff",
+    "backend for frontend",
+    "backends for frontends",
+    "client adapter",
+    "per-client api"
+  ],
+  "tags": [
+    "backend for frontend",
+    "web",
+    "mobile",
+    "api composition"
+  ],
+  "featured": false,
+  "order": 60
+}

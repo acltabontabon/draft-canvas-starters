@@ -1,0 +1,22 @@
+{
+  "id": "cqrs",
+  "name": "CQRS",
+  "category": "architecture",
+  "summary": "Distinct command and query paths, async read projection",
+  "aliases": [
+    "cqrs",
+    "command query",
+    "command query responsibility segregation",
+    "read model",
+    "write model",
+    "projection"
+  ],
+  "tags": [
+    "command query",
+    "read model",
+    "projection",
+    "eventual consistency"
+  ],
+  "featured": true,
+  "order": 70
+}

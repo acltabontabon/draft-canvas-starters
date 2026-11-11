@@ -1,0 +1,21 @@
+{
+  "id": "modular-monolith",
+  "name": "Modular Monolith",
+  "category": "architecture",
+  "summary": "One deployable, explicitly encapsulated modules inside",
+  "aliases": [
+    "modular monolith",
+    "modular architecture",
+    "modules",
+    "module boundaries",
+    "majestic monolith",
+    "monolith modules"
+  ],
+  "tags": [
+    "modules",
+    "single deployable",
+    "bounded contexts"
+  ],
+  "featured": false,
+  "order": 20
+}

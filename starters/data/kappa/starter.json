@@ -1,0 +1,23 @@
+{
+  "id": "kappa",
+  "name": "Kappa",
+  "category": "data",
+  "summary": "Process live and historical data through one durable stream",
+  "aliases": [
+    "kappa",
+    "kappa architecture",
+    "durable log",
+    "log replay",
+    "materialized view",
+    "stream processing",
+    "unified log"
+  ],
+  "tags": [
+    "streaming",
+    "event log",
+    "replay",
+    "materialized view"
+  ],
+  "featured": false,
+  "order": 90
+}

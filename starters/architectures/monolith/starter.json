@@ -1,0 +1,20 @@
+{
+  "id": "monolith",
+  "name": "Monolith",
+  "category": "architecture",
+  "summary": "One application, built and deployed as a unit",
+  "aliases": [
+    "monolith",
+    "monolithic",
+    "single deployment",
+    "one application",
+    "layered"
+  ],
+  "tags": [
+    "layered",
+    "web app",
+    "single deployable"
+  ],
+  "featured": true,
+  "order": 10
+}

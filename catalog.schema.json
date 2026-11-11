@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/acltabontabon/draft-canvas-starters/main/catalog.schema.json",
+  "title": "Draft Canvas starters catalog",
+  "type": "object",
+  "required": ["schema", "updated", "starters"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema": { "const": 1, "description": "Bumped only for a change older apps cannot read." },
+    "updated": { "type": "string", "format": "date" },
+    "starters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "category", "summary", "path", "sha256", "bytes", "formatVersion", "updated"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "name": { "type": "string", "minLength": 1, "maxLength": 60 },
+          "category": { "enum": ["architecture", "data", "pattern", "example"] },
+          "summary": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "aliases": { "type": "array", "items": { "type": "string" } },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "featured": { "type": "boolean" },
+          "order": { "type": "integer" },
+          "path": { "type": "string", "pattern": "^starters/[a-z]+/[a-z0-9-]+/[a-z0-9-]+\\.draftcanvas$" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "bytes": { "type": "integer", "minimum": 1, "maximum": 524288 },
+          "formatVersion": { "type": "integer", "minimum": 1, "description": "The file's Draft Canvas format version; an older app shows the starter as needing an update." },
+          "updated": { "type": "string", "format": "date" }
+        }
+      }
+    }
+  }
+}
