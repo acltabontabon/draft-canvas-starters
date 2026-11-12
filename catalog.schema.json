@@ -20,6 +20,8 @@
           "summary": { "type": "string", "minLength": 1, "maxLength": 120 },
           "aliases": { "type": "array", "items": { "type": "string" } },
           "tags": { "type": "array", "items": { "type": "string" } },
+          "useWhen": { "type": "array", "maxItems": 4, "items": { "type": "string", "maxLength": 160 }, "description": "When this starter fits, one line each." },
+          "watchOutFor": { "type": "array", "maxItems": 4, "items": { "type": "string", "maxLength": 160 }, "description": "Its trade-offs, one line each." },
           "featured": { "type": "boolean" },
           "order": { "type": "integer" },
           "path": { "type": "string", "pattern": "^starters/[a-z]+/[a-z0-9-]+/[a-z0-9-]+\\.draftcanvas$" },

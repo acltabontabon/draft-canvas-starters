@@ -16,6 +16,14 @@
     "events",
     "consistency"
   ],
+  "useWhen": [
+    "A state change and its event must never disagree.",
+    "Publishing events from a service that owns a database."
+  ],
+  "watchOutFor": [
+    "Events arrive at least once and slightly late.",
+    "The outbox table needs cleaning up."
+  ],
   "featured": false,
   "order": 130
 }

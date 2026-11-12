@@ -21,6 +21,14 @@
     "queues",
     "dead letter"
   ],
+  "useWhen": [
+    "Several consumers react to the same change without the producer knowing them.",
+    "Showing retries and where failed messages go."
+  ],
+  "watchOutFor": [
+    "Delivery is at least once: consumers must handle duplicates.",
+    "The flow of one request is harder to follow end to end."
+  ],
   "featured": true,
   "order": 40
 }

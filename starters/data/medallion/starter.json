@@ -18,6 +18,14 @@
     "data pipeline",
     "analytics"
   ],
+  "useWhen": [
+    "Building analytics on data from several operational sources.",
+    "Showing where data quality is enforced."
+  ],
+  "watchOutFor": [
+    "Each layer stores another copy of the data.",
+    "Late-arriving or corrected data needs reprocessing through every layer."
+  ],
   "featured": false,
   "order": 80
 }

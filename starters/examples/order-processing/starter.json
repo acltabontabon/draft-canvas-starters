@@ -11,6 +11,13 @@
     "queue",
     "worker"
   ],
+  "useWhen": [
+    "Learning how shapes, connectors and flows read on the canvas.",
+    "A starting point for any queue-and-worker design."
+  ],
+  "watchOutFor": [
+    "It is deliberately small: there is no failure path."
+  ],
   "featured": false,
   "order": 140
 }

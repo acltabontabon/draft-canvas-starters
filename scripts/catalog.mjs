@@ -57,6 +57,10 @@ for (const [category, folder] of Object.entries(CATEGORIES)) {
     if (typeof meta.summary !== 'string' || !meta.summary.trim() || meta.summary.length > 120) fail(where, 'summary: 1–120 characters');
     if (meta.aliases !== undefined && !isStrings(meta.aliases)) fail(where, 'aliases: a list of words');
     if (meta.tags !== undefined && !isStrings(meta.tags)) fail(where, 'tags: a list of words');
+    for (const key of ['useWhen', 'watchOutFor']) {
+      const list = meta[key];
+      if (list !== undefined && (!isStrings(list) || list.length > 4 || list.some((line) => line.length > 160))) fail(where, `${key}: up to 4 lines of up to 160 characters`);
+    }
     if (meta.featured !== undefined && typeof meta.featured !== 'boolean') fail(where, 'featured: true or false');
     if (!Number.isInteger(meta.order)) fail(where, 'order: a whole number');
 
@@ -81,6 +85,8 @@ for (const [category, folder] of Object.entries(CATEGORIES)) {
       summary: meta.summary,
       aliases: meta.aliases ?? [],
       tags: meta.tags ?? [],
+      useWhen: meta.useWhen ?? [],
+      watchOutFor: meta.watchOutFor ?? [],
       featured: meta.featured ?? false,
       order: meta.order,
       path: `starters/${folder}/${id}/${id}.draftcanvas`,

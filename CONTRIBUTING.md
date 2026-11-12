@@ -22,6 +22,8 @@ pattern, not a particular company's system.
      "summary": "One line, under 120 characters, about what it shows",
      "aliases": ["other names people search for"],
      "tags": ["topic words"],
+     "useWhen": ["When this starter fits, one line each (up to 4)"],
+     "watchOutFor": ["Its trade-offs, one line each (up to 4)"],
      "featured": false,
      "order": 100
    }
@@ -29,7 +31,8 @@ pattern, not a particular company's system.
 
    `featured` starters appear on an empty canvas; keep that set to about five. `order` sorts
    starters within their category.
-4. Write `README.md`: what it shows, when to use it, what to watch out for, and its flows.
+4. Write `README.md`: what it shows, when to use it, what to watch out for, and its flows. The
+   app shows `useWhen` and `watchOutFor` from `starter.json` beside the preview.
 5. Draw the pictures and check the starter against the app (needs a Draft Canvas checkout beside
    this one):
 
