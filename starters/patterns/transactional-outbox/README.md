@@ -43,6 +43,8 @@ Play these in Draft Canvas with **Present**:
 
 ## Look closer
 
+- The whole pipeline runs along one straight line, and the three tables written in one transaction
+  share one boundary.
 - Step into **Transfers API** to see where the transaction boundary sits in code.
 - Notes hold the transaction as SQL, the Debezium outbox event router configuration, the decision
   never to publish inside the transaction, and a warning about at-least-once delivery.

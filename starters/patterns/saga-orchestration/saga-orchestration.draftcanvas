@@ -11,10 +11,10 @@
     {
       "id": "traveller",
       "type": "actor",
-      "x": 0,
-      "y": 190,
-      "width": 140,
-      "height": 120,
+      "x": 380,
+      "y": 61,
+      "width": 120,
+      "height": 118,
       "z": 0,
       "text": "Traveller",
       "description": "Books a flight and a hotel in one go.",
@@ -25,10 +25,10 @@
     {
       "id": "trips",
       "type": "service",
-      "x": 240,
-      "y": 190,
-      "width": 200,
-      "height": 120,
+      "x": 732,
+      "y": 69,
+      "width": 176,
+      "height": 103,
       "z": 0,
       "text": "Trips API",
       "description": "Takes a trip request and starts its booking workflow.",
@@ -39,10 +39,10 @@
     {
       "id": "orchestrator",
       "type": "service",
-      "x": 560,
-      "y": 0,
+      "x": 700,
+      "y": 349,
       "width": 240,
-      "height": 500,
+      "height": 142,
       "z": 0,
       "text": "Booking Orchestrator",
       "description": "Runs each step in turn and undoes the done ones on failure.",
@@ -89,10 +89,10 @@
             "x": 242,
             "y": 140,
             "width": 152,
-            "height": 95,
+            "height": 80,
             "z": 0,
             "text": "BookTrip Workflow",
-            "description": "Holds the saga's steps and its compensation stack.",
+            "description": "Runs the steps; keeps the undo stack.",
             "technology": "Temporal",
             "textOrigin": "explicit",
             "componentKind": "generic"
@@ -101,7 +101,7 @@
             "id": "o.flights",
             "type": "component",
             "x": 12,
-            "y": 373,
+            "y": 358,
             "width": 152,
             "height": 103,
             "z": 0,
@@ -114,7 +114,7 @@
             "id": "o.hotels",
             "type": "component",
             "x": 242,
-            "y": 373,
+            "y": 358,
             "width": 152,
             "height": 103,
             "z": 0,
@@ -127,12 +127,12 @@
             "id": "o.payments",
             "type": "component",
             "x": 472,
-            "y": 373,
+            "y": 358,
             "width": 152,
             "height": 103,
             "z": 0,
             "text": "Payment Activities",
-            "description": "Charges the trip total.",
+            "description": "Charges the trip.",
             "textOrigin": "explicit",
             "componentKind": "adapter"
           },
@@ -140,7 +140,7 @@
             "id": "o.flights-svc",
             "type": "service",
             "x": 0,
-            "y": 548,
+            "y": 533,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -153,7 +153,7 @@
             "id": "o.hotels-svc",
             "type": "service",
             "x": 230,
-            "y": 548,
+            "y": 533,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -166,7 +166,7 @@
             "id": "o.payments-svc",
             "type": "service",
             "x": 460,
-            "y": 548,
+            "y": 533,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -301,10 +301,10 @@
     {
       "id": "flights",
       "type": "service",
-      "x": 1100,
-      "y": 0,
-      "width": 220,
-      "height": 130,
+      "x": 1152,
+      "y": 377,
+      "width": 176,
+      "height": 87,
       "z": 0,
       "text": "Flights Service",
       "description": "Holds seats on a flight.",
@@ -315,10 +315,10 @@
     {
       "id": "flights-db",
       "type": "database",
-      "x": 1500,
-      "y": 32,
-      "width": 170,
-      "height": 150,
+      "x": 1540,
+      "y": 349,
+      "width": 120,
+      "height": 143,
       "z": 0,
       "text": "Flights DB",
       "description": "Seat holds and tickets.",
@@ -329,10 +329,10 @@
     {
       "id": "hotels",
       "type": "service",
-      "x": 1100,
-      "y": 185,
-      "width": 220,
-      "height": 130,
+      "x": 312,
+      "y": 377,
+      "width": 176,
+      "height": 87,
       "z": 0,
       "text": "Hotels Service",
       "description": "Reserves hotel rooms.",
@@ -343,10 +343,10 @@
     {
       "id": "hotels-db",
       "type": "database",
-      "x": 1500,
-      "y": 217,
-      "width": 170,
-      "height": 150,
+      "x": -30,
+      "y": 350,
+      "width": 140,
+      "height": 140,
       "z": 0,
       "text": "Hotels DB",
       "description": "Room reservations.",
@@ -357,10 +357,10 @@
     {
       "id": "payments",
       "type": "service",
-      "x": 1100,
-      "y": 370,
-      "width": 220,
-      "height": 130,
+      "x": 732,
+      "y": 677,
+      "width": 176,
+      "height": 87,
       "z": 0,
       "text": "Payments Service",
       "description": "Charges the trip total.",
@@ -371,10 +371,10 @@
     {
       "id": "stripe",
       "type": "service",
-      "x": 1500,
-      "y": 370,
-      "width": 220,
-      "height": 130,
+      "x": 1152,
+      "y": 671,
+      "width": 176,
+      "height": 99,
       "z": 0,
       "text": "Stripe",
       "description": "Charges cards.",
@@ -383,10 +383,22 @@
       "serviceKind": "external"
     },
     {
+      "id": "title",
+      "type": "text",
+      "x": -30,
+      "y": -97,
+      "width": 1100,
+      "height": 110,
+      "z": 0,
+      "text": "# Saga – Orchestration\nOne workflow books a trip, and undoes the finished steps when one fails.",
+      "textOrigin": "explicit",
+      "textRole": "title"
+    },
+    {
       "id": "seq",
       "type": "sequence",
-      "x": 486,
-      "y": 587,
+      "x": -30,
+      "y": 890,
       "width": 748,
       "height": 698,
       "z": 0,
@@ -536,14 +548,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "calls",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "inferred"
     },
     {
@@ -554,14 +558,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "command",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -574,11 +570,11 @@
       "semantic": "http",
       "sourceAnchor": {
         "side": "right",
-        "offset": 0.078
+        "offset": 0.32
       },
       "targetAnchor": {
         "side": "left",
-        "offset": 0.3
+        "offset": 0.2062
       },
       "semanticsOrigin": "explicit"
     },
@@ -591,12 +587,12 @@
       "routing": "smoothstep",
       "semantic": "http",
       "sourceAnchor": {
-        "side": "right",
-        "offset": 0.448
+        "side": "left",
+        "offset": 0.32
       },
       "targetAnchor": {
-        "side": "left",
-        "offset": 0.3
+        "side": "right",
+        "offset": 0.2062
       },
       "semanticsOrigin": "explicit"
     },
@@ -608,14 +604,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.87
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -632,11 +620,11 @@
       "compensationProtocol": "http",
       "sourceAnchor": {
         "side": "right",
-        "offset": 0.182
+        "offset": 0.68
       },
       "targetAnchor": {
         "side": "left",
-        "offset": 0.7
+        "offset": 0.7938
       },
       "semanticsOrigin": "explicit",
       "attachments": [
@@ -663,12 +651,12 @@
       "compensationName": "Cancel room",
       "compensationProtocol": "http",
       "sourceAnchor": {
-        "side": "right",
-        "offset": 0.552
+        "side": "left",
+        "offset": 0.68
       },
       "targetAnchor": {
-        "side": "left",
-        "offset": 0.7
+        "side": "right",
+        "offset": 0.7938
       },
       "semanticsOrigin": "explicit",
       "attachments": [
@@ -709,14 +697,6 @@
       "routing": "smoothstep",
       "semantic": "http",
       "hasResponse": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     }
   ],

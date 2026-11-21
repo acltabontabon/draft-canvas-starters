@@ -451,8 +451,8 @@
       "featured": false,
       "order": 110,
       "path": "starters/patterns/saga-orchestration/saga-orchestration.draftcanvas",
-      "sha256": "80a18e93679d6dfa2b6eafce7c92ae159a257147974c16d2f1331c837306caf7",
-      "bytes": 22062,
+      "sha256": "1f2d252e7f05ed2611d1cf1185bc2fc1b94f053cc40d6bc5117147b5707c10bd",
+      "bytes": 21730,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },
@@ -492,8 +492,8 @@
       "featured": false,
       "order": 120,
       "path": "starters/patterns/saga-choreography/saga-choreography.draftcanvas",
-      "sha256": "c683b2168a280460515cb81692daa5aa481f4417ebab8c58685d4ca2ec099892",
-      "bytes": 14168,
+      "sha256": "bc58f63ef27d4d98b119bd028ed0339a493850cd7f919b701e0bdb732115f811",
+      "bytes": 14637,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },
@@ -534,8 +534,8 @@
       "featured": false,
       "order": 130,
       "path": "starters/patterns/transactional-outbox/transactional-outbox.draftcanvas",
-      "sha256": "498a4671d0b18b4ff6756ec1495e073238fbfaeae13d86cebe078445a47f6a0f",
-      "bytes": 17506,
+      "sha256": "79a635202bbc89281c7366ea9b30d71d4140c850ecdb3e2e61488138d09f54eb",
+      "bytes": 17508,
       "formatVersion": 28,
       "updated": "2026-11-21"
     },

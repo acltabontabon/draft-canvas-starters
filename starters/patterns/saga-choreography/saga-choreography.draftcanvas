@@ -11,8 +11,8 @@
     {
       "id": "customer",
       "type": "actor",
-      "x": 0,
-      "y": 188,
+      "x": -70,
+      "y": 201,
       "width": 140,
       "height": 118,
       "z": 0,
@@ -25,8 +25,8 @@
     {
       "id": "order",
       "type": "service",
-      "x": 252,
-      "y": 195.5,
+      "x": 172,
+      "y": 209,
       "width": 176,
       "height": 103,
       "z": 0,
@@ -39,8 +39,8 @@
     {
       "id": "order-db",
       "type": "database",
-      "x": 577,
-      "y": 34,
+      "x": 200,
+      "y": -31,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -53,9 +53,9 @@
     {
       "id": "orders-events",
       "type": "queue",
-      "x": 567,
-      "y": 230.25,
-      "width": 140,
+      "x": 435,
+      "y": 418,
+      "width": 170,
       "height": 104,
       "z": 0,
       "text": "orders.events",
@@ -77,8 +77,8 @@
     {
       "id": "payment",
       "type": "service",
-      "x": 816,
-      "y": 205.5,
+      "x": 692,
+      "y": 219,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -91,8 +91,8 @@
     {
       "id": "payment-db",
       "type": "database",
-      "x": 1166,
-      "y": 193,
+      "x": 720,
+      "y": -31,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -105,8 +105,8 @@
     {
       "id": "adyen",
       "type": "service",
-      "x": 1138,
-      "y": 0,
+      "x": 952,
+      "y": -17,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -119,9 +119,9 @@
     {
       "id": "payments-events",
       "type": "queue",
-      "x": 1156,
-      "y": 358,
-      "width": 140,
+      "x": 955,
+      "y": 408,
+      "width": 170,
       "height": 124,
       "z": 0,
       "text": "payments.events",
@@ -133,8 +133,8 @@
     {
       "id": "kitchen",
       "type": "service",
-      "x": 1460,
-      "y": 304.5,
+      "x": 1212,
+      "y": 219,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -157,8 +157,8 @@
     {
       "id": "kitchen-db",
       "type": "database",
-      "x": 1773,
-      "y": 150,
+      "x": 1240,
+      "y": -31,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -171,9 +171,9 @@
     {
       "id": "kitchen-events",
       "type": "queue",
-      "x": 1763,
-      "y": 342,
-      "width": 140,
+      "x": 1475,
+      "y": 418,
+      "width": 170,
       "height": 104,
       "z": 0,
       "text": "kitchen.events",
@@ -195,8 +195,8 @@
     {
       "id": "delivery",
       "type": "service",
-      "x": 2030,
-      "y": 317.25,
+      "x": 1732,
+      "y": 219,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -205,6 +205,18 @@
       "technology": "FastAPI",
       "textOrigin": "explicit",
       "serviceKind": "generic"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "x": -70,
+      "y": -189,
+      "width": 1100,
+      "height": 110,
+      "z": 0,
+      "text": "# Saga – Choreography\nServices react to each other's events to deliver a dinner order, with no coordinator.",
+      "textOrigin": "explicit",
+      "textRole": "title"
     }
   ],
   "edges": [
@@ -225,14 +237,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "readsWrites",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -244,6 +248,14 @@
       "routing": "smoothstep",
       "semantic": "publishes",
       "kind": "event",
+      "sourceAnchor": {
+        "side": "bottom",
+        "offset": 0.7
+      },
+      "targetAnchor": {
+        "side": "left",
+        "offset": 0.5
+      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -255,6 +267,14 @@
       "routing": "smoothstep",
       "semantic": "deliversTo",
       "kind": "event",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "bottom",
+        "offset": 0.3
+      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -267,12 +287,12 @@
       "semantic": "http",
       "hasResponse": true,
       "sourceAnchor": {
-        "side": "left",
-        "offset": 0.25
+        "side": "right",
+        "offset": 0.5
       },
       "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
+        "side": "bottom",
+        "offset": 0.5
       },
       "semanticsOrigin": "explicit"
     },
@@ -283,14 +303,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "readsWrites",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -303,12 +315,12 @@
       "semantic": "publishes",
       "kind": "event",
       "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
+        "side": "bottom",
+        "offset": 0.7
       },
       "targetAnchor": {
         "side": "left",
-        "offset": 0.25
+        "offset": 0.5
       },
       "semanticsOrigin": "explicit"
     },
@@ -323,11 +335,11 @@
       "kind": "event",
       "sourceAnchor": {
         "side": "right",
-        "offset": 0.25
+        "offset": 0.5
       },
       "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
+        "side": "bottom",
+        "offset": 0.3
       },
       "semanticsOrigin": "explicit"
     },
@@ -338,14 +350,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "readsWrites",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -358,12 +362,12 @@
       "semantic": "publishes",
       "kind": "event",
       "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
+        "side": "bottom",
+        "offset": 0.7
       },
       "targetAnchor": {
         "side": "left",
-        "offset": 0.75
+        "offset": 0.5
       },
       "semanticsOrigin": "explicit"
     },
@@ -378,11 +382,11 @@
       "portal": true,
       "kind": "event",
       "sourceAnchor": {
-        "side": "bottom",
+        "side": "top",
         "offset": 0.5
       },
       "targetAnchor": {
-        "side": "top",
+        "side": "right",
         "offset": 0.3
       },
       "semanticsOrigin": "explicit"
@@ -396,6 +400,14 @@
       "routing": "smoothstep",
       "semantic": "deliversTo",
       "kind": "event",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "bottom",
+        "offset": 0.5
+      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -408,13 +420,23 @@
       "semantic": "deliversTo",
       "kind": "failure",
       "sourceAnchor": {
-        "side": "left",
+        "side": "bottom",
         "offset": 0.5
       },
       "targetAnchor": {
-        "side": "top",
-        "offset": 0.75
+        "side": "bottom",
+        "offset": 0.5
       },
+      "waypoints": [
+        {
+          "x": 1560,
+          "y": 600
+        },
+        {
+          "x": 780,
+          "y": 600
+        }
+      ],
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -438,12 +460,12 @@
       "portal": true,
       "kind": "failure",
       "sourceAnchor": {
-        "side": "bottom",
+        "side": "top",
         "offset": 0.5
       },
       "targetAnchor": {
-        "side": "bottom",
-        "offset": 0.5
+        "side": "right",
+        "offset": 0.7
       },
       "semanticsOrigin": "explicit"
     }

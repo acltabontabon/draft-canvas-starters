@@ -41,8 +41,10 @@ Play these in Draft Canvas with **Present**:
 
 ## Look closer
 
-- **BookTrip, step by step** is a native sequence diagram beside the architecture: the calls, their
+- **BookTrip, step by step** is a native sequence diagram below the architecture: the calls, their
   replies, and the `alt` branch where a declined card turns into compensations.
+- The orchestrator sits at the hub: each step and its compensation run as a pair of parallel
+  lines to the service they act on.
 - Step into **Booking Orchestrator** to see the workflow and one activity per service.
 - Notes hold the design decision, a sketch of the workflow code with its compensation stack, a
   warning that compensations must be idempotent, and why cancelling is not a rollback.

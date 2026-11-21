@@ -41,6 +41,8 @@ Play these in Draft Canvas with **Present**:
 
 ## Look closer
 
+- Services run left to right in the order the saga runs. Each topic sits between the service that
+  publishes it and the one that reacts, and the refund travels back along a lane underneath.
 - The two events that travel back to the Order Service are drawn as **portals** (new in Draft
   Canvas's next release): a short labelled stub at each end instead of a line across the whole
   diagram. Click a stub's words to jump to the other end.
