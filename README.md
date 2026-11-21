@@ -269,13 +269,15 @@ starters/
   architectures/<id>/     how a whole system is organised
   data/<id>/              how data moves and is refined
   patterns/<id>/          one recurring design problem, at its own scope
-  examples/<id>/          small worked examples
+  examples/<id>/          whole systems and worked examples
     <id>.draftcanvas      the diagram
+    spec.json             what tools/build.ts builds the diagram from
     starter.json          name, summary, search words, order
     README.md             what it shows, when to use it, what to watch out for
     preview.svg           light picture, drawn by Draft Canvas
     preview-dark.svg      dark picture
-scripts/catalog.mjs       builds catalog.json and the table above
+scripts/catalog.mjs       builds catalog.json and the gallery above
+tools/                    build, picture and screenshot starters with Draft Canvas itself
 ```
 
 A folder is one starter, so adding one never touches another. The app finds files only through

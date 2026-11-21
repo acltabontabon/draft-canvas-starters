@@ -1,0 +1,447 @@
+{
+  "title": "Change Data Capture",
+  "layout": {
+    "primaryFlow": "price-change",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "source",
+      "label": "Listings Service",
+      "kind": "domain",
+      "color": "blue"
+    },
+    {
+      "id": "pipeline",
+      "label": "CDC Pipeline",
+      "kind": "group",
+      "color": "teal"
+    },
+    {
+      "id": "views",
+      "label": "Derived views",
+      "kind": "group"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "seller",
+      "type": "person",
+      "label": "Seller",
+      "description": "Lists items and sets prices."
+    },
+    {
+      "id": "api",
+      "type": "api",
+      "label": "Listings API",
+      "technology": "Spring Boot 3",
+      "group": "source",
+      "description": "Creates and updates listings."
+    },
+    {
+      "id": "db",
+      "type": "sql-database",
+      "label": "Listings DB",
+      "technology": "PostgreSQL 16",
+      "group": "source",
+      "description": "Source of truth for listings, prices and stock."
+    },
+    {
+      "id": "connector",
+      "type": "worker",
+      "label": "Change Capture",
+      "technology": "Debezium",
+      "group": "pipeline",
+      "description": "Tails the WAL; emits one event per committed row change."
+    },
+    {
+      "id": "changes",
+      "type": "stream",
+      "label": "listings.changes",
+      "technology": "Kafka",
+      "group": "pipeline",
+      "description": "Keeps row changes in commit order per listing."
+    },
+    {
+      "id": "indexer",
+      "type": "worker",
+      "label": "Search Indexer",
+      "technology": "Node.js",
+      "description": "Turns changes into search documents.",
+      "group": "views"
+    },
+    {
+      "id": "search",
+      "type": "search-index",
+      "label": "Listings Index",
+      "technology": "Elasticsearch",
+      "description": "Answers buyers' searches and filters.",
+      "group": "views"
+    },
+    {
+      "id": "dlq",
+      "type": "dead-letter-queue",
+      "label": "search-dlq",
+      "technology": "Kafka",
+      "description": "Holds changes the indexer could not map.",
+      "group": "views"
+    },
+    {
+      "id": "invalidator",
+      "type": "worker",
+      "label": "Cache Invalidator",
+      "technology": "Go",
+      "description": "Evicts listings whose row changed.",
+      "group": "views"
+    },
+    {
+      "id": "cache",
+      "type": "cache",
+      "label": "Listing Cache",
+      "technology": "Redis 7",
+      "description": "Serves listing pages without the database.",
+      "group": "views"
+    },
+    {
+      "id": "sink",
+      "type": "worker",
+      "label": "Warehouse Sink",
+      "technology": "Kafka",
+      "description": "Loads changes in micro-batches (Kafka Connect).",
+      "group": "views"
+    },
+    {
+      "id": "warehouse",
+      "type": "database",
+      "label": "Analytics",
+      "technology": "Snowflake",
+      "description": "Keeps the full history for pricing analysts.",
+      "group": "views"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "edit",
+      "from": "seller",
+      "to": "api",
+      "label": "Changes a price"
+    },
+    {
+      "id": "write",
+      "from": "api",
+      "to": "db",
+      "label": "UPDATE listings",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "capture",
+      "from": "db",
+      "to": "connector",
+      "semantic": "cdc"
+    },
+    {
+      "id": "publish",
+      "from": "connector",
+      "to": "changes",
+      "label": "Row changes",
+      "semantic": "publishes"
+    },
+    {
+      "id": "feed-search",
+      "from": "changes",
+      "to": "indexer",
+      "semantic": "consumes"
+    },
+    {
+      "id": "index",
+      "from": "indexer",
+      "to": "search",
+      "semantic": "indexes"
+    },
+    {
+      "id": "park",
+      "from": "indexer",
+      "to": "dlq",
+      "semantic": "deadLetters"
+    },
+    {
+      "id": "feed-cache",
+      "from": "changes",
+      "to": "invalidator",
+      "semantic": "consumes"
+    },
+    {
+      "id": "evict",
+      "from": "invalidator",
+      "to": "cache",
+      "semantic": "invalidates"
+    },
+    {
+      "id": "feed-warehouse",
+      "from": "changes",
+      "to": "sink",
+      "semantic": "consumes"
+    },
+    {
+      "id": "load",
+      "from": "sink",
+      "to": "warehouse",
+      "label": "MERGE batches",
+      "semantic": "writes"
+    }
+  ],
+  "flows": [
+    {
+      "id": "price-change",
+      "title": "A price change reaches every view",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "edit",
+          "caption": "A seller drops the price of a listing."
+        },
+        {
+          "relationship": "write",
+          "caption": "The API writes one row, to its own database only, and answers."
+        },
+        {
+          "relationship": "capture",
+          "caption": "Once committed, the change is read from the write-ahead log."
+        },
+        {
+          "relationship": "publish",
+          "caption": "It is published once, keyed by listing id, with before and after."
+        },
+        {
+          "relationship": "feed-search",
+          "caption": "The search indexer reads it at its own pace."
+        },
+        {
+          "relationship": "index",
+          "caption": "Buyers now find the listing at the new price."
+        },
+        {
+          "relationship": "feed-cache",
+          "caption": "The same change, read independently by the cache invalidator."
+        },
+        {
+          "relationship": "evict",
+          "caption": "The cached listing page is evicted; the next view reloads it."
+        },
+        {
+          "relationship": "feed-warehouse",
+          "caption": "And once more by the warehouse sink."
+        },
+        {
+          "relationship": "load",
+          "caption": "Every five minutes, the batch is merged into Snowflake."
+        }
+      ]
+    },
+    {
+      "id": "backfill",
+      "title": "Backfill a new view",
+      "color": "amber",
+      "variantOf": "price-change",
+      "steps": [
+        {
+          "relationship": "capture",
+          "caption": "A new consumer needs every listing, not just new changes: Debezium snapshots."
+        },
+        {
+          "relationship": "publish",
+          "caption": "Existing rows are published as read events, then live changes follow."
+        },
+        {
+          "relationship": "feed-warehouse",
+          "caption": "The sink reads from the earliest offset and loads it all."
+        },
+        {
+          "relationship": "load",
+          "caption": "Snowflake catches up without a query against production."
+        }
+      ]
+    },
+    {
+      "id": "unmappable",
+      "title": "A change cannot be indexed",
+      "color": "rose",
+      "variantOf": "price-change",
+      "steps": [
+        {
+          "relationship": "feed-search",
+          "caption": "A new column arrives that the indexer cannot map."
+        },
+        {
+          "relationship": "park",
+          "caption": "After three tries it parks the change and keeps going.",
+          "highlight": [
+            "search"
+          ]
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Change data capture\nOne committed price change, streamed from PostgreSQL's log to search, cache and warehouse.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "guarantees",
+      "kind": "label",
+      "about": "changes",
+      "attach": false,
+      "text": "### Pipeline design targets\n| Property | Target |\n| --- | --- |\n| Order | per listing, by key |\n| Delivery | at least once |\n| Lag, p99 | under 2 s |\n| Topic retention | 7 days |",
+      "style": {
+        "background": "card",
+        "color": "teal"
+      }
+    },
+    {
+      "id": "n.nodual",
+      "kind": "decision",
+      "about": "write",
+      "text": "No dual writes: the API writes only its own database. Search, cache and warehouse learn from the log, after commit."
+    },
+    {
+      "id": "n.debezium",
+      "kind": "code",
+      "about": "connector",
+      "language": "json",
+      "code": "{\n  \"connector.class\": \"io.debezium.connector.postgresql.PostgresConnector\",\n  \"plugin.name\": \"pgoutput\",\n  \"database.dbname\": \"listings\",\n  \"table.include.list\": \"public.listings,public.prices\",\n  \"topic.prefix\": \"listings\",\n  \"snapshot.mode\": \"initial\"\n}"
+    },
+    {
+      "id": "n.schema",
+      "kind": "warning",
+      "about": "changes",
+      "text": "Events mirror the table's columns. Renaming a column breaks every consumer: evolve the schema in the registry first."
+    },
+    {
+      "id": "n.lag",
+      "kind": "warning",
+      "about": "evict",
+      "text": "Eventually consistent: for a moment the cache and the index can still show the old price."
+    },
+    {
+      "id": "n.deletes",
+      "kind": "question",
+      "about": "warehouse",
+      "text": "Do analysts need deleted listings (tombstones) in Snowflake, or only the latest row?"
+    }
+  ],
+  "_patch": {
+    "edges": {
+      "capture": {
+        "cadence": "Streaming"
+      },
+      "load": {
+        "cadence": "Every 5 min"
+      },
+      "park": {
+        "deliveryAttempts": 3
+      }
+    },
+    "nodes": {
+      "guarantees": {
+        "parentId": null
+      }
+    }
+  },
+  "_openPoints": [
+    {
+      "id": "op.wal",
+      "kind": "tentative",
+      "context": "Assumed: 24 h of WAL retention covers Debezium being down over a weekend. Confirm with the DBAs.",
+      "targets": [
+        {
+          "kind": "edge",
+          "id": "capture"
+        }
+      ]
+    }
+  ],
+  "_centers": {
+    "seller": [
+      80,
+      400
+    ],
+    "api": [
+      400,
+      400
+    ],
+    "db": [
+      720,
+      400
+    ],
+    "connector": [
+      1140,
+      400
+    ],
+    "changes": [
+      1460,
+      400
+    ],
+    "indexer": [
+      1800,
+      170
+    ],
+    "search": [
+      2140,
+      170
+    ],
+    "dlq": [
+      1800,
+      -40
+    ],
+    "invalidator": [
+      1800,
+      400
+    ],
+    "cache": [
+      2140,
+      400
+    ],
+    "sink": [
+      1800,
+      630
+    ],
+    "warehouse": [
+      2140,
+      630
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {},
+  "_alignRows": [
+    [
+      "source",
+      "pipeline"
+    ]
+  ],
+  "_place": [
+    {
+      "id": "guarantees",
+      "of": [
+        "pipeline"
+      ],
+      "side": "above",
+      "gap": 80,
+      "align": "start"
+    },
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 56,
+      "width": 1200,
+      "height": 110
+    }
+  ]
+}

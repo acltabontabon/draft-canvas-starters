@@ -1,0 +1,492 @@
+{
+  "title": "Order processing",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "place",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "shop",
+      "label": "Shop Platform",
+      "kind": "system"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "shopper",
+      "type": "person",
+      "label": "Shopper",
+      "description": "Buys from the online shop."
+    },
+    {
+      "id": "web",
+      "type": "service",
+      "label": "Checkout Web",
+      "technology": "Next.js 15",
+      "group": "shop",
+      "description": "Runs the basket and checkout pages."
+    },
+    {
+      "id": "api",
+      "type": "api",
+      "label": "Orders API",
+      "technology": "Spring Boot 3",
+      "replicas": 3,
+      "group": "shop",
+      "description": "Takes orders, charges the card and queues fulfilment.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "c.web",
+            "type": "service",
+            "label": "Checkout Web",
+            "technology": "Next.js 15"
+          },
+          {
+            "id": "c.controller",
+            "type": "component",
+            "label": "Orders Controller",
+            "technology": "Spring",
+            "description": "Validates the request and answers 202."
+          },
+          {
+            "id": "c.place",
+            "type": "component",
+            "label": "Place Order",
+            "description": "Prices the basket, charges and records the order."
+          },
+          {
+            "id": "c.payments",
+            "type": "adapter",
+            "label": "Payments Client",
+            "technology": "Stripe",
+            "description": "Authorizes the card with an idempotency key."
+          },
+          {
+            "id": "c.repo",
+            "type": "adapter",
+            "label": "Order Repository",
+            "technology": "Hibernate",
+            "description": "Saves orders and their lines."
+          },
+          {
+            "id": "c.publisher",
+            "type": "adapter",
+            "label": "Fulfilment Publisher",
+            "technology": "Amazon SQS",
+            "description": "Sends the FulfilOrder command."
+          },
+          {
+            "id": "c.stripe",
+            "type": "external-system",
+            "label": "Stripe",
+            "technology": "Stripe"
+          },
+          {
+            "id": "c.db",
+            "type": "sql-database",
+            "label": "Orders DB",
+            "technology": "PostgreSQL 16"
+          },
+          {
+            "id": "c.queue",
+            "type": "queue",
+            "label": "fulfilment",
+            "technology": "Amazon SQS"
+          }
+        ],
+        "relationships": [
+          {
+            "id": "c.post",
+            "from": "c.web",
+            "to": "c.controller",
+            "label": "POST /orders",
+            "semantic": "http",
+            "response": "202 Accepted"
+          },
+          {
+            "id": "c.handle",
+            "from": "c.controller",
+            "to": "c.place",
+            "label": "placeOrder(cmd)",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.authorize",
+            "from": "c.place",
+            "to": "c.payments",
+            "label": "authorize(total)",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.stripe-call",
+            "from": "c.payments",
+            "to": "c.stripe",
+            "label": "Creates PaymentIntent",
+            "semantic": "http"
+          },
+          {
+            "id": "c.save",
+            "from": "c.place",
+            "to": "c.repo",
+            "label": "save(order)",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.sql",
+            "from": "c.repo",
+            "to": "c.db",
+            "label": "INSERT orders",
+            "semantic": "writes"
+          },
+          {
+            "id": "c.send",
+            "from": "c.place",
+            "to": "c.publisher",
+            "label": "requestFulfilment(id)",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.sqs",
+            "from": "c.publisher",
+            "to": "c.queue",
+            "label": "SendMessage",
+            "semantic": "command"
+          }
+        ],
+        "flows": [
+          {
+            "id": "c.flow",
+            "title": "Place an order, inside the API",
+            "color": "blue",
+            "steps": [
+              {
+                "relationship": "c.post",
+                "caption": "The controller validates the basket and hands it to the use case."
+              },
+              {
+                "relationship": "c.handle",
+                "caption": "Place Order owns the business rules: price, charge, record, queue."
+              },
+              {
+                "relationship": "c.authorize",
+                "caption": "The card is authorized first; nothing is stored for a declined card."
+              },
+              {
+                "relationship": "c.stripe-call",
+                "caption": "Stripe authorizes the amount, keyed by the order id."
+              },
+              {
+                "relationship": "c.save",
+                "caption": "The order is saved as PAID."
+              },
+              {
+                "relationship": "c.sql",
+                "caption": "One row per order, one per line."
+              },
+              {
+                "relationship": "c.send",
+                "caption": "Fulfilment is requested only once the order is stored."
+              },
+              {
+                "relationship": "c.sqs",
+                "caption": "The command goes on the queue; the controller answers 202."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "stripe",
+      "type": "external-system",
+      "label": "Stripe",
+      "technology": "Stripe",
+      "description": "Authorizes and captures card payments."
+    },
+    {
+      "id": "db",
+      "type": "sql-database",
+      "label": "Orders DB",
+      "technology": "PostgreSQL 16",
+      "group": "shop",
+      "description": "Orders, their lines and their status."
+    },
+    {
+      "id": "queue",
+      "type": "queue",
+      "label": "fulfilment",
+      "technology": "Amazon SQS",
+      "group": "shop",
+      "description": "Orders waiting to be picked and shipped."
+    },
+    {
+      "id": "worker",
+      "type": "worker",
+      "label": "Fulfilment Worker",
+      "technology": "Node.js",
+      "replicas": 4,
+      "group": "shop",
+      "description": "Books each order with the warehouse."
+    },
+    {
+      "id": "shipments",
+      "type": "nosql-database",
+      "label": "Shipments",
+      "technology": "Amazon DynamoDB",
+      "group": "shop",
+      "description": "Tracking numbers per order."
+    },
+    {
+      "id": "dlq",
+      "type": "dead-letter-queue",
+      "label": "fulfilment-dlq",
+      "technology": "Amazon SQS",
+      "group": "shop",
+      "description": "Orders the warehouse kept refusing."
+    },
+    {
+      "id": "wms",
+      "type": "external-system",
+      "label": "Warehouse WMS",
+      "description": "Picks, packs and ships parcels."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "browse",
+      "from": "shopper",
+      "to": "web",
+      "label": "Checks out"
+    },
+    {
+      "id": "submit",
+      "from": "web",
+      "to": "api",
+      "label": "POST /orders",
+      "semantic": "http",
+      "response": "202 Accepted"
+    },
+    {
+      "id": "charge",
+      "from": "api",
+      "to": "stripe",
+      "label": "Authorizes payment",
+      "semantic": "http",
+      "response": "authorized"
+    },
+    {
+      "id": "save",
+      "from": "api",
+      "to": "db",
+      "label": "Stores the order",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "enqueue",
+      "from": "api",
+      "to": "queue",
+      "label": "FulfilOrder",
+      "semantic": "command"
+    },
+    {
+      "id": "process",
+      "from": "queue",
+      "to": "worker",
+      "semantic": "consumes"
+    },
+    {
+      "id": "book",
+      "from": "worker",
+      "to": "wms",
+      "label": "Books shipment",
+      "semantic": "http",
+      "response": "201 Shipment"
+    },
+    {
+      "id": "mark",
+      "from": "worker",
+      "to": "shipments",
+      "label": "Tracking number",
+      "semantic": "writes"
+    },
+    {
+      "id": "park",
+      "from": "queue",
+      "to": "dlq",
+      "semantic": "deadLetters",
+      "deliveryAttempts": 5
+    }
+  ],
+  "flows": [
+    {
+      "id": "place",
+      "title": "Place an order",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "browse",
+          "caption": "A shopper confirms the basket and pays."
+        },
+        {
+          "relationship": "submit",
+          "caption": "Checkout posts the order; the API answers 202 without waiting for the warehouse."
+        },
+        {
+          "relationship": "charge",
+          "caption": "The card is authorized, keyed by the order id so a retry never charges twice."
+        },
+        {
+          "relationship": "save",
+          "caption": "The order is stored as PAID."
+        },
+        {
+          "relationship": "enqueue",
+          "caption": "A FulfilOrder command is queued for the workers."
+        },
+        {
+          "relationship": "process",
+          "caption": "One of four workers takes the message; the others take the next ones."
+        },
+        {
+          "relationship": "book",
+          "caption": "The worker books the shipment with the warehouse."
+        },
+        {
+          "relationship": "mark",
+          "caption": "The tracking number is stored and the message deleted."
+        }
+      ]
+    },
+    {
+      "id": "refused",
+      "title": "Warehouse keeps refusing",
+      "color": "rose",
+      "variantOf": "place",
+      "steps": [
+        {
+          "relationship": "process",
+          "caption": "The warehouse is down. The message returns to the queue and is tried again.",
+          "highlight": [
+            "wms"
+          ]
+        },
+        {
+          "relationship": "park",
+          "caption": "After five attempts SQS parks it in the DLQ; on-call redrives it once the warehouse is back."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Order processing\nA shop takes the payment, queues fulfilment, and parks what the warehouse refuses.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "n.accept",
+      "kind": "decision",
+      "about": "enqueue",
+      "text": "Accept fast, fulfil later: the shopper waits for the payment, never for the warehouse."
+    },
+    {
+      "id": "n.dual",
+      "kind": "warning",
+      "about": "save",
+      "text": "Storing the order and sending the command are two writes. If the API dies between them, the order is never shipped. The Transactional Outbox starter closes that gap."
+    },
+    {
+      "id": "n.idem",
+      "kind": "code",
+      "about": "charge",
+      "language": "http",
+      "code": "POST /v1/payment_intents\nIdempotency-Key: order-8f14e45f\n\namount=4999&currency=eur\n&capture_method=manual"
+    },
+    {
+      "id": "n.msg",
+      "kind": "code",
+      "about": "queue",
+      "language": "json",
+      "code": "{\n  \"type\": \"FulfilOrder\",\n  \"orderId\": \"8f14e45f\",\n  \"lines\": [{ \"sku\": \"TEE-BLK-M\", \"qty\": 2 }],\n  \"shipTo\": \"DE\"\n}"
+    }
+  ],
+  "_openPoints": [
+    {
+      "id": "op.capture",
+      "kind": "awaiting",
+      "context": "Capture the payment when the parcel ships, or at checkout? Finance to confirm.",
+      "targets": [
+        {
+          "kind": "edge",
+          "id": "charge"
+        },
+        {
+          "kind": "edge",
+          "id": "book"
+        }
+      ]
+    }
+  ],
+  "_centers": {
+    "stripe": [
+      700,
+      -30
+    ],
+    "wms": [
+      1380,
+      -30
+    ],
+    "shopper": [
+      60,
+      330
+    ],
+    "web": [
+      370,
+      330
+    ],
+    "api": [
+      700,
+      330
+    ],
+    "queue": [
+      1040,
+      330
+    ],
+    "worker": [
+      1380,
+      330
+    ],
+    "db": [
+      700,
+      560
+    ],
+    "dlq": [
+      1040,
+      560
+    ],
+    "shipments": [
+      1380,
+      560
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {},
+  "_place": [
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "width": 1200,
+      "height": 110
+    }
+  ]
+}

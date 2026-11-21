@@ -1,0 +1,1222 @@
+{
+  "title": "Music streaming service",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "f.play",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "devices",
+      "label": "Listener devices",
+      "kind": "group"
+    },
+    {
+      "id": "cloud",
+      "label": "Earshot cloud",
+      "kind": "system"
+    },
+    {
+      "id": "edge-d",
+      "label": "Edge",
+      "kind": "domain",
+      "parent": "cloud"
+    },
+    {
+      "id": "library",
+      "label": "Library",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "blue"
+    },
+    {
+      "id": "listening",
+      "label": "Listening",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "teal"
+    },
+    {
+      "id": "personal",
+      "label": "Personalization",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "violet"
+    },
+    {
+      "id": "insights",
+      "label": "Insights & royalties",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "amber"
+    },
+    {
+      "id": "content",
+      "label": "Content",
+      "kind": "domain",
+      "parent": "cloud"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "listener",
+      "type": "person",
+      "label": "Listener",
+      "description": "Plays music on every device they own."
+    },
+    {
+      "id": "speaker",
+      "type": "device",
+      "label": "Smart Speaker",
+      "group": "devices",
+      "description": "Takes voice requests in the living room."
+    },
+    {
+      "id": "desktop",
+      "type": "service",
+      "label": "Desktop App",
+      "technology": "Electron",
+      "group": "devices",
+      "description": "Browses, searches and builds playlists."
+    },
+    {
+      "id": "phone",
+      "type": "service",
+      "label": "Phone App",
+      "technology": "Flutter",
+      "group": "devices",
+      "description": "Streams and caches music on the go."
+    },
+    {
+      "id": "j-api",
+      "type": "junction",
+      "label": "API calls"
+    },
+    {
+      "id": "gateway",
+      "type": "gateway",
+      "label": "API Gateway",
+      "technology": "Kong",
+      "replicas": 6,
+      "group": "edge-d",
+      "description": "Checks the session and routes each path."
+    },
+    {
+      "id": "playlists",
+      "type": "api",
+      "label": "Playlists",
+      "technology": "Scala",
+      "replicas": 4,
+      "group": "library",
+      "description": "Stores and syncs playlists, including shared ones."
+    },
+    {
+      "id": "playlists-db",
+      "type": "nosql-database",
+      "label": "Playlists DB",
+      "technology": "ScyllaDB",
+      "group": "library",
+      "description": "Four billion playlists, one partition each."
+    },
+    {
+      "id": "search",
+      "type": "api",
+      "label": "Search",
+      "technology": "Go",
+      "group": "library",
+      "description": "Finds tracks, artists and podcasts as you type."
+    },
+    {
+      "id": "index",
+      "type": "search-index",
+      "label": "Track Index",
+      "technology": "Vespa",
+      "group": "library",
+      "description": "Ranks by text and popularity."
+    },
+    {
+      "id": "audio",
+      "type": "api",
+      "label": "Audio API",
+      "technology": "Rust",
+      "replicas": 8,
+      "group": "listening",
+      "description": "Checks rights and signs short-lived audio URLs."
+    },
+    {
+      "id": "events",
+      "type": "topic",
+      "label": "listening-events",
+      "technology": "Google Pub/Sub",
+      "group": "listening",
+      "description": "Every play, skip and pause, from every device."
+    },
+    {
+      "id": "dj",
+      "type": "ai-agent",
+      "label": "AI DJ",
+      "technology": "Python",
+      "group": "personal",
+      "description": "Turns a spoken request into a queue, and introduces it."
+    },
+    {
+      "id": "recs",
+      "type": "api",
+      "label": "Recommendations",
+      "technology": "Python",
+      "replicas": 10,
+      "group": "personal",
+      "description": "Finds tracks a listener will love next.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "r.dj",
+            "type": "ai-agent",
+            "label": "AI DJ"
+          },
+          {
+            "id": "r.api",
+            "type": "component",
+            "label": "Recommend Handler",
+            "technology": "FastAPI",
+            "description": "Takes a listener, a seed and a mood."
+          },
+          {
+            "id": "r.candidates",
+            "type": "component",
+            "label": "Candidate Generator",
+            "technology": "PyTorch",
+            "description": "Embeds the request and pulls 2,000 near tracks."
+          },
+          {
+            "id": "r.vectors",
+            "type": "search-index",
+            "label": "Track Embeddings",
+            "technology": "Milvus",
+            "description": "Nearest neighbours over 100M track vectors."
+          },
+          {
+            "id": "r.ranker",
+            "type": "component",
+            "label": "Ranker",
+            "technology": "PyTorch",
+            "description": "Scores candidates for this listener, now."
+          },
+          {
+            "id": "r.features",
+            "type": "cache",
+            "label": "Listener Features",
+            "technology": "Redis",
+            "description": "Recent plays, skips and time of day."
+          },
+          {
+            "id": "r.mix",
+            "type": "component",
+            "label": "Mix Rules",
+            "description": "Spaces out artists and keeps the mood."
+          }
+        ],
+        "relationships": [
+          {
+            "id": "r.ask",
+            "from": "r.dj",
+            "to": "r.api",
+            "label": "POST /recommend",
+            "semantic": "http",
+            "response": "50 tracks"
+          },
+          {
+            "id": "r.gen",
+            "from": "r.api",
+            "to": "r.candidates",
+            "label": "candidates(seed)",
+            "semantic": "uses"
+          },
+          {
+            "id": "r.ann",
+            "from": "r.candidates",
+            "to": "r.vectors",
+            "label": "Nearest tracks",
+            "semantic": "searches"
+          },
+          {
+            "id": "r.rank",
+            "from": "r.api",
+            "to": "r.ranker",
+            "label": "rank(candidates)",
+            "semantic": "uses"
+          },
+          {
+            "id": "r.feat",
+            "from": "r.ranker",
+            "to": "r.features",
+            "label": "Listener features",
+            "semantic": "reads"
+          },
+          {
+            "id": "r.rules",
+            "from": "r.api",
+            "to": "r.mix",
+            "label": "arrange(ranked)",
+            "semantic": "uses"
+          }
+        ],
+        "flows": [
+          {
+            "id": "r.flow",
+            "title": "Recommend, inside the service",
+            "color": "violet",
+            "steps": [
+              {
+                "relationship": "r.ask",
+                "caption": "The DJ asks for fifty tracks for 'focus, no lyrics'."
+              },
+              {
+                "relationship": "r.gen",
+                "caption": "The request and the listener are embedded together."
+              },
+              {
+                "relationship": "r.ann",
+                "caption": "Two thousand nearby tracks come back from the vector index."
+              },
+              {
+                "relationship": "r.rank",
+                "caption": "Each candidate is scored for this listener, right now."
+              },
+              {
+                "relationship": "r.feat",
+                "caption": "Skips in the last hour count more than last year's plays."
+              },
+              {
+                "relationship": "r.rules",
+                "caption": "No artist twice in a row; the energy rises slowly."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "warehouse",
+      "type": "table",
+      "label": "Listening Warehouse",
+      "technology": "BigQuery",
+      "group": "insights",
+      "description": "Every play ever, partitioned by day."
+    },
+    {
+      "id": "weekly",
+      "type": "scheduler",
+      "label": "Weekly Mix Builder",
+      "technology": "Apache Spark",
+      "group": "insights",
+      "description": "Builds a fresh playlist for every listener."
+    },
+    {
+      "id": "royalties",
+      "type": "scheduler",
+      "label": "Royalties Run",
+      "technology": "Apache Airflow",
+      "group": "insights",
+      "description": "Counts paid plays per track and rights holder."
+    },
+    {
+      "id": "labels",
+      "type": "external-actor",
+      "label": "Labels & Distributors",
+      "description": "Own the rights and are paid per play."
+    },
+    {
+      "id": "cdn",
+      "type": "external-system",
+      "label": "Audio CDN",
+      "technology": "Fastly",
+      "description": "Caches audio files close to listeners."
+    },
+    {
+      "id": "storage",
+      "type": "object-storage",
+      "label": "Audio Files",
+      "technology": "Google Cloud Storage",
+      "group": "content",
+      "description": "Every track in five bitrates."
+    },
+    {
+      "id": "artist",
+      "type": "person",
+      "label": "Artist",
+      "description": "Releases music and follows their listeners."
+    },
+    {
+      "id": "portal",
+      "type": "service",
+      "label": "Artist Portal",
+      "technology": "Next.js",
+      "description": "Uploads releases and shows streaming stats."
+    },
+    {
+      "id": "ingestion",
+      "type": "service",
+      "label": "Ingestion",
+      "technology": "Go",
+      "group": "content",
+      "description": "Checks, encodes and publishes each release.",
+      "inside": {
+        "level": "container",
+        "nodes": [
+          {
+            "id": "i.portal",
+            "type": "service",
+            "label": "Artist Portal",
+            "technology": "Next.js"
+          },
+          {
+            "id": "i.api",
+            "type": "api",
+            "label": "Release API",
+            "technology": "Go",
+            "description": "Takes DDEX releases and their audio."
+          },
+          {
+            "id": "i.jobs",
+            "type": "queue",
+            "label": "encode-jobs",
+            "technology": "Google Pub/Sub",
+            "description": "One job per track."
+          },
+          {
+            "id": "i.encoders",
+            "type": "worker",
+            "label": "Encoders",
+            "technology": "FFmpeg",
+            "replicas": 20,
+            "description": "Encode Ogg and AAC at five bitrates."
+          },
+          {
+            "id": "i.loudness",
+            "type": "worker",
+            "label": "Loudness Check",
+            "technology": "Python",
+            "description": "Measures LUFS so every track plays at one level."
+          },
+          {
+            "id": "i.storage",
+            "type": "object-storage",
+            "label": "Audio Files",
+            "technology": "Google Cloud Storage"
+          },
+          {
+            "id": "i.catalog",
+            "type": "sql-database",
+            "label": "Track Catalog",
+            "technology": "PostgreSQL",
+            "description": "Tracks, credits, territories and release dates."
+          },
+          {
+            "id": "i.dlq",
+            "type": "dead-letter-queue",
+            "label": "encode-jobs-dlq",
+            "technology": "Google Pub/Sub",
+            "description": "Tracks that failed every attempt."
+          }
+        ],
+        "relationships": [
+          {
+            "id": "i.upload",
+            "from": "i.portal",
+            "to": "i.api",
+            "label": "POST /releases",
+            "semantic": "http",
+            "response": "202 Accepted"
+          },
+          {
+            "id": "i.record",
+            "from": "i.api",
+            "to": "i.catalog",
+            "label": "Release metadata",
+            "semantic": "writes"
+          },
+          {
+            "id": "i.queue",
+            "from": "i.api",
+            "to": "i.jobs",
+            "label": "EncodeTrack",
+            "semantic": "command"
+          },
+          {
+            "id": "i.take",
+            "from": "i.jobs",
+            "to": "i.encoders",
+            "semantic": "consumes"
+          },
+          {
+            "id": "i.measure",
+            "from": "i.encoders",
+            "to": "i.loudness",
+            "label": "Encoded files",
+            "semantic": "calls"
+          },
+          {
+            "id": "i.store",
+            "from": "i.loudness",
+            "to": "i.storage",
+            "label": "Normalised audio",
+            "semantic": "writes"
+          },
+          {
+            "id": "i.park",
+            "from": "i.jobs",
+            "to": "i.dlq",
+            "semantic": "deadLetters",
+            "deliveryAttempts": 3
+          }
+        ],
+        "flows": [
+          {
+            "id": "i.flow",
+            "title": "Release an album",
+            "color": "violet",
+            "steps": [
+              {
+                "relationship": "i.upload",
+                "caption": "The portal posts a DDEX release with twelve WAV files."
+              },
+              {
+                "relationship": "i.record",
+                "caption": "Credits, territories and the release date are recorded."
+              },
+              {
+                "relationship": "i.queue",
+                "caption": "One encode job is queued per track."
+              },
+              {
+                "relationship": "i.take",
+                "caption": "Twenty encoders work through the jobs."
+              },
+              {
+                "relationship": "i.measure",
+                "caption": "Loudness is measured so playback can even it out."
+              },
+              {
+                "relationship": "i.store",
+                "caption": "Five bitrates per track are stored, ready for the CDN."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "tap",
+      "from": "listener",
+      "to": "phone",
+      "label": "Taps play"
+    },
+    {
+      "id": "speaker-api",
+      "from": "speaker",
+      "to": "j-api"
+    },
+    {
+      "id": "desktop-api",
+      "from": "desktop",
+      "to": "j-api"
+    },
+    {
+      "id": "phone-api",
+      "from": "phone",
+      "to": "j-api"
+    },
+    {
+      "id": "api",
+      "from": "j-api",
+      "to": "gateway",
+      "label": "HTTPS"
+    },
+    {
+      "id": "r-playlists",
+      "from": "gateway",
+      "to": "playlists",
+      "label": "/playlists",
+      "semantic": "routes"
+    },
+    {
+      "id": "r-search",
+      "from": "gateway",
+      "to": "search",
+      "label": "/search",
+      "semantic": "routes"
+    },
+    {
+      "id": "r-play",
+      "from": "gateway",
+      "to": "audio",
+      "label": "/play",
+      "semantic": "routes"
+    },
+    {
+      "id": "r-dj",
+      "from": "gateway",
+      "to": "dj",
+      "label": "/dj"
+    },
+    {
+      "id": "save",
+      "from": "playlists",
+      "to": "playlists-db",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "find",
+      "from": "search",
+      "to": "index",
+      "semantic": "searches"
+    },
+    {
+      "id": "played",
+      "from": "audio",
+      "to": "events",
+      "label": "TrackPlayed",
+      "semantic": "publishes"
+    },
+    {
+      "id": "ask",
+      "from": "dj",
+      "to": "recs",
+      "label": "Tracks for a mood",
+      "semantic": "http",
+      "response": "50 tracks"
+    },
+    {
+      "id": "stream",
+      "from": "phone",
+      "to": "cdn",
+      "label": "Audio file",
+      "semantic": "http",
+      "response": "Ogg 320k"
+    },
+    {
+      "id": "miss",
+      "from": "cdn",
+      "to": "storage",
+      "label": "Cache miss",
+      "semantic": "reads",
+      "kind": "fallback"
+    },
+    {
+      "id": "land",
+      "from": "events",
+      "to": "warehouse",
+      "label": "Streams in"
+    },
+    {
+      "id": "week",
+      "from": "warehouse",
+      "to": "weekly",
+      "label": "A week of plays",
+      "semantic": "reads"
+    },
+    {
+      "id": "mix",
+      "from": "weekly",
+      "to": "playlists",
+      "label": "Weekly mixes",
+      "semantic": "http"
+    },
+    {
+      "id": "count",
+      "from": "warehouse",
+      "to": "royalties",
+      "label": "Paid plays",
+      "semantic": "reads"
+    },
+    {
+      "id": "pay",
+      "from": "royalties",
+      "to": "labels",
+      "label": "Statements",
+      "semantic": "notifies"
+    },
+    {
+      "id": "upload",
+      "from": "artist",
+      "to": "portal",
+      "label": "Uploads an album"
+    },
+    {
+      "id": "release",
+      "from": "portal",
+      "to": "ingestion",
+      "label": "POST /releases",
+      "semantic": "http",
+      "response": "202"
+    },
+    {
+      "id": "encode",
+      "from": "ingestion",
+      "to": "storage",
+      "label": "Encoded audio",
+      "semantic": "writes"
+    },
+    {
+      "id": "publish",
+      "from": "ingestion",
+      "to": "index",
+      "label": "New tracks",
+      "semantic": "indexes"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f.play",
+      "title": "Play a song",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "tap",
+          "caption": "A listener taps a song on their phone."
+        },
+        {
+          "relationship": "phone-api",
+          "caption": "The app asks the API for the track."
+        },
+        {
+          "relationship": "api",
+          "caption": "The gateway checks the session."
+        },
+        {
+          "relationship": "r-play",
+          "caption": "The Audio API checks rights in this country."
+        },
+        {
+          "relationship": "stream",
+          "caption": "With a 5-minute signed URL, the phone streams from the CDN."
+        },
+        {
+          "relationship": "played",
+          "caption": "After 30 seconds the play counts: TrackPlayed is published."
+        },
+        {
+          "relationship": "land",
+          "caption": "Every event lands in the warehouse within seconds."
+        }
+      ]
+    },
+    {
+      "id": "f.miss",
+      "title": "First play in a region",
+      "color": "amber",
+      "variantOf": "f.play",
+      "steps": [
+        {
+          "relationship": "stream",
+          "caption": "A new release, not yet cached at this CDN node."
+        },
+        {
+          "relationship": "miss",
+          "caption": "The CDN fetches the file from storage and keeps it.",
+          "highlight": [
+            "storage"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f.dj",
+      "title": "Ask the AI DJ",
+      "color": "violet",
+      "steps": [
+        {
+          "relationship": "speaker-api",
+          "caption": "“Play something for focus, no lyrics.”"
+        },
+        {
+          "relationship": "api",
+          "caption": "The request reaches the gateway like any other call."
+        },
+        {
+          "relationship": "r-dj",
+          "caption": "The AI DJ turns the words into a mood and a seed."
+        },
+        {
+          "relationship": "ask",
+          "caption": "It asks Recommendations for fifty tracks, then introduces them."
+        }
+      ]
+    },
+    {
+      "id": "f.search",
+      "title": "Search and save",
+      "color": "blue",
+      "steps": [
+        {
+          "relationship": "desktop-api",
+          "caption": "The listener types an artist's name."
+        },
+        {
+          "relationship": "api",
+          "caption": "Each keystroke is a request; the gateway rate-limits it."
+        },
+        {
+          "relationship": "r-search",
+          "caption": "Search takes the prefix."
+        },
+        {
+          "relationship": "find",
+          "caption": "Vespa ranks matches by text and popularity."
+        },
+        {
+          "relationship": "r-playlists",
+          "caption": "The listener adds a track to a playlist."
+        },
+        {
+          "relationship": "save",
+          "caption": "The change syncs to every device with the playlist."
+        }
+      ]
+    },
+    {
+      "id": "f.weekly",
+      "title": "Build Monday's mixes",
+      "color": "green",
+      "steps": [
+        {
+          "relationship": "week",
+          "caption": "Sunday night, Spark reads a week of everyone's plays."
+        },
+        {
+          "relationship": "mix",
+          "caption": "600M personal playlists are written before Monday morning."
+        }
+      ]
+    },
+    {
+      "id": "f.pay",
+      "title": "Pay the artists",
+      "color": "rose",
+      "steps": [
+        {
+          "relationship": "land",
+          "caption": "Only counted plays are in the warehouse."
+        },
+        {
+          "relationship": "count",
+          "caption": "Each night, plays are summed per track and rights holder."
+        },
+        {
+          "relationship": "pay",
+          "caption": "Each month, labels and distributors get their statements."
+        }
+      ]
+    },
+    {
+      "id": "f.release",
+      "title": "Release an album",
+      "color": "violet",
+      "steps": [
+        {
+          "relationship": "upload",
+          "caption": "An artist uploads an album with its credits."
+        },
+        {
+          "relationship": "release",
+          "caption": "The portal posts the release for ingestion."
+        },
+        {
+          "relationship": "encode",
+          "caption": "Each track is encoded into five bitrates."
+        },
+        {
+          "relationship": "publish",
+          "caption": "On release day the tracks become searchable."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Earshot\nA music streaming service: **600M** listeners, **100M** tracks, **4B** plays a day.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "counts",
+      "kind": "label",
+      "about": "events",
+      "attach": false,
+      "text": "### When a play counts\n- [x] 30 seconds listened\n- [x] Not a repeat from a bot pattern\n- [x] Rights valid in the listener's country\n- [ ] Offline plays, synced later",
+      "style": {
+        "background": "card",
+        "color": "amber"
+      }
+    },
+    {
+      "id": "money",
+      "kind": "label",
+      "about": "royalties",
+      "attach": false,
+      "text": "every play is money owed",
+      "style": {
+        "font": "hand",
+        "color": "rose"
+      }
+    },
+    {
+      "id": "n.cdn",
+      "kind": "decision",
+      "about": "stream",
+      "text": "Audio comes from a CDN on URLs signed for 5 minutes: listeners never reach our servers for bytes, and a leaked link soon stops working."
+    },
+    {
+      "id": "n.played",
+      "kind": "code",
+      "about": "played",
+      "language": "json",
+      "code": "{\n  \"type\": \"TrackPlayed\",\n  \"listener\": \"l_77d1\",\n  \"track\": \"t_5ad93c\",\n  \"msPlayed\": 31250,\n  \"country\": \"BR\",\n  \"device\": \"phone\",\n  \"offline\": false\n}"
+    },
+    {
+      "id": "n.dj",
+      "kind": "warning",
+      "about": "dj",
+      "text": "The DJ only queues tracks Recommendations returned: it can't invent a track, or play one the listener has no rights to."
+    },
+    {
+      "id": "n.royalty",
+      "kind": "code",
+      "about": "count",
+      "language": "sql",
+      "code": "SELECT track_id, rights_holder,\n       COUNT(*) AS paid_plays\nFROM listening.plays\nWHERE play_date = @run_date\n  AND ms_played >= 30000\n  AND NOT suspected_bot\nGROUP BY track_id, rights_holder"
+    },
+    {
+      "id": "n.scylla",
+      "kind": "decision",
+      "about": "playlists-db",
+      "text": "ScyllaDB: millions of edits a minute, and a shared playlist merges edits per item instead of locking it."
+    },
+    {
+      "id": "n.private",
+      "kind": "question",
+      "about": "weekly",
+      "text": "Should plays in a private session shape the weekly mix?"
+    }
+  ],
+  "sequences": [
+    {
+      "id": "seq-dj",
+      "title": "Ask the AI DJ, message by message",
+      "mermaid": "sequenceDiagram\n  participant spk as Smart Speaker\n  participant gw as API Gateway\n  participant dj as AI DJ\n  participant rec as Recommendations\n  participant au as Audio API\n  spk->>+gw: Voice request\n  gw->>+dj: /dj\n  Note over dj: focus, no lyrics, 90 min\n  dj->>+rec: POST /recommend\n  rec-->>-dj: 50 tracks\n  par\n    dj-->>spk: Spoken intro\n  and\n    dj->>+au: Play first track\n    au-->>-dj: Signed URL\n  end\n  dj-->>-gw: Queue of 50\n  gw-->>-spk: 200 Queue",
+      "links": {
+        "spk": "speaker",
+        "gw": "gateway",
+        "dj": "dj",
+        "rec": "recs",
+        "au": "audio"
+      }
+    }
+  ],
+  "_openPoints": [
+    {
+      "id": "op.lossless",
+      "kind": "parked",
+      "context": "A lossless tier needs about four times the CDN storage. Revisit with the next CDN contract.",
+      "targets": [
+        {
+          "kind": "edge",
+          "id": "stream"
+        }
+      ]
+    }
+  ],
+  "_centers": {
+    "listener": [
+      70,
+      970
+    ],
+    "speaker": [
+      330,
+      690
+    ],
+    "desktop": [
+      330,
+      830
+    ],
+    "phone": [
+      330,
+      970
+    ],
+    "j-api": [
+      560,
+      830
+    ],
+    "gateway": [
+      800,
+      830
+    ],
+    "playlists": [
+      1120,
+      290
+    ],
+    "playlists-db": [
+      1460,
+      290
+    ],
+    "search": [
+      1120,
+      480
+    ],
+    "index": [
+      1460,
+      480
+    ],
+    "audio": [
+      1120,
+      830
+    ],
+    "events": [
+      1460,
+      851
+    ],
+    "dj": [
+      1120,
+      1202
+    ],
+    "recs": [
+      1460,
+      1202
+    ],
+    "weekly": [
+      1820,
+      290
+    ],
+    "warehouse": [
+      1820,
+      830
+    ],
+    "royalties": [
+      2160,
+      830
+    ],
+    "labels": [
+      2600,
+      830
+    ],
+    "cdn": [
+      330,
+      1202
+    ],
+    "storage": [
+      800,
+      1202
+    ],
+    "artist": [
+      70,
+      1410
+    ],
+    "portal": [
+      330,
+      1410
+    ],
+    "ingestion": [
+      800,
+      1410
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {
+    "header": 80
+  },
+  "_patch": {
+    "nodes": {
+      "counts": {
+        "parentId": "insights"
+      },
+      "money": {
+        "parentId": "insights"
+      },
+      "i.catalog": {
+        "dy": 17
+      },
+      "j-api": {
+        "text": null,
+        "textOrigin": null
+      }
+    },
+    "edges": {
+      "publish": {
+        "portal": true,
+        "targetAnchor": {
+          "side": "right",
+          "offset": 0.5
+        }
+      },
+      "land": {
+        "cadence": "Streaming"
+      },
+      "week": {
+        "cadence": "Weekly, Sunday"
+      },
+      "count": {
+        "cadence": "Daily 01:00"
+      },
+      "pay": {
+        "cadence": "Monthly"
+      },
+      "mix": {
+        "portal": true,
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.2
+        }
+      },
+      "speaker-api": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "desktop-api": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "phone-api": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        }
+      },
+      "r-dj": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.8
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "r-playlists": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.3
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "r-search": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.7
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      }
+    }
+  },
+  "_place": [
+    {
+      "id": "counts",
+      "of": [
+        "warehouse",
+        "royalties"
+      ],
+      "side": "below",
+      "gap": 150,
+      "align": "center",
+      "width": 330,
+      "height": 164,
+      "early": true
+    },
+    {
+      "id": "insights",
+      "of": [
+        "library"
+      ],
+      "side": "right",
+      "gap": 66,
+      "align": "start",
+      "height": 1162
+    },
+    {
+      "id": "money",
+      "of": [
+        "weekly"
+      ],
+      "side": "right",
+      "gap": 180,
+      "align": "center",
+      "early": true,
+      "dy": 0
+    },
+    {
+      "id": "seq-dj",
+      "of": [
+        "cloud"
+      ],
+      "side": "below",
+      "gap": 80,
+      "align": "end"
+    },
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "width": 1100,
+      "height": 110,
+      "exclude": [
+        "seq-dj"
+      ]
+    }
+  ],
+  "_ink": [
+    {
+      "shape": "underline",
+      "of": [
+        "money"
+      ],
+      "tool": "highlighter",
+      "color": "yellow",
+      "size": 14,
+      "pad": -14
+    }
+  ],
+  "_alignCols": [
+    [
+      "library",
+      "listening",
+      "personal"
+    ]
+  ],
+  "_alignRows": [
+    [
+      "edge-d",
+      "listening"
+    ]
+  ]
+}

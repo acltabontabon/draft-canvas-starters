@@ -1,0 +1,483 @@
+{
+  "title": "Kappa",
+  "layout": {
+    "primaryFlow": "score-payment",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "fraud",
+      "label": "Fraud Platform",
+      "kind": "system"
+    },
+    {
+      "id": "lane-live",
+      "label": "Live · rules v7",
+      "kind": "group",
+      "parent": "fraud",
+      "color": "teal"
+    },
+    {
+      "id": "lane-replay",
+      "label": "Replay · rules v8",
+      "kind": "group",
+      "parent": "fraud",
+      "color": "amber"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "gateway",
+      "type": "api",
+      "label": "Card Gateway",
+      "technology": "Go",
+      "description": "Authorizes card payments for merchants."
+    },
+    {
+      "id": "network",
+      "type": "external-system",
+      "label": "Card Network",
+      "description": "Sends chargebacks filed by cardholders."
+    },
+    {
+      "id": "log",
+      "type": "stream",
+      "label": "card-events",
+      "technology": "Kafka",
+      "group": "fraud",
+      "description": "Keeps every authorization and chargeback, forever."
+    },
+    {
+      "id": "live",
+      "type": "worker",
+      "label": "Fraud Scoring v7",
+      "technology": "Apache Flink",
+      "replicas": 6,
+      "group": "lane-live",
+      "description": "Scores each card live from its recent activity.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "c.log",
+            "type": "stream",
+            "label": "card-events",
+            "technology": "Kafka"
+          },
+          {
+            "id": "c.source",
+            "type": "component",
+            "label": "Kafka Source",
+            "technology": "Apache Flink",
+            "description": "Reads partitions and emits event-time watermarks."
+          },
+          {
+            "id": "c.key",
+            "type": "component",
+            "label": "Key by Card",
+            "description": "Sends every event for one card to one task."
+          },
+          {
+            "id": "c.window",
+            "type": "component",
+            "label": "Velocity Windows",
+            "description": "Counts auths and spend per card over 5 minutes."
+          },
+          {
+            "id": "c.score",
+            "type": "component",
+            "label": "Rules + Model",
+            "description": "Turns each window into a risk score."
+          },
+          {
+            "id": "c.sink",
+            "type": "adapter",
+            "label": "Cassandra Sink",
+            "technology": "Apache Cassandra",
+            "description": "Upserts the latest score per card."
+          },
+          {
+            "id": "c.view",
+            "type": "nosql-database",
+            "label": "risk_v7",
+            "technology": "Apache Cassandra"
+          }
+        ],
+        "relationships": [
+          {
+            "id": "c.read",
+            "from": "c.log",
+            "to": "c.source",
+            "semantic": "consumes"
+          },
+          {
+            "id": "c.keyed",
+            "from": "c.source",
+            "to": "c.key",
+            "label": "events",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.windowed",
+            "from": "c.key",
+            "to": "c.window",
+            "label": "per card",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.scored",
+            "from": "c.window",
+            "to": "c.score",
+            "label": "5-min totals",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.sunk",
+            "from": "c.score",
+            "to": "c.sink",
+            "label": "scores",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.upsert",
+            "from": "c.sink",
+            "to": "c.view",
+            "label": "UPSERT",
+            "semantic": "writes"
+          }
+        ],
+        "flows": [
+          {
+            "id": "c.flow",
+            "title": "Score an event, inside the job",
+            "color": "blue",
+            "steps": [
+              {
+                "relationship": "c.read",
+                "caption": "The source reads each partition and tracks event time."
+              },
+              {
+                "relationship": "c.keyed",
+                "caption": "Events are keyed by card, so one task sees a card's whole history."
+              },
+              {
+                "relationship": "c.windowed",
+                "caption": "Sliding 5-minute windows count authorizations and spend."
+              },
+              {
+                "relationship": "c.scored",
+                "caption": "Rules and the model turn the totals into a score from 0 to 1."
+              },
+              {
+                "relationship": "c.sunk",
+                "caption": "Only a changed score is passed on."
+              },
+              {
+                "relationship": "c.upsert",
+                "caption": "The card's row in risk_v7 is replaced."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "replay",
+      "type": "worker",
+      "label": "Fraud Scoring v8",
+      "technology": "Apache Flink",
+      "group": "lane-replay",
+      "description": "Replays the log from the start with new rules."
+    },
+    {
+      "id": "dlq",
+      "type": "dead-letter-queue",
+      "label": "card-events-dlq",
+      "technology": "Kafka",
+      "group": "fraud",
+      "description": "Holds events the job could not parse."
+    },
+    {
+      "id": "view7",
+      "type": "nosql-database",
+      "label": "risk_v7",
+      "technology": "Apache Cassandra",
+      "group": "lane-live",
+      "description": "Holds the latest score per card."
+    },
+    {
+      "id": "view8",
+      "type": "nosql-database",
+      "label": "risk_v8",
+      "technology": "Apache Cassandra",
+      "group": "lane-replay",
+      "description": "Fills up as v8 catches up."
+    },
+    {
+      "id": "api",
+      "type": "api",
+      "label": "Risk API",
+      "technology": "Spring Boot 3",
+      "group": "fraud",
+      "description": "Answers how risky a card is in under 10 ms."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "publish",
+      "from": "gateway",
+      "to": "log",
+      "label": "AuthorizationMade",
+      "semantic": "publishes"
+    },
+    {
+      "id": "disputes",
+      "from": "network",
+      "to": "log",
+      "label": "ChargebackFiled",
+      "semantic": "publishes"
+    },
+    {
+      "id": "consume-live",
+      "from": "log",
+      "to": "live",
+      "semantic": "consumes"
+    },
+    {
+      "id": "consume-replay",
+      "from": "log",
+      "to": "replay",
+      "label": "Replays from offset 0",
+      "semantic": "consumes"
+    },
+    {
+      "id": "park",
+      "from": "live",
+      "to": "dlq",
+      "semantic": "deadLetters"
+    },
+    {
+      "id": "write-live",
+      "from": "live",
+      "to": "view7",
+      "label": "Upserts scores",
+      "semantic": "writes"
+    },
+    {
+      "id": "write-replay",
+      "from": "replay",
+      "to": "view8",
+      "label": "Upserts scores",
+      "semantic": "writes"
+    },
+    {
+      "id": "serve",
+      "from": "view7",
+      "to": "api",
+      "semantic": "reads"
+    },
+    {
+      "id": "cutover",
+      "from": "view8",
+      "to": "api",
+      "semantic": "reads",
+      "condition": "after cutover"
+    },
+    {
+      "id": "score",
+      "from": "gateway",
+      "to": "api",
+      "label": "GET /risk/{card}",
+      "semantic": "http",
+      "response": "0.82"
+    }
+  ],
+  "flows": [
+    {
+      "id": "score-payment",
+      "title": "Score a card payment",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "score",
+          "caption": "Before approving, the gateway asks how risky the card is right now."
+        },
+        {
+          "relationship": "serve",
+          "caption": "The Risk API reads the card's latest score from risk_v7."
+        },
+        {
+          "relationship": "publish",
+          "caption": "The authorization is appended to the log, whatever the decision."
+        },
+        {
+          "relationship": "consume-live",
+          "caption": "The live job reads it within a second, in order per card."
+        },
+        {
+          "relationship": "write-live",
+          "caption": "The card's new score replaces the old one in the view."
+        }
+      ]
+    },
+    {
+      "id": "rebuild",
+      "title": "Rebuild with new rules",
+      "color": "amber",
+      "variantOf": "score-payment",
+      "steps": [
+        {
+          "relationship": "consume-replay",
+          "caption": "v8 starts at offset 0 and reads 14 months of history, same code path."
+        },
+        {
+          "relationship": "write-replay",
+          "caption": "It fills risk_v8 while v7 keeps serving traffic.",
+          "highlight": [
+            "view7"
+          ]
+        },
+        {
+          "relationship": "cutover",
+          "caption": "Once v8 is at the head of the log, the API switches; v7 is retired."
+        }
+      ]
+    },
+    {
+      "id": "poison",
+      "title": "An event cannot be parsed",
+      "color": "rose",
+      "variantOf": "score-payment",
+      "steps": [
+        {
+          "relationship": "consume-live",
+          "caption": "A producer sends an event with a schema the job does not know."
+        },
+        {
+          "relationship": "park",
+          "caption": "The job parks it in the DLQ and moves on; one bad event never stalls a card."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Kappa architecture\nCard fraud scoring from one durable log: live scoring and full replays run the same job.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "n.log",
+      "kind": "decision",
+      "about": "log",
+      "text": "The log is the source of truth. Infinite retention (tiered storage) means any view can be rebuilt by replaying it."
+    },
+    {
+      "id": "n.window",
+      "kind": "code",
+      "about": "consume-live",
+      "language": "sql",
+      "code": "SELECT card_id,\n       COUNT(*)    AS auths_5m,\n       SUM(amount) AS spend_5m\nFROM card_events\nGROUP BY card_id,\n  HOP(event_time, INTERVAL '1' MINUTE, INTERVAL '5' MINUTE);"
+    },
+    {
+      "id": "n.eventtime",
+      "kind": "decision",
+      "about": "replay",
+      "text": "Windows use event time, not arrival time, so a replay scores history exactly as live did."
+    },
+    {
+      "id": "n.cost",
+      "kind": "warning",
+      "about": "consume-replay",
+      "text": "A full replay reads every event ever written. Budget hours of cluster time, and keep v7 serving until v8 has caught up."
+    },
+    {
+      "id": "n.dlq",
+      "kind": "question",
+      "about": "dlq",
+      "text": "Who replays parked events once the parser is fixed, and into which version?"
+    }
+  ],
+  "_patch": {
+    "edges": {
+      "consume-live": {
+        "cadence": "Streaming"
+      },
+      "consume-replay": {
+        "cadence": "On demand"
+      },
+      "score": {
+        "portal": true,
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      }
+    }
+  },
+  "_centers": {
+    "gateway": [
+      100,
+      397
+    ],
+    "network": [
+      100,
+      567
+    ],
+    "log": [
+      480,
+      445
+    ],
+    "live": [
+      860,
+      300
+    ],
+    "view7": [
+      1220,
+      300
+    ],
+    "replay": [
+      860,
+      590
+    ],
+    "view8": [
+      1220,
+      590
+    ],
+    "dlq": [
+      860,
+      90
+    ],
+    "api": [
+      1600,
+      445
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {},
+  "_alignCols": [
+    [
+      "lane-live",
+      "lane-replay"
+    ]
+  ],
+  "_place": [
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 56,
+      "width": 1200,
+      "height": 110
+    }
+  ]
+}

@@ -19,17 +19,23 @@ moving money, a lakehouse refining ride data. Not a real company's system, and n
   event payload. Attach each to what it is about.
 - **Depth where it teaches something**: one drill-down view inside the container whose internals
   are the point (the modules of a modular monolith, the ports of a hexagonal core).
-- **About 15 elements at most** on the top view.
+- **About 15 elements at most** on the top view of an architecture, data or pattern starter. A whole
+  system in `examples` can hold more, grouped into domain boundaries.
 
 ## Add or change a starter
 
-1. Draw it in Draft Canvas, and add at least one **Flow** that walks through it. Use only the
-   shape kinds Draft Canvas already has.
+Every starter here is also built from a `spec.json` beside it, with Draft Canvas's own layout and
+checks: see [tools/README.md](tools/README.md), and [tools/LAYOUT.md](tools/LAYOUT.md) for how a
+starter is laid out. To change one, edit its spec and rebuild, or draw in Draft Canvas and update
+the spec to match, so the next rebuild keeps your change.
+
+1. Draw it in Draft Canvas, or write its `spec.json`, and add at least one **Flow** that walks
+   through it. Use only the shape kinds Draft Canvas already has.
 2. Save it as `<id>.draftcanvas` in `starters/<category>/<id>/`. Categories:
    - `architectures`: how a whole system is organised.
    - `data`: how data moves and is refined.
    - `patterns`: one recurring problem, drawn at its own scope.
-   - `examples`: small worked examples.
+   - `examples`: whole systems and worked examples.
 3. Add `starter.json` beside it:
 
    ```json

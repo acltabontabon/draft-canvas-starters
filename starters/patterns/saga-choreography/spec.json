@@ -1,0 +1,527 @@
+{
+  "title": "Saga – Choreography",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "dinner"
+  },
+  "nodes": [
+    {
+      "id": "customer",
+      "type": "person",
+      "label": "Customer",
+      "description": "Orders dinner from a restaurant in the app."
+    },
+    {
+      "id": "order",
+      "type": "api",
+      "label": "Order Service",
+      "technology": "Spring Boot 3",
+      "description": "Takes orders and follows their fate from events."
+    },
+    {
+      "id": "order-db",
+      "type": "sql-database",
+      "label": "Orders DB",
+      "technology": "PostgreSQL 16",
+      "description": "Orders and their status."
+    },
+    {
+      "id": "orders-events",
+      "type": "topic",
+      "label": "orders.events",
+      "technology": "Kafka",
+      "description": "What happened to orders."
+    },
+    {
+      "id": "payment",
+      "type": "service",
+      "label": "Payment Service",
+      "technology": "Go",
+      "description": "Authorizes and refunds the order total."
+    },
+    {
+      "id": "payment-db",
+      "type": "sql-database",
+      "label": "Payments DB",
+      "technology": "PostgreSQL 16",
+      "description": "Authorizations and refunds."
+    },
+    {
+      "id": "adyen",
+      "type": "external-system",
+      "label": "Adyen",
+      "technology": "Adyen",
+      "description": "Authorizes cards and refunds them."
+    },
+    {
+      "id": "payments-events",
+      "type": "topic",
+      "label": "payments.events",
+      "technology": "Kafka",
+      "description": "What happened to payments."
+    },
+    {
+      "id": "kitchen",
+      "type": "service",
+      "label": "Kitchen Service",
+      "technology": "Node.js",
+      "description": "Sends tickets to restaurants and records their answer."
+    },
+    {
+      "id": "kitchen-db",
+      "type": "nosql-database",
+      "label": "Tickets DB",
+      "technology": "MongoDB 7",
+      "description": "Kitchen tickets per restaurant."
+    },
+    {
+      "id": "kitchen-events",
+      "type": "topic",
+      "label": "kitchen.events",
+      "technology": "Kafka",
+      "description": "What restaurants did with tickets."
+    },
+    {
+      "id": "delivery",
+      "type": "service",
+      "label": "Delivery Service",
+      "technology": "FastAPI",
+      "description": "Assigns a courier to accepted orders."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "place",
+      "from": "customer",
+      "to": "order",
+      "label": "Places order"
+    },
+    {
+      "id": "order-tx",
+      "from": "order",
+      "to": "order-db",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "order-publish",
+      "from": "order",
+      "to": "orders-events",
+      "label": "OrderPlaced",
+      "semantic": "publishes",
+      "kind": "event"
+    },
+    {
+      "id": "to-payment",
+      "from": "orders-events",
+      "to": "payment",
+      "label": "OrderPlaced",
+      "semantic": "deliversTo",
+      "kind": "event"
+    },
+    {
+      "id": "authorize",
+      "from": "payment",
+      "to": "adyen",
+      "label": "Authorizes card",
+      "semantic": "http",
+      "response": true
+    },
+    {
+      "id": "payment-tx",
+      "from": "payment",
+      "to": "payment-db",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "payment-publish",
+      "from": "payment",
+      "to": "payments-events",
+      "label": "PaymentAuthorized",
+      "semantic": "publishes",
+      "kind": "event"
+    },
+    {
+      "id": "to-kitchen",
+      "from": "payments-events",
+      "to": "kitchen",
+      "label": "PaymentAuthorized",
+      "semantic": "deliversTo",
+      "kind": "event"
+    },
+    {
+      "id": "kitchen-tx",
+      "from": "kitchen",
+      "to": "kitchen-db",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "kitchen-publish",
+      "from": "kitchen",
+      "to": "kitchen-events",
+      "label": "TicketAccepted",
+      "semantic": "publishes",
+      "kind": "event"
+    },
+    {
+      "id": "to-order",
+      "from": "kitchen-events",
+      "to": "order",
+      "label": "TicketAccepted",
+      "semantic": "deliversTo",
+      "kind": "event"
+    },
+    {
+      "id": "to-delivery",
+      "from": "kitchen-events",
+      "to": "delivery",
+      "label": "TicketAccepted",
+      "semantic": "deliversTo",
+      "kind": "event"
+    },
+    {
+      "id": "to-refund",
+      "from": "kitchen-events",
+      "to": "payment",
+      "label": "TicketRejected",
+      "semantic": "deliversTo",
+      "kind": "failure"
+    },
+    {
+      "id": "to-cancel",
+      "from": "payments-events",
+      "to": "order",
+      "label": "PaymentRefunded",
+      "semantic": "deliversTo",
+      "kind": "failure"
+    }
+  ],
+  "flows": [
+    {
+      "id": "dinner",
+      "title": "Order dinner",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "place",
+          "caption": "The customer orders a curry; the order is saved as PENDING.",
+          "highlight": [
+            "order-tx"
+          ]
+        },
+        {
+          "relationship": "order-publish",
+          "caption": "Order Service publishes OrderPlaced. It tells nobody what to do next."
+        },
+        {
+          "relationship": "to-payment",
+          "caption": "Payment reacts to the fact on its own."
+        },
+        {
+          "relationship": "authorize",
+          "caption": "Adyen authorizes the total; Payment records it locally.",
+          "highlight": [
+            "payment-tx"
+          ]
+        },
+        {
+          "relationship": "payment-publish",
+          "caption": "And publishes PaymentAuthorized."
+        },
+        {
+          "relationship": "to-kitchen",
+          "caption": "Kitchen reacts in turn and sends the ticket to the restaurant."
+        },
+        {
+          "relationship": "kitchen-publish",
+          "caption": "The restaurant accepts: TicketAccepted is published.",
+          "highlight": [
+            "kitchen-tx"
+          ]
+        },
+        {
+          "relationship": "to-order",
+          "caption": "Order Service marks the order CONFIRMED."
+        },
+        {
+          "relationship": "to-delivery",
+          "caption": "Delivery assigns a courier. The saga finished with no one in charge."
+        }
+      ]
+    },
+    {
+      "id": "rejected",
+      "title": "Restaurant rejects the ticket",
+      "color": "rose",
+      "variantOf": "dinner",
+      "steps": [
+        {
+          "relationship": "kitchen-publish",
+          "caption": "The restaurant is out of curry: Kitchen publishes TicketRejected."
+        },
+        {
+          "relationship": "to-refund",
+          "caption": "Payment reacts by refunding: a new local transaction, not a rollback.",
+          "highlight": [
+            "payment-tx",
+            "adyen"
+          ]
+        },
+        {
+          "relationship": "payment-publish",
+          "caption": "It publishes PaymentRefunded, like any other fact."
+        },
+        {
+          "relationship": "to-cancel",
+          "caption": "Order Service reacts: the order is CANCELLED and the customer told."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Saga – Choreography\nServices react to each other's events to deliver a dinner order, with no coordinator.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "n.nobody",
+      "kind": "decision",
+      "about": "orders-events",
+      "text": "No coordinator: each service owns its step, reacts to the events it cares about and publishes what it did."
+    },
+    {
+      "id": "n.event",
+      "kind": "code",
+      "about": "to-refund",
+      "language": "json",
+      "code": "{\n  \"type\": \"TicketRejected\",\n  \"orderId\": \"ord_5b2e\",\n  \"restaurantId\": \"rst_curry_house\",\n  \"reason\": \"OUT_OF_STOCK\",\n  \"correlationId\": \"ord_5b2e\"\n}"
+    },
+    {
+      "id": "n.trace",
+      "kind": "warning",
+      "about": "kitchen-events",
+      "text": "The workflow exists only as events. Carry a correlation id and trace it, or nobody can answer \"where is my dinner?\"."
+    },
+    {
+      "id": "n.timeout",
+      "kind": "question",
+      "about": "kitchen",
+      "text": "Who cancels an order if the restaurant never answers? Nothing here times out."
+    }
+  ],
+  "_openPoints": [
+    {
+      "id": "op.partial",
+      "kind": "parked",
+      "context": "Partial refunds when only some dishes are unavailable.",
+      "targets": [
+        {
+          "kind": "edge",
+          "id": "to-refund"
+        }
+      ]
+    }
+  ],
+  "_patch": {
+    "edges": {
+      "order-publish": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "to-payment": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "payment-publish": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "to-kitchen": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "kitchen-publish": {
+        "sourceAnchor": {
+          "side": "left",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "right",
+          "offset": 0.5
+        }
+      },
+      "to-delivery": {
+        "sourceAnchor": {
+          "side": "left",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "right",
+          "offset": 0.5
+        }
+      },
+      "to-order": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.3
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "waypoints": [
+          {
+            "x": 696,
+            "y": 480
+          },
+          {
+            "x": 330,
+            "y": 480
+          }
+        ]
+      },
+      "to-refund": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.7
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.27
+        },
+        "waypoints": [
+          {
+            "x": 764,
+            "y": 390
+          },
+          {
+            "x": 1090,
+            "y": 390
+          }
+        ]
+      },
+      "to-cancel": {
+        "portal": true,
+        "sourceAnchor": {
+          "side": "left",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.85
+        }
+      },
+      "authorize": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      }
+    },
+    "nodes": {
+      "orders-events": {
+        "width": 170
+      },
+      "payments-events": {
+        "width": 170
+      },
+      "kitchen-events": {
+        "width": 170
+      }
+    }
+  },
+  "_centers": {
+    "customer": [
+      0,
+      200
+    ],
+    "order": [
+      330,
+      200
+    ],
+    "orders-events": [
+      730,
+      235
+    ],
+    "payment": [
+      1130,
+      200
+    ],
+    "order-db": [
+      330,
+      -40
+    ],
+    "payment-db": [
+      1130,
+      -40
+    ],
+    "adyen": [
+      1480,
+      200
+    ],
+    "payments-events": [
+      1130,
+      500
+    ],
+    "kitchen": [
+      1130,
+      800
+    ],
+    "kitchen-db": [
+      1480,
+      800
+    ],
+    "kitchen-events": [
+      730,
+      835
+    ],
+    "delivery": [
+      330,
+      800
+    ]
+  },
+  "_clearRoutes": true,
+  "_place": [
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "align": "start",
+      "width": 1100,
+      "height": 110
+    }
+  ]
+}

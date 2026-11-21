@@ -1,0 +1,1395 @@
+{
+  "title": "Food delivery marketplace",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "f.order",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "apps",
+      "label": "Marketplace apps",
+      "kind": "group"
+    },
+    {
+      "id": "cloud",
+      "label": "Forkful cloud",
+      "kind": "system"
+    },
+    {
+      "id": "edge-d",
+      "label": "Edge",
+      "kind": "domain",
+      "parent": "cloud"
+    },
+    {
+      "id": "discovery",
+      "label": "Discovery",
+      "kind": "domain",
+      "parent": "cloud"
+    },
+    {
+      "id": "ordering",
+      "label": "Ordering",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "blue"
+    },
+    {
+      "id": "orders-db",
+      "label": "Orders DB",
+      "kind": "boundary",
+      "parent": "ordering"
+    },
+    {
+      "id": "payments-d",
+      "label": "Payments",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "violet"
+    },
+    {
+      "id": "kitchen",
+      "label": "Kitchen",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "amber"
+    },
+    {
+      "id": "logistics",
+      "label": "Logistics",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "teal"
+    },
+    {
+      "id": "data",
+      "label": "Data",
+      "kind": "domain",
+      "parent": "cloud"
+    },
+    {
+      "id": "notify-d",
+      "label": "Notifications",
+      "kind": "domain",
+      "parent": "cloud"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "customer",
+      "type": "person",
+      "label": "Customer",
+      "description": "Orders dinner from nearby restaurants."
+    },
+    {
+      "id": "capp",
+      "type": "service",
+      "label": "Customer App",
+      "technology": "React Native",
+      "group": "apps",
+      "description": "Browses, orders and tracks the courier."
+    },
+    {
+      "id": "tablet",
+      "type": "device",
+      "label": "Kitchen Tablet",
+      "group": "apps",
+      "description": "Rings with new tickets; staff accept or reject."
+    },
+    {
+      "id": "courier-app",
+      "type": "service",
+      "label": "Courier App",
+      "technology": "Kotlin",
+      "group": "apps",
+      "description": "Takes offers and shares location every 4 s."
+    },
+    {
+      "id": "courier",
+      "type": "person",
+      "label": "Courier",
+      "description": "Picks up and delivers orders."
+    },
+    {
+      "id": "j-api",
+      "type": "junction",
+      "label": "API calls"
+    },
+    {
+      "id": "gateway",
+      "type": "gateway",
+      "label": "API Gateway",
+      "technology": "Traefik",
+      "replicas": 6,
+      "group": "edge-d",
+      "description": "Authenticates all three apps and routes each path."
+    },
+    {
+      "id": "restaurants",
+      "type": "api",
+      "label": "Restaurants",
+      "technology": "Node.js",
+      "replicas": 4,
+      "group": "discovery",
+      "description": "Serves restaurants, menus and opening hours."
+    },
+    {
+      "id": "search",
+      "type": "search-index",
+      "label": "Menu Search",
+      "technology": "Elasticsearch",
+      "group": "discovery",
+      "description": "Finds dishes by name, cuisine and distance."
+    },
+    {
+      "id": "orders",
+      "type": "api",
+      "label": "Orders API",
+      "technology": "Spring Boot",
+      "replicas": 4,
+      "group": "ordering",
+      "description": "Takes orders and records them with their events."
+    },
+    {
+      "id": "saga",
+      "type": "service",
+      "label": "Order Saga",
+      "technology": "Temporal",
+      "replicas": 3,
+      "group": "ordering",
+      "description": "Runs each order: pay, cook, deliver, or undo.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "s.workflow",
+            "type": "component",
+            "label": "PlaceOrder Workflow",
+            "technology": "TypeScript",
+            "description": "One workflow per order; its state is the order."
+          },
+          {
+            "id": "s.authorize",
+            "type": "component",
+            "label": "Authorize Payment",
+            "description": "Activity: holds the amount on the card."
+          },
+          {
+            "id": "s.ticket",
+            "type": "component",
+            "label": "Send Ticket",
+            "description": "Activity: sends the ticket to the restaurant."
+          },
+          {
+            "id": "s.timer",
+            "type": "component",
+            "label": "Acceptance Timer",
+            "description": "Waits 3 minutes for the restaurant's answer."
+          },
+          {
+            "id": "s.courier",
+            "type": "component",
+            "label": "Find Courier",
+            "description": "Activity: asks Dispatch for a courier."
+          },
+          {
+            "id": "s.stack",
+            "type": "component",
+            "label": "Compensation Stack",
+            "description": "Undo steps, run newest first on failure."
+          },
+          {
+            "id": "s.payments",
+            "type": "api",
+            "label": "Payments",
+            "technology": "Go"
+          },
+          {
+            "id": "s.tickets",
+            "type": "queue",
+            "label": "tickets",
+            "technology": "RabbitMQ"
+          },
+          {
+            "id": "s.dispatch",
+            "type": "api",
+            "label": "Dispatch",
+            "technology": "Go"
+          }
+        ],
+        "relationships": [
+          {
+            "id": "s.r1",
+            "from": "s.workflow",
+            "to": "s.authorize",
+            "label": "1 · authorize",
+            "semantic": "uses"
+          },
+          {
+            "id": "s.r1x",
+            "from": "s.authorize",
+            "to": "s.payments",
+            "label": "POST /authorizations",
+            "semantic": "http",
+            "response": "hold id"
+          },
+          {
+            "id": "s.r2",
+            "from": "s.workflow",
+            "to": "s.ticket",
+            "label": "2 · send ticket",
+            "semantic": "uses"
+          },
+          {
+            "id": "s.r2x",
+            "from": "s.ticket",
+            "to": "s.tickets",
+            "label": "SendTicket",
+            "semantic": "command"
+          },
+          {
+            "id": "s.r3",
+            "from": "s.workflow",
+            "to": "s.timer",
+            "label": "3 · wait ≤ 3 min",
+            "semantic": "uses"
+          },
+          {
+            "id": "s.r4",
+            "from": "s.workflow",
+            "to": "s.courier",
+            "label": "4 · find courier",
+            "semantic": "uses"
+          },
+          {
+            "id": "s.r4x",
+            "from": "s.courier",
+            "to": "s.dispatch",
+            "label": "FindCourier",
+            "semantic": "grpc",
+            "response": "courier"
+          },
+          {
+            "id": "s.r5",
+            "from": "s.workflow",
+            "to": "s.stack",
+            "label": "push undo step",
+            "semantic": "uses"
+          }
+        ],
+        "flows": [
+          {
+            "id": "s.flow",
+            "title": "One order, inside the saga",
+            "color": "teal",
+            "steps": [
+              {
+                "relationship": "s.r1",
+                "caption": "The workflow starts with the payment."
+              },
+              {
+                "relationship": "s.r1x",
+                "caption": "The amount is held on the card, not taken."
+              },
+              {
+                "relationship": "s.r5",
+                "caption": "'Refund payment' goes on the compensation stack."
+              },
+              {
+                "relationship": "s.r2",
+                "caption": "Then the ticket goes to the restaurant."
+              },
+              {
+                "relationship": "s.r2x",
+                "caption": "SendTicket is queued for Restaurant Integration."
+              },
+              {
+                "relationship": "s.r3",
+                "caption": "A durable 3-minute timer starts; it survives restarts."
+              },
+              {
+                "relationship": "s.r4",
+                "caption": "Accepted in time: now a courier is needed."
+              },
+              {
+                "relationship": "s.r4x",
+                "caption": "Dispatch answers with the courier it booked."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "orders-tbl",
+      "type": "table",
+      "label": "orders",
+      "technology": "PostgreSQL",
+      "group": "orders-db",
+      "description": "One row per order and its state."
+    },
+    {
+      "id": "outbox",
+      "type": "table",
+      "label": "outbox",
+      "technology": "PostgreSQL",
+      "group": "orders-db",
+      "description": "Events waiting to be published."
+    },
+    {
+      "id": "payments",
+      "type": "api",
+      "label": "Payments",
+      "technology": "Go",
+      "replicas": 3,
+      "group": "payments-d",
+      "description": "Holds, captures and refunds card payments."
+    },
+    {
+      "id": "stripe",
+      "type": "external-system",
+      "label": "Stripe",
+      "technology": "Stripe",
+      "description": "Card payments and payouts to partners."
+    },
+    {
+      "id": "tickets",
+      "type": "queue",
+      "label": "tickets",
+      "technology": "RabbitMQ",
+      "group": "kitchen",
+      "description": "Orders waiting for a restaurant's answer."
+    },
+    {
+      "id": "dlq",
+      "type": "dead-letter-queue",
+      "label": "tickets-dlq",
+      "technology": "RabbitMQ",
+      "group": "kitchen",
+      "description": "Tickets no restaurant system would take."
+    },
+    {
+      "id": "integration",
+      "type": "worker",
+      "label": "Restaurant Integration",
+      "technology": "Node.js",
+      "replicas": 4,
+      "group": "kitchen",
+      "description": "Sends tickets to the POS or the kitchen tablet."
+    },
+    {
+      "id": "pos",
+      "type": "external-system",
+      "label": "Restaurant POS",
+      "description": "The restaurant's own till and kitchen printer."
+    },
+    {
+      "id": "dispatch",
+      "type": "api",
+      "label": "Dispatch",
+      "technology": "Go",
+      "replicas": 6,
+      "group": "logistics",
+      "description": "Matches each order to the best nearby courier.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "d.saga",
+            "type": "worker",
+            "label": "Order Saga",
+            "technology": "Temporal"
+          },
+          {
+            "id": "d.api",
+            "type": "component",
+            "label": "Dispatch Handler",
+            "technology": "Go",
+            "description": "Takes FindCourier with pickup and drop-off."
+          },
+          {
+            "id": "d.eta",
+            "type": "component",
+            "label": "ETA Model",
+            "technology": "Python",
+            "description": "Predicts food-ready and travel times."
+          },
+          {
+            "id": "d.match",
+            "type": "component",
+            "label": "Courier Matcher",
+            "description": "Scores couriers by ETA, load and fairness."
+          },
+          {
+            "id": "d.geo",
+            "type": "cache",
+            "label": "Live Locations",
+            "technology": "Redis",
+            "description": "Geo index of online couriers."
+          },
+          {
+            "id": "d.offer",
+            "type": "component",
+            "label": "Offer Manager",
+            "description": "Offers the job; 30 s to accept, then the next one."
+          },
+          {
+            "id": "d.push",
+            "type": "adapter",
+            "label": "Courier Push",
+            "technology": "Firebase",
+            "description": "Rings the courier's phone with the offer."
+          }
+        ],
+        "relationships": [
+          {
+            "id": "d.find",
+            "from": "d.saga",
+            "to": "d.api",
+            "label": "FindCourier",
+            "semantic": "grpc",
+            "response": "courier"
+          },
+          {
+            "id": "d.predict",
+            "from": "d.api",
+            "to": "d.eta",
+            "label": "readyAt, travel",
+            "semantic": "uses"
+          },
+          {
+            "id": "d.score",
+            "from": "d.api",
+            "to": "d.match",
+            "label": "best couriers",
+            "semantic": "uses"
+          },
+          {
+            "id": "d.near",
+            "from": "d.match",
+            "to": "d.geo",
+            "label": "Within 3 km",
+            "semantic": "reads"
+          },
+          {
+            "id": "d.ask",
+            "from": "d.api",
+            "to": "d.offer",
+            "label": "offer(courier)",
+            "semantic": "uses"
+          },
+          {
+            "id": "d.ring",
+            "from": "d.offer",
+            "to": "d.push",
+            "label": "send(offer)",
+            "semantic": "uses"
+          }
+        ],
+        "flows": [
+          {
+            "id": "d.flow",
+            "title": "Find a courier, inside Dispatch",
+            "color": "blue",
+            "steps": [
+              {
+                "relationship": "d.find",
+                "caption": "The saga asks for a courier once the restaurant accepts."
+              },
+              {
+                "relationship": "d.predict",
+                "caption": "Food is ready in 18 minutes; leave in 9."
+              },
+              {
+                "relationship": "d.score",
+                "caption": "Couriers are scored by arrival time, load and fairness."
+              },
+              {
+                "relationship": "d.near",
+                "caption": "Only couriers within 3 km and online right now."
+              },
+              {
+                "relationship": "d.ask",
+                "caption": "The best courier gets the offer first."
+              },
+              {
+                "relationship": "d.ring",
+                "caption": "Their phone rings; 30 seconds to accept."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "locations",
+      "type": "cache",
+      "label": "Courier Locations",
+      "technology": "Redis",
+      "group": "logistics",
+      "description": "Where every online courier is, right now."
+    },
+    {
+      "id": "events",
+      "type": "stream",
+      "label": "order-events",
+      "technology": "Kafka",
+      "group": "data",
+      "description": "Every change to every order, in order."
+    },
+    {
+      "id": "warehouse",
+      "type": "table",
+      "label": "Orders Warehouse",
+      "technology": "Snowflake",
+      "group": "data",
+      "description": "Every order, fee and tip, for reporting."
+    },
+    {
+      "id": "payouts",
+      "type": "scheduler",
+      "label": "Payouts Run",
+      "technology": "Apache Airflow",
+      "group": "data",
+      "description": "Pays restaurants and couriers what they earned."
+    },
+    {
+      "id": "notifier",
+      "type": "worker",
+      "label": "Notifier",
+      "technology": "Go",
+      "group": "notify-d",
+      "description": "Turns order events into push messages."
+    },
+    {
+      "id": "fcm",
+      "type": "external-system",
+      "label": "Push Service",
+      "technology": "Firebase",
+      "description": "Delivers push notifications to phones."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "order",
+      "from": "customer",
+      "to": "capp",
+      "label": "Orders dinner"
+    },
+    {
+      "id": "capp-api",
+      "from": "capp",
+      "to": "j-api"
+    },
+    {
+      "id": "tablet-api",
+      "from": "tablet",
+      "to": "j-api"
+    },
+    {
+      "id": "courier-api",
+      "from": "courier-app",
+      "to": "j-api"
+    },
+    {
+      "id": "drive",
+      "from": "courier",
+      "to": "courier-app",
+      "label": "Accepts a delivery"
+    },
+    {
+      "id": "api",
+      "from": "j-api",
+      "to": "gateway",
+      "label": "HTTPS"
+    },
+    {
+      "id": "r-browse",
+      "from": "gateway",
+      "to": "restaurants",
+      "label": "/restaurants",
+      "semantic": "routes"
+    },
+    {
+      "id": "find",
+      "from": "restaurants",
+      "to": "search",
+      "semantic": "searches"
+    },
+    {
+      "id": "r-orders",
+      "from": "gateway",
+      "to": "orders",
+      "label": "/orders",
+      "semantic": "routes"
+    },
+    {
+      "id": "r-tickets",
+      "from": "gateway",
+      "to": "integration",
+      "label": "/tickets",
+      "semantic": "routes"
+    },
+    {
+      "id": "r-couriers",
+      "from": "gateway",
+      "to": "dispatch",
+      "label": "/couriers",
+      "semantic": "routes"
+    },
+    {
+      "id": "write",
+      "from": "orders",
+      "to": "orders-tbl",
+      "label": "INSERT order",
+      "semantic": "writes"
+    },
+    {
+      "id": "stage",
+      "from": "orders",
+      "to": "outbox",
+      "label": "INSERT event",
+      "semantic": "writes"
+    },
+    {
+      "id": "start",
+      "from": "orders",
+      "to": "saga",
+      "label": "Starts PlaceOrder"
+    },
+    {
+      "id": "relay",
+      "from": "outbox",
+      "to": "events",
+      "label": "Debezium relay"
+    },
+    {
+      "id": "authorize",
+      "from": "saga",
+      "to": "payments",
+      "label": "Authorize",
+      "semantic": "http",
+      "response": "hold id"
+    },
+    {
+      "id": "refund",
+      "from": "saga",
+      "to": "payments",
+      "label": "POST /refunds",
+      "semantic": "compensates",
+      "compensationFor": "authorize",
+      "compensationName": "Refund payment",
+      "compensationProtocol": "http"
+    },
+    {
+      "id": "charge",
+      "from": "payments",
+      "to": "stripe",
+      "label": "PaymentIntent",
+      "semantic": "http",
+      "response": "authorized"
+    },
+    {
+      "id": "send",
+      "from": "saga",
+      "to": "tickets",
+      "label": "SendTicket",
+      "semantic": "command"
+    },
+    {
+      "id": "cancel",
+      "from": "saga",
+      "to": "integration",
+      "label": "POST /tickets/{id}/cancel",
+      "semantic": "compensates",
+      "compensationFor": "send",
+      "compensationName": "Cancel ticket",
+      "condition": "no answer in 3 min",
+      "compensationProtocol": "http"
+    },
+    {
+      "id": "take",
+      "from": "tickets",
+      "to": "integration",
+      "semantic": "consumes"
+    },
+    {
+      "id": "park",
+      "from": "tickets",
+      "to": "dlq",
+      "semantic": "deadLetters",
+      "deliveryAttempts": 5
+    },
+    {
+      "id": "pos-call",
+      "from": "integration",
+      "to": "pos",
+      "label": "Ticket",
+      "semantic": "http"
+    },
+    {
+      "id": "assign",
+      "from": "saga",
+      "to": "dispatch",
+      "label": "FindCourier",
+      "semantic": "grpc",
+      "response": "courier"
+    },
+    {
+      "id": "near",
+      "from": "dispatch",
+      "to": "locations",
+      "label": "Live positions",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "land",
+      "from": "events",
+      "to": "warehouse",
+      "label": "Streams in"
+    },
+    {
+      "id": "week",
+      "from": "warehouse",
+      "to": "payouts",
+      "label": "A week of orders",
+      "semantic": "reads"
+    },
+    {
+      "id": "payout",
+      "from": "payouts",
+      "to": "stripe",
+      "label": "Payouts",
+      "semantic": "http"
+    },
+    {
+      "id": "notify",
+      "from": "events",
+      "to": "notifier",
+      "semantic": "consumes"
+    },
+    {
+      "id": "push",
+      "from": "notifier",
+      "to": "fcm",
+      "label": "Push",
+      "semantic": "http"
+    },
+    {
+      "id": "tell",
+      "from": "fcm",
+      "to": "customer",
+      "label": "Order updates",
+      "semantic": "notifies"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f.order",
+      "title": "Place an order",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "order",
+          "caption": "A customer orders two ramen bowls and pays in the app."
+        },
+        {
+          "relationship": "capp-api",
+          "caption": "The app posts the basket with an idempotency key."
+        },
+        {
+          "relationship": "api",
+          "caption": "The gateway checks the customer's token."
+        },
+        {
+          "relationship": "r-orders",
+          "caption": "The order reaches the Orders API."
+        },
+        {
+          "relationship": "write",
+          "caption": "The order row and its OrderPlaced event commit together…",
+          "highlight": [
+            "outbox"
+          ]
+        },
+        {
+          "relationship": "stage",
+          "caption": "…in one transaction, so neither can exist without the other."
+        },
+        {
+          "relationship": "start",
+          "caption": "A PlaceOrder workflow starts; the app gets 201 straight away."
+        },
+        {
+          "relationship": "authorize",
+          "caption": "First, the amount is held on the card."
+        },
+        {
+          "relationship": "charge",
+          "caption": "Stripe authorizes €32.50; nothing is captured yet."
+        },
+        {
+          "relationship": "send",
+          "caption": "Then the ticket goes to the restaurant."
+        },
+        {
+          "relationship": "take",
+          "caption": "Restaurant Integration picks it up."
+        },
+        {
+          "relationship": "pos-call",
+          "caption": "The POS prints it and answers: accepted, ready in 18 min."
+        },
+        {
+          "relationship": "assign",
+          "caption": "Now a courier is booked."
+        },
+        {
+          "relationship": "near",
+          "caption": "Dispatch picks the best courier from live positions."
+        }
+      ]
+    },
+    {
+      "id": "f.reject",
+      "title": "Restaurant rejects the order",
+      "color": "rose",
+      "variantOf": "f.order",
+      "steps": [
+        {
+          "relationship": "pos-call",
+          "caption": "The kitchen is out of ramen: the ticket is rejected."
+        },
+        {
+          "relationship": "refund",
+          "caption": "The saga runs its undo stack: the hold is released.",
+          "highlight": [
+            "stripe"
+          ]
+        },
+        {
+          "relationship": "relay",
+          "caption": "OrderCancelled leaves through the outbox."
+        },
+        {
+          "relationship": "notify",
+          "caption": "The Notifier picks it up…"
+        },
+        {
+          "relationship": "push",
+          "caption": "…and pushes the bad news."
+        },
+        {
+          "relationship": "tell",
+          "caption": "The customer sees 'Sorry, the restaurant can't take it' and no charge."
+        }
+      ]
+    },
+    {
+      "id": "f.silent",
+      "title": "Restaurant doesn't answer",
+      "color": "amber",
+      "variantOf": "f.order",
+      "steps": [
+        {
+          "relationship": "send",
+          "caption": "The ticket is sent, and a 3-minute timer starts."
+        },
+        {
+          "relationship": "cancel",
+          "caption": "No answer in 3 minutes: the ticket is cancelled first…"
+        },
+        {
+          "relationship": "refund",
+          "caption": "…then the payment hold is released, newest step first."
+        }
+      ]
+    },
+    {
+      "id": "f.deliver",
+      "title": "Courier delivers",
+      "color": "blue",
+      "steps": [
+        {
+          "relationship": "drive",
+          "caption": "The courier accepts the offer and rides to the restaurant."
+        },
+        {
+          "relationship": "courier-api",
+          "caption": "Every 4 s the app sends its position."
+        },
+        {
+          "relationship": "api",
+          "caption": "Through the same gateway as every other app."
+        },
+        {
+          "relationship": "r-couriers",
+          "caption": "Dispatch records pickup and drop-off."
+        },
+        {
+          "relationship": "near",
+          "caption": "Live positions update in Redis."
+        },
+        {
+          "relationship": "relay",
+          "caption": "Each status change becomes an event."
+        },
+        {
+          "relationship": "notify",
+          "caption": "The Notifier turns it into a message."
+        },
+        {
+          "relationship": "push",
+          "caption": "Firebase delivers it."
+        },
+        {
+          "relationship": "tell",
+          "caption": "“Your courier is 2 minutes away.”"
+        }
+      ]
+    },
+    {
+      "id": "f.browse",
+      "title": "Browse and search",
+      "color": "violet",
+      "steps": [
+        {
+          "relationship": "capp-api",
+          "caption": "The customer opens the app and types 'ramen'."
+        },
+        {
+          "relationship": "api",
+          "caption": "The gateway serves anonymous browsing too."
+        },
+        {
+          "relationship": "r-browse",
+          "caption": "Restaurants answers with what's open nearby."
+        },
+        {
+          "relationship": "find",
+          "caption": "Dishes are matched by name, cuisine and distance."
+        }
+      ]
+    },
+    {
+      "id": "f.payout",
+      "title": "Weekly payouts",
+      "color": "green",
+      "steps": [
+        {
+          "relationship": "land",
+          "caption": "Every order, fee and tip streams into the warehouse."
+        },
+        {
+          "relationship": "week",
+          "caption": "Every Monday, earnings are summed per restaurant and courier."
+        },
+        {
+          "relationship": "payout",
+          "caption": "Stripe pays each partner's bank account."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Forkful\nA food delivery marketplace: **120k** restaurants, **2M** couriers, **40** orders a second at dinner.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "states",
+      "kind": "label",
+      "about": "orders",
+      "attach": false,
+      "text": "### Order states\n| State | Moved by |\n| --- | --- |\n| `PLACED` | Customer |\n| `ACCEPTED` | Restaurant |\n| `PICKED_UP` | Courier |\n| `DELIVERED` | Courier |\n| `CANCELLED` | Order Saga |",
+      "style": {
+        "background": "card",
+        "color": "blue"
+      }
+    },
+    {
+      "id": "tip",
+      "kind": "label",
+      "about": "saga",
+      "attach": false,
+      "text": "> [!TIP]\n> Every saga step is idempotent, keyed by order id: Temporal may run an activity twice after a crash."
+    },
+    {
+      "id": "clock",
+      "kind": "label",
+      "about": "tickets",
+      "attach": false,
+      "text": "3 minutes, or we refund",
+      "style": {
+        "font": "hand",
+        "color": "rose"
+      }
+    },
+    {
+      "id": "n.saga",
+      "kind": "decision",
+      "about": "saga",
+      "text": "An orchestrated saga on Temporal: an order's whole story lives in one workflow, so a stuck order is one query away."
+    },
+    {
+      "id": "n.wf",
+      "kind": "code",
+      "about": "start",
+      "language": "typescript",
+      "code": "const hold = await authorize(order);\nundo.push(() => refund(hold));\nconst ticket = await sendTicket(order);\nundo.push(() => cancelTicket(ticket));\nconst ok = await condition(() => answered, '3 min');\nif (!ok || rejected) return unwind(undo);\nawait findCourier(order);"
+    },
+    {
+      "id": "n.outbox",
+      "kind": "code",
+      "about": "stage",
+      "language": "sql",
+      "code": "BEGIN;\nINSERT INTO orders (id, customer_id, total, state)\n  VALUES ($1, $2, 3250, 'PLACED');\nINSERT INTO outbox (aggregate_id, type, payload)\n  VALUES ($1, 'OrderPlaced', $3);\nCOMMIT;"
+    },
+    {
+      "id": "n.event",
+      "kind": "code",
+      "about": "relay",
+      "language": "json",
+      "code": "{\n  \"type\": \"OrderPlaced\",\n  \"orderId\": \"o_9f31\",\n  \"restaurant\": \"r_ramen_42\",\n  \"items\": [{ \"dish\": \"tonkotsu\", \"qty\": 2 }],\n  \"total\": { \"amount\": 3250, \"currency\": \"EUR\" }\n}"
+    },
+    {
+      "id": "n.redis",
+      "kind": "warning",
+      "about": "locations",
+      "text": "Courier positions live only in Redis: a failover loses the last few seconds, which the apps send again."
+    },
+    {
+      "id": "n.payout",
+      "kind": "question",
+      "about": "payouts",
+      "text": "Weekly payouts, or instant cash-out for couriers for a small fee?"
+    }
+  ],
+  "sequences": [
+    {
+      "id": "seq-order",
+      "title": "Place an order, message by message",
+      "mermaid": "sequenceDiagram\n  participant app as Customer App\n  participant ord as Orders API\n  participant saga as Order Saga\n  participant pay as Payments\n  participant kit as Restaurant Integration\n  participant dis as Dispatch\n  app->>+ord: POST /orders\n  ord->>saga: Start PlaceOrder\n  ord-->>-app: 201 Order\n  saga->>+pay: Authorize €32.50\n  pay-->>-saga: hold id\n  saga->>kit: SendTicket\n  alt accepted within 3 min\n    kit-->>saga: Accepted, ready in 18 min\n    critical courier booked\n      saga->>dis: FindCourier\n      dis-->>saga: Courier on the way\n    end\n  else rejected, or no answer\n    saga->>kit: CancelTicket\n    saga->>pay: Refund payment\n  end",
+      "links": {
+        "app": "capp",
+        "ord": "orders",
+        "saga": "saga",
+        "pay": "payments",
+        "kit": "integration",
+        "dis": "dispatch"
+      }
+    }
+  ],
+  "_openPoints": [
+    {
+      "id": "op.tip",
+      "kind": "awaiting",
+      "context": "Tips after delivery: hold the tip with the order, or charge it separately? Finance to decide.",
+      "targets": [
+        {
+          "kind": "edge",
+          "id": "authorize"
+        }
+      ]
+    }
+  ],
+  "_centers": {
+    "customer": [
+      70,
+      240
+    ],
+    "capp": [
+      330,
+      240
+    ],
+    "tablet": [
+      330,
+      520
+    ],
+    "courier-app": [
+      330,
+      800
+    ],
+    "courier": [
+      70,
+      800
+    ],
+    "j-api": [
+      560,
+      520
+    ],
+    "gateway": [
+      800,
+      520
+    ],
+    "restaurants": [
+      800,
+      860
+    ],
+    "search": [
+      800,
+      1140
+    ],
+    "orders": [
+      1120,
+      520
+    ],
+    "saga": [
+      1460,
+      520
+    ],
+    "orders-tbl": [
+      1120,
+      800
+    ],
+    "outbox": [
+      1460,
+      800
+    ],
+    "payments": [
+      1460,
+      240
+    ],
+    "stripe": [
+      1460,
+      -90
+    ],
+    "dispatch": [
+      1800,
+      240
+    ],
+    "locations": [
+      2140,
+      240
+    ],
+    "tickets": [
+      1800,
+      520
+    ],
+    "integration": [
+      2140,
+      520
+    ],
+    "pos": [
+      2480,
+      520
+    ],
+    "dlq": [
+      1800,
+      800
+    ],
+    "events": [
+      1460,
+      1140
+    ],
+    "warehouse": [
+      1800,
+      1140
+    ],
+    "payouts": [
+      2140,
+      1140
+    ],
+    "notifier": [
+      1120,
+      1140
+    ],
+    "fcm": [
+      1120,
+      1400
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {
+    "header": 80
+  },
+  "_patch": {
+    "nodes": {
+      "states": {
+        "parentId": null
+      },
+      "tip": {
+        "parentId": null
+      },
+      "clock": {
+        "parentId": null
+      },
+      "j-api": {
+        "text": null,
+        "textOrigin": null
+      }
+    },
+    "edges": {
+      "r-tickets": {
+        "portal": true,
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "r-couriers": {
+        "portal": true,
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.85
+        }
+      },
+      "payout": {
+        "portal": true
+      },
+      "tell": {
+        "portal": true
+      },
+      "land": {
+        "cadence": "Streaming"
+      },
+      "week": {
+        "cadence": "Weekly, Monday"
+      },
+      "cancel": {
+        "portal": true,
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.85
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        }
+      },
+      "assign": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.85
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "waypoints": [
+          {
+            "x": 1522,
+            "y": 365
+          },
+          {
+            "x": 1800,
+            "y": 365
+          }
+        ]
+      }
+    }
+  },
+  "_place": [
+    {
+      "id": "clock",
+      "of": [
+        "dlq"
+      ],
+      "side": "right",
+      "gap": 60,
+      "align": "center",
+      "early": true
+    },
+    {
+      "id": "kitchen",
+      "of": [
+        "ordering"
+      ],
+      "side": "right",
+      "gap": 114,
+      "align": "start",
+      "height": 550
+    },
+    {
+      "id": "seq-order",
+      "of": "@all",
+      "exclude": [
+        "states",
+        "tip",
+        "title",
+        "seq-order"
+      ],
+      "side": "below",
+      "gap": 140,
+      "align": "start",
+      "dx": 505
+    },
+    {
+      "id": "states",
+      "of": [
+        "seq-order"
+      ],
+      "side": "right",
+      "gap": 64,
+      "align": "start",
+      "width": 330
+    },
+    {
+      "id": "tip",
+      "of": [
+        "states"
+      ],
+      "side": "below",
+      "gap": 32,
+      "align": "start",
+      "width": 330
+    },
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "width": 1200,
+      "height": 110,
+      "exclude": [
+        "seq-order",
+        "states",
+        "tip"
+      ]
+    }
+  ],
+  "_ink": [
+    {
+      "shape": "underline",
+      "of": [
+        "clock"
+      ],
+      "tool": "highlighter",
+      "color": "yellow",
+      "size": 14,
+      "pad": -14
+    },
+    {
+      "shape": "ellipse",
+      "of": [
+        "saga"
+      ],
+      "pad": 14,
+      "color": "red",
+      "size": 3
+    }
+  ],
+  "_alignRows": [
+    [
+      "logistics",
+      "payments-d"
+    ],
+    [
+      "data",
+      "notify-d"
+    ]
+  ],
+  "_alignCols": [
+    [
+      "edge-d",
+      "discovery"
+    ]
+  ]
+}

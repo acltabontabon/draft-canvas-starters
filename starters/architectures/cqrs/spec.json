@@ -1,0 +1,525 @@
+{
+  "title": "CQRS",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "send",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "command-side",
+      "label": "Command side",
+      "kind": "domain",
+      "color": "blue"
+    },
+    {
+      "id": "query-side",
+      "label": "Query side",
+      "kind": "domain",
+      "color": "teal"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "customer",
+      "type": "person",
+      "label": "Customer",
+      "description": "Sends money and checks their accounts."
+    },
+    {
+      "id": "app",
+      "type": "service",
+      "label": "Banking App",
+      "technology": "React Native",
+      "description": "The bank's mobile app."
+    },
+    {
+      "id": "command-api",
+      "type": "api",
+      "label": "Payments API",
+      "technology": "Spring Boot 3",
+      "replicas": 2,
+      "group": "command-side",
+      "description": "Validates commands and records what happened.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "c.app",
+            "type": "service",
+            "label": "Banking App",
+            "technology": "React Native"
+          },
+          {
+            "id": "c.controller",
+            "type": "component",
+            "label": "Transfers Controller",
+            "technology": "Spring",
+            "description": "Checks the request and its idempotency key."
+          },
+          {
+            "id": "c.handler",
+            "type": "component",
+            "label": "Send Money Handler",
+            "description": "Loads the account and applies the command."
+          },
+          {
+            "id": "c.aggregate",
+            "type": "component",
+            "label": "Account Aggregate",
+            "description": "Enforces balance and limits; decides the events."
+          },
+          {
+            "id": "c.repo",
+            "type": "adapter",
+            "label": "Event Store Repository",
+            "technology": "PostgreSQL",
+            "description": "Replays an account's events; appends new ones."
+          },
+          {
+            "id": "c.store",
+            "type": "sql-database",
+            "label": "Ledger Event Store",
+            "technology": "PostgreSQL 16"
+          }
+        ],
+        "relationships": [
+          {
+            "id": "c.post",
+            "from": "c.app",
+            "to": "c.controller",
+            "label": "POST /transfers",
+            "semantic": "http",
+            "response": "202 Accepted"
+          },
+          {
+            "id": "c.dispatch",
+            "from": "c.controller",
+            "to": "c.handler",
+            "label": "handle(SendMoney)",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.decide",
+            "from": "c.handler",
+            "to": "c.aggregate",
+            "label": "send(amount, to)",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.persist",
+            "from": "c.handler",
+            "to": "c.repo",
+            "label": "load / append",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.sql",
+            "from": "c.repo",
+            "to": "c.store",
+            "label": "Events by account",
+            "semantic": "readsWrites"
+          }
+        ],
+        "flows": [
+          {
+            "id": "c.flow",
+            "title": "Send money, inside the Payments API",
+            "color": "teal",
+            "steps": [
+              {
+                "relationship": "c.post",
+                "caption": "The controller checks the request; a repeated idempotency key stops here."
+              },
+              {
+                "relationship": "c.dispatch",
+                "caption": "The SendMoney command goes to its one handler."
+              },
+              {
+                "relationship": "c.persist",
+                "caption": "The handler loads the account by replaying its events."
+              },
+              {
+                "relationship": "c.sql",
+                "caption": "Events come back in version order.",
+                "highlight": [
+                  "c.store"
+                ]
+              },
+              {
+                "relationship": "c.decide",
+                "caption": "The aggregate checks balance and limits, then decides MoneySent."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "event-store",
+      "type": "sql-database",
+      "label": "Ledger Event Store",
+      "technology": "PostgreSQL 16",
+      "group": "command-side",
+      "description": "Every account change, append-only."
+    },
+    {
+      "id": "relay",
+      "type": "worker",
+      "label": "Change Relay",
+      "technology": "Debezium",
+      "group": "command-side",
+      "description": "Streams committed events out of the store."
+    },
+    {
+      "id": "events",
+      "type": "stream",
+      "label": "ledger-events",
+      "technology": "Kafka",
+      "description": "The ledger's events, in order per account."
+    },
+    {
+      "id": "projector",
+      "type": "worker",
+      "label": "Projection Worker",
+      "technology": "Go",
+      "replicas": 3,
+      "group": "query-side",
+      "description": "Folds events into read models shaped for questions."
+    },
+    {
+      "id": "dlq",
+      "type": "dead-letter-queue",
+      "label": "ledger-dlq",
+      "technology": "Kafka",
+      "group": "query-side",
+      "description": "Events a projection couldn't apply."
+    },
+    {
+      "id": "balances",
+      "type": "nosql-database",
+      "label": "Balances",
+      "technology": "Redis 7",
+      "group": "query-side",
+      "description": "Balance per account."
+    },
+    {
+      "id": "statements",
+      "type": "search-index",
+      "label": "Statements",
+      "technology": "OpenSearch",
+      "group": "query-side",
+      "description": "Searchable transaction history."
+    },
+    {
+      "id": "query-api",
+      "type": "api",
+      "label": "Accounts API",
+      "technology": "NestJS",
+      "replicas": 4,
+      "group": "query-side",
+      "description": "Answers questions; never changes anything."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "use",
+      "from": "customer",
+      "to": "app",
+      "label": "Sends money"
+    },
+    {
+      "id": "transfer",
+      "from": "app",
+      "to": "command-api",
+      "label": "POST /transfers",
+      "semantic": "http",
+      "response": "202 Accepted"
+    },
+    {
+      "id": "append",
+      "from": "command-api",
+      "to": "event-store",
+      "label": "Appends MoneySent",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "capture",
+      "from": "event-store",
+      "to": "relay",
+      "label": "Tails the WAL",
+      "semantic": "reads"
+    },
+    {
+      "id": "publish",
+      "from": "relay",
+      "to": "events",
+      "semantic": "publishes"
+    },
+    {
+      "id": "deliver",
+      "from": "events",
+      "to": "projector",
+      "semantic": "consumes"
+    },
+    {
+      "id": "project-balance",
+      "from": "projector",
+      "to": "balances",
+      "label": "Updates balance",
+      "semantic": "writes"
+    },
+    {
+      "id": "project-statement",
+      "from": "projector",
+      "to": "statements",
+      "label": "Indexes transaction",
+      "semantic": "indexes"
+    },
+    {
+      "id": "park",
+      "from": "projector",
+      "to": "dlq",
+      "semantic": "deadLetters",
+      "deliveryAttempts": 3
+    },
+    {
+      "id": "view",
+      "from": "app",
+      "to": "query-api",
+      "label": "GET /accounts/:id",
+      "semantic": "http",
+      "response": "200 Balance"
+    },
+    {
+      "id": "read-balance",
+      "from": "balances",
+      "to": "query-api",
+      "label": "Balance lookup",
+      "semantic": "reads"
+    },
+    {
+      "id": "search",
+      "from": "statements",
+      "to": "query-api",
+      "label": "Transaction search"
+    }
+  ],
+  "flows": [
+    {
+      "id": "send",
+      "title": "Send money",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "use",
+          "caption": "A customer sends €40 to a friend."
+        },
+        {
+          "relationship": "transfer",
+          "caption": "The app posts a SendMoney command; the API answers 202 with an id."
+        },
+        {
+          "relationship": "append",
+          "caption": "MoneySent is appended at the account's next version."
+        },
+        {
+          "relationship": "capture",
+          "caption": "Once committed, the relay reads the event from the write-ahead log."
+        },
+        {
+          "relationship": "publish",
+          "caption": "It publishes the event, keyed by account so order is kept."
+        },
+        {
+          "relationship": "deliver",
+          "caption": "A projection worker picks it up."
+        },
+        {
+          "relationship": "project-balance",
+          "caption": "The balance read model drops by €40…"
+        },
+        {
+          "relationship": "project-statement",
+          "caption": "…and the transaction becomes searchable."
+        }
+      ]
+    },
+    {
+      "id": "read",
+      "title": "Check the balance",
+      "color": "blue",
+      "steps": [
+        {
+          "relationship": "view",
+          "caption": "The customer opens their account."
+        },
+        {
+          "relationship": "read-balance",
+          "caption": "The balance is one key lookup; nothing is computed on read."
+        },
+        {
+          "relationship": "search",
+          "caption": "Recent transactions come from the search index."
+        }
+      ]
+    },
+    {
+      "id": "stale",
+      "title": "Read before the projection catches up",
+      "color": "amber",
+      "variantOf": "read",
+      "steps": [
+        {
+          "relationship": "view",
+          "caption": "The customer checks the balance a moment after sending."
+        },
+        {
+          "relationship": "read-balance",
+          "caption": "The read model may still show the old balance for a few hundred ms.",
+          "highlight": [
+            "projector"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "poison",
+      "title": "A projection can't apply an event",
+      "color": "rose",
+      "variantOf": "send",
+      "steps": [
+        {
+          "relationship": "deliver",
+          "caption": "The worker receives an event it can't apply (say, an unknown currency)."
+        },
+        {
+          "relationship": "park",
+          "caption": "After three tries it parks the event and moves on; the account's reads go stale."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# CQRS\nCommands append to a ledger; projections answer every question from views built for it.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "n.ack",
+      "kind": "decision",
+      "about": "transfer",
+      "text": "Commands answer 202 and an id, never the new balance: the query side may still be catching up."
+    },
+    {
+      "id": "n.event",
+      "kind": "code",
+      "about": "append",
+      "language": "json",
+      "code": "{\n  \"type\": \"MoneySent\",\n  \"accountId\": \"acc_51f2\",\n  \"version\": 1043,\n  \"amount\": { \"value\": \"40.00\", \"currency\": \"EUR\" },\n  \"to\": \"acc_9b07\",\n  \"transferId\": \"tr_8813\"\n}"
+    },
+    {
+      "id": "n.schema",
+      "kind": "code",
+      "about": "event-store",
+      "language": "sql",
+      "code": "CREATE TABLE ledger_events (\n  account_id  text   NOT NULL,\n  version     bigint NOT NULL,\n  type        text   NOT NULL,\n  payload     jsonb  NOT NULL,\n  recorded_at timestamptz DEFAULT now(),\n  PRIMARY KEY (account_id, version)  -- two writers can't both take v1043\n);"
+    },
+    {
+      "id": "n.lag",
+      "kind": "warning",
+      "about": "read-balance",
+      "text": "Reads lag writes by the projection delay (p99 ≈ 400 ms). The app shows its own pending transfer until the balance catches up."
+    },
+    {
+      "id": "n.rebuild",
+      "kind": "question",
+      "about": "statements",
+      "text": "Rebuilding Statements from offset 0 takes about six hours. Do we need a second index to swap in?"
+    }
+  ],
+  "_openPoints": [
+    {
+      "id": "op.retention",
+      "kind": "parked",
+      "context": "How long ledger-events keeps history: forever (replay any projection) or 30 days plus snapshots.",
+      "targets": [
+        {
+          "kind": "node",
+          "id": "events"
+        }
+      ]
+    }
+  ],
+  "_patch": {},
+  "_centers": {
+    "customer": [
+      70,
+      410
+    ],
+    "app": [
+      380,
+      410
+    ],
+    "command-api": [
+      720,
+      200
+    ],
+    "event-store": [
+      1060,
+      200
+    ],
+    "relay": [
+      1400,
+      200
+    ],
+    "events": [
+      1740,
+      200
+    ],
+    "query-api": [
+      720,
+      620
+    ],
+    "balances": [
+      1060,
+      480
+    ],
+    "statements": [
+      1060,
+      760
+    ],
+    "projector": [
+      1400,
+      620
+    ],
+    "dlq": [
+      1400,
+      820
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {},
+  "_alignCols": [
+    [
+      "command-side",
+      "query-side"
+    ]
+  ],
+  "_place": [
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 56,
+      "width": 1100,
+      "height": 110
+    }
+  ]
+}

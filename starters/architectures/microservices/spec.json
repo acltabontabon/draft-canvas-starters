@@ -1,0 +1,593 @@
+{
+  "title": "Microservices",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "order",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "ordering",
+      "label": "Ordering",
+      "kind": "domain",
+      "color": "blue"
+    },
+    {
+      "id": "kitchen",
+      "label": "Restaurants",
+      "kind": "domain"
+    },
+    {
+      "id": "dispatch",
+      "label": "Delivery",
+      "kind": "domain",
+      "color": "teal"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "customer",
+      "type": "person",
+      "label": "Customer",
+      "description": "Orders dinner from nearby restaurants."
+    },
+    {
+      "id": "app",
+      "type": "service",
+      "label": "Customer App",
+      "technology": "Flutter",
+      "description": "Shows menus, takes the order and tracks the courier."
+    },
+    {
+      "id": "gateway",
+      "type": "gateway",
+      "label": "API Gateway",
+      "technology": "Kong",
+      "replicas": 2,
+      "description": "Checks the token, rate-limits and routes each path."
+    },
+    {
+      "id": "orders",
+      "type": "api",
+      "label": "Orders Service",
+      "technology": "Spring Boot 3",
+      "replicas": 3,
+      "group": "ordering",
+      "description": "Prices, pays for and records orders.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "o.gateway",
+            "type": "gateway",
+            "label": "API Gateway",
+            "technology": "Kong"
+          },
+          {
+            "id": "o.controller",
+            "type": "component",
+            "label": "Order Controller",
+            "technology": "Spring",
+            "description": "Validates the basket and answers 201."
+          },
+          {
+            "id": "o.place",
+            "type": "component",
+            "label": "Place Order",
+            "technology": "Java",
+            "description": "Prices, charges and records the order."
+          },
+          {
+            "id": "o.menus",
+            "type": "adapter",
+            "label": "Restaurants Client",
+            "technology": "Spring",
+            "description": "Calls Restaurants over gRPC behind a circuit breaker."
+          },
+          {
+            "id": "o.pay",
+            "type": "adapter",
+            "label": "Payments Client",
+            "technology": "Adyen",
+            "description": "Authorizes the card with an idempotency key."
+          },
+          {
+            "id": "o.repo",
+            "type": "adapter",
+            "label": "Order Repository",
+            "technology": "Hibernate",
+            "description": "Saves orders and their lines."
+          },
+          {
+            "id": "o.publisher",
+            "type": "adapter",
+            "label": "Event Publisher",
+            "technology": "Kafka",
+            "description": "Publishes OrderPlaced after commit."
+          },
+          {
+            "id": "o.restaurants",
+            "type": "api",
+            "label": "Restaurants Service",
+            "technology": "Go"
+          },
+          {
+            "id": "o.adyen",
+            "type": "external-system",
+            "label": "Adyen",
+            "technology": "Adyen"
+          },
+          {
+            "id": "o.db",
+            "type": "sql-database",
+            "label": "Orders DB",
+            "technology": "PostgreSQL 16"
+          },
+          {
+            "id": "o.events",
+            "type": "topic",
+            "label": "order-events",
+            "technology": "Kafka"
+          }
+        ],
+        "relationships": [
+          {
+            "id": "o.post",
+            "from": "o.gateway",
+            "to": "o.controller",
+            "label": "POST /orders",
+            "semantic": "routes"
+          },
+          {
+            "id": "o.handle",
+            "from": "o.controller",
+            "to": "o.place",
+            "label": "place(basket)",
+            "semantic": "uses"
+          },
+          {
+            "id": "o.price",
+            "from": "o.place",
+            "to": "o.menus",
+            "label": "price(items)",
+            "semantic": "uses"
+          },
+          {
+            "id": "o.grpc",
+            "from": "o.menus",
+            "to": "o.restaurants",
+            "label": "GetPrices",
+            "semantic": "grpc",
+            "response": true
+          },
+          {
+            "id": "o.charge",
+            "from": "o.place",
+            "to": "o.pay",
+            "label": "authorize(total)",
+            "semantic": "uses"
+          },
+          {
+            "id": "o.adyen-call",
+            "from": "o.pay",
+            "to": "o.adyen",
+            "label": "Authorizes payment",
+            "semantic": "http"
+          },
+          {
+            "id": "o.save",
+            "from": "o.place",
+            "to": "o.repo",
+            "label": "save(order)",
+            "semantic": "uses"
+          },
+          {
+            "id": "o.sql",
+            "from": "o.repo",
+            "to": "o.db",
+            "semantic": "writes"
+          },
+          {
+            "id": "o.emit",
+            "from": "o.place",
+            "to": "o.publisher",
+            "label": "publish(event)",
+            "semantic": "uses"
+          },
+          {
+            "id": "o.kafka",
+            "from": "o.publisher",
+            "to": "o.events",
+            "label": "OrderPlaced",
+            "semantic": "publishes"
+          }
+        ],
+        "flows": [
+          {
+            "id": "o.flow",
+            "title": "Place an order, inside Orders",
+            "color": "blue",
+            "steps": [
+              {
+                "relationship": "o.post",
+                "caption": "The gateway forwards the checked request to the controller."
+              },
+              {
+                "relationship": "o.handle",
+                "caption": "The use case owns the order rules."
+              },
+              {
+                "relationship": "o.price",
+                "caption": "Prices come from Restaurants, never from a copy of its tables."
+              },
+              {
+                "relationship": "o.grpc",
+                "caption": "One gRPC call, guarded by a circuit breaker and a 300 ms deadline."
+              },
+              {
+                "relationship": "o.charge",
+                "caption": "The total is authorized before anything is stored."
+              },
+              {
+                "relationship": "o.adyen-call",
+                "caption": "Adyen authorizes the card, keyed by the order id."
+              },
+              {
+                "relationship": "o.save",
+                "caption": "The order is saved as PAID."
+              },
+              {
+                "relationship": "o.sql",
+                "caption": "Only Orders writes Orders DB."
+              },
+              {
+                "relationship": "o.emit",
+                "caption": "The use case announces the order."
+              },
+              {
+                "relationship": "o.kafka",
+                "caption": "OrderPlaced is published, keyed by restaurant."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "orders-db",
+      "type": "sql-database",
+      "label": "Orders DB",
+      "technology": "PostgreSQL 16",
+      "group": "ordering",
+      "description": "Orders and payment status."
+    },
+    {
+      "id": "restaurants",
+      "type": "api",
+      "label": "Restaurants Service",
+      "technology": "Go",
+      "replicas": 2,
+      "group": "kitchen",
+      "description": "Serves menus and today's prices."
+    },
+    {
+      "id": "menus-db",
+      "type": "nosql-database",
+      "label": "Menus DB",
+      "technology": "MongoDB",
+      "group": "kitchen",
+      "description": "Menus, prices and hours."
+    },
+    {
+      "id": "events",
+      "type": "topic",
+      "label": "order-events",
+      "technology": "Kafka",
+      "description": "Order lifecycle events, partitioned by restaurant."
+    },
+    {
+      "id": "delivery",
+      "type": "api",
+      "label": "Delivery Service",
+      "technology": "NestJS",
+      "group": "dispatch",
+      "description": "Assigns a courier and tracks the drop-off."
+    },
+    {
+      "id": "locations",
+      "type": "cache",
+      "label": "Courier Locations",
+      "technology": "Redis 7",
+      "group": "dispatch",
+      "description": "Live courier positions."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "use",
+      "from": "customer",
+      "to": "app",
+      "label": "Orders dinner"
+    },
+    {
+      "id": "call",
+      "from": "app",
+      "to": "gateway",
+      "label": "POST /orders",
+      "semantic": "http",
+      "response": "201 Created"
+    },
+    {
+      "id": "route-orders",
+      "from": "gateway",
+      "to": "orders",
+      "label": "/orders/**",
+      "semantic": "routes"
+    },
+    {
+      "id": "route-menus",
+      "from": "gateway",
+      "to": "restaurants",
+      "label": "/menus/**",
+      "semantic": "routes"
+    },
+    {
+      "id": "price",
+      "from": "orders",
+      "to": "restaurants",
+      "label": "GetPrices",
+      "semantic": "grpc",
+      "response": "prices"
+    },
+    {
+      "id": "persist-orders",
+      "from": "orders",
+      "to": "orders-db",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "persist-menus",
+      "from": "restaurants",
+      "to": "menus-db",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "publish",
+      "from": "orders",
+      "to": "events",
+      "label": "OrderPlaced",
+      "semantic": "publishes"
+    },
+    {
+      "id": "to-delivery",
+      "from": "events",
+      "to": "delivery",
+      "label": "Courier request",
+      "semantic": "deliversTo"
+    },
+    {
+      "id": "nearest",
+      "from": "delivery",
+      "to": "locations",
+      "label": "Nearest couriers",
+      "semantic": "readsWrites"
+    }
+  ],
+  "flows": [
+    {
+      "id": "order",
+      "title": "Order dinner",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "use",
+          "caption": "A customer orders two pizzas in the app."
+        },
+        {
+          "relationship": "call",
+          "caption": "The app posts the order to the one public entry point."
+        },
+        {
+          "relationship": "route-orders",
+          "caption": "Kong checks the customer's JWT and routes /orders to one of three instances."
+        },
+        {
+          "relationship": "price",
+          "caption": "Orders asks Restaurants for today's prices over gRPC."
+        },
+        {
+          "relationship": "persist-orders",
+          "caption": "Orders stores the order in its own database."
+        },
+        {
+          "relationship": "publish",
+          "caption": "OrderPlaced is published once; Orders doesn't know who listens."
+        },
+        {
+          "relationship": "to-delivery",
+          "caption": "Delivery starts looking for a courier, at its own pace."
+        },
+        {
+          "relationship": "nearest",
+          "caption": "The nearest free courier is found in the geo index."
+        }
+      ]
+    },
+    {
+      "id": "breaker",
+      "title": "Restaurants is down",
+      "color": "rose",
+      "variantOf": "order",
+      "steps": [
+        {
+          "relationship": "price",
+          "caption": "GetPrices times out at 300 ms; after 10 failures in 20 the breaker opens.",
+          "highlight": [
+            "restaurants"
+          ]
+        },
+        {
+          "relationship": "call",
+          "caption": "Orders fails fast with 503 and the app asks the customer to retry."
+        }
+      ]
+    },
+    {
+      "id": "browse",
+      "title": "Browse a menu",
+      "color": "blue",
+      "steps": [
+        {
+          "relationship": "call",
+          "caption": "The app asks for a restaurant's menu."
+        },
+        {
+          "relationship": "route-menus",
+          "caption": "The gateway routes /menus straight to Restaurants."
+        },
+        {
+          "relationship": "persist-menus",
+          "caption": "Restaurants answers from its own Menus DB."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Food delivery services\nMicroservices: each service owns its data; calls and events connect them.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "n.events",
+      "kind": "decision",
+      "about": "publish",
+      "text": "Services share events and APIs, never tables. Delivery learns about orders from OrderPlaced, not from Orders DB."
+    },
+    {
+      "id": "n.chain",
+      "kind": "warning",
+      "about": "price",
+      "text": "A synchronous call chains availability: when Restaurants is down, nobody can order. The breaker fails fast instead of piling up threads."
+    },
+    {
+      "id": "n.breaker",
+      "kind": "code",
+      "about": "orders",
+      "language": "yaml",
+      "code": "resilience4j.circuitbreaker.instances:\n  restaurants:\n    slidingWindowSize: 20\n    failureRateThreshold: 50\n    waitDurationInOpenState: 10s"
+    },
+    {
+      "id": "n.payload",
+      "kind": "code",
+      "about": "events",
+      "language": "json",
+      "code": "{\n  \"type\": \"OrderPlaced\",\n  \"orderId\": \"ord_7Hq2\",\n  \"restaurantId\": \"rst_221\",\n  \"items\": [{ \"sku\": \"margherita\", \"qty\": 2 }],\n  \"dropOff\": { \"lat\": 52.52, \"lng\": 13.40 }\n}"
+    },
+    {
+      "id": "n.bff",
+      "kind": "question",
+      "about": "gateway",
+      "text": "The tracking screen needs Orders and Delivery together. Compose it here, or give the app its own backend (see the BFF starter)?"
+    },
+    {
+      "id": "n.kong",
+      "kind": "code",
+      "about": "gateway",
+      "language": "yaml",
+      "code": "routes:\n  - name: orders\n    paths: [/orders]\n    service: orders-service\n    plugins:\n      - name: jwt\n      - name: rate-limiting\n        config: { minute: 60 }"
+    }
+  ],
+  "_openPoints": [
+    {
+      "id": "op.locations",
+      "kind": "tentative",
+      "context": "Courier positions live only in Redis. Assumed fine to lose on a restart: couriers report again within 5 s.",
+      "targets": [
+        {
+          "kind": "node",
+          "id": "locations"
+        }
+      ]
+    }
+  ],
+  "_patch": {
+    "edges": {
+      "route-menus": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      }
+    }
+  },
+  "_centers": {
+    "customer": [
+      0,
+      0
+    ],
+    "app": [
+      340,
+      0
+    ],
+    "gateway": [
+      700,
+      0
+    ],
+    "orders": [
+      1060,
+      0
+    ],
+    "orders-db": [
+      1060,
+      290
+    ],
+    "restaurants": [
+      1060,
+      -360
+    ],
+    "menus-db": [
+      1440,
+      -360
+    ],
+    "events": [
+      1440,
+      22
+    ],
+    "delivery": [
+      1820,
+      0
+    ],
+    "locations": [
+      1820,
+      290
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {},
+  "_place": [
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "width": 1000,
+      "height": 110
+    }
+  ],
+  "_alignRows": [
+    [
+      "ordering",
+      "dispatch"
+    ]
+  ]
+}

@@ -1,0 +1,517 @@
+{
+  "title": "Saga – Orchestration",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "book"
+  },
+  "nodes": [
+    {
+      "id": "traveller",
+      "type": "person",
+      "label": "Traveller",
+      "description": "Books a flight and a hotel in one go."
+    },
+    {
+      "id": "trips",
+      "type": "api",
+      "label": "Trips API",
+      "technology": "Go",
+      "description": "Takes a trip request and starts its booking workflow."
+    },
+    {
+      "id": "orchestrator",
+      "type": "worker",
+      "label": "Booking Orchestrator",
+      "technology": "Temporal",
+      "replicas": 2,
+      "description": "Runs each step in turn and undoes the done ones on failure.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "o.trips",
+            "type": "api",
+            "label": "Trips API",
+            "technology": "Go"
+          },
+          {
+            "id": "o.workflow",
+            "type": "component",
+            "label": "BookTrip Workflow",
+            "technology": "Temporal",
+            "description": "Runs the steps; keeps the undo stack."
+          },
+          {
+            "id": "o.flights",
+            "type": "adapter",
+            "label": "Flight Activities",
+            "description": "Holds and releases seats."
+          },
+          {
+            "id": "o.hotels",
+            "type": "adapter",
+            "label": "Hotel Activities",
+            "description": "Reserves and cancels rooms."
+          },
+          {
+            "id": "o.payments",
+            "type": "adapter",
+            "label": "Payment Activities",
+            "description": "Charges the trip."
+          },
+          {
+            "id": "o.flights-svc",
+            "type": "api",
+            "label": "Flights Service",
+            "technology": "Spring Boot 3"
+          },
+          {
+            "id": "o.hotels-svc",
+            "type": "api",
+            "label": "Hotels Service",
+            "technology": "Kotlin"
+          },
+          {
+            "id": "o.payments-svc",
+            "type": "api",
+            "label": "Payments Service",
+            "technology": "Go"
+          }
+        ],
+        "relationships": [
+          {
+            "id": "o.start",
+            "from": "o.trips",
+            "to": "o.workflow",
+            "label": "StartWorkflow",
+            "semantic": "command"
+          },
+          {
+            "id": "o.hold",
+            "from": "o.workflow",
+            "to": "o.flights",
+            "label": "holdSeat()",
+            "semantic": "uses"
+          },
+          {
+            "id": "o.reserve",
+            "from": "o.workflow",
+            "to": "o.hotels",
+            "label": "reserveRoom()",
+            "semantic": "uses"
+          },
+          {
+            "id": "o.charge",
+            "from": "o.workflow",
+            "to": "o.payments",
+            "label": "charge()",
+            "semantic": "uses"
+          },
+          {
+            "id": "o.flights-call",
+            "from": "o.flights",
+            "to": "o.flights-svc",
+            "label": "POST /holds",
+            "semantic": "http"
+          },
+          {
+            "id": "o.hotels-call",
+            "from": "o.hotels",
+            "to": "o.hotels-svc",
+            "label": "POST /reservations",
+            "semantic": "http"
+          },
+          {
+            "id": "o.payments-call",
+            "from": "o.payments",
+            "to": "o.payments-svc",
+            "label": "POST /charges",
+            "semantic": "http"
+          }
+        ],
+        "flows": [
+          {
+            "id": "o.flow",
+            "title": "Book a trip, inside the orchestrator",
+            "color": "blue",
+            "steps": [
+              {
+                "relationship": "o.start",
+                "caption": "Temporal records the start; the workflow survives any worker restart."
+              },
+              {
+                "relationship": "o.hold",
+                "caption": "Each step is an activity: retried on its own, its result kept in history."
+              },
+              "o.flights-call",
+              {
+                "relationship": "o.reserve",
+                "caption": "A done step pushes its compensation onto the stack."
+              },
+              "o.hotels-call",
+              {
+                "relationship": "o.charge",
+                "caption": "Last, and the riskiest: if it fails, the stack is unwound."
+              },
+              "o.payments-call"
+            ]
+          }
+        ]
+      },
+      "place": {
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 120
+      }
+    },
+    {
+      "id": "flights",
+      "type": "api",
+      "label": "Flights Service",
+      "technology": "Spring Boot 3",
+      "description": "Holds seats on a flight."
+    },
+    {
+      "id": "flights-db",
+      "type": "sql-database",
+      "label": "Flights DB",
+      "technology": "PostgreSQL 16",
+      "description": "Seat holds and tickets."
+    },
+    {
+      "id": "hotels",
+      "type": "api",
+      "label": "Hotels Service",
+      "technology": "Kotlin",
+      "description": "Reserves hotel rooms."
+    },
+    {
+      "id": "hotels-db",
+      "type": "nosql-database",
+      "label": "Hotels DB",
+      "technology": "MongoDB 7",
+      "description": "Room reservations."
+    },
+    {
+      "id": "payments",
+      "type": "api",
+      "label": "Payments Service",
+      "technology": "Go",
+      "description": "Charges the trip total."
+    },
+    {
+      "id": "stripe",
+      "type": "external-system",
+      "label": "Stripe",
+      "technology": "Stripe",
+      "description": "Charges cards."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "request",
+      "from": "traveller",
+      "to": "trips",
+      "label": "Books a trip"
+    },
+    {
+      "id": "start",
+      "from": "trips",
+      "to": "orchestrator",
+      "label": "Starts BookTrip",
+      "semantic": "command"
+    },
+    {
+      "id": "hold-seat",
+      "from": "orchestrator",
+      "to": "flights",
+      "label": "POST /holds",
+      "semantic": "http"
+    },
+    {
+      "id": "reserve-room",
+      "from": "orchestrator",
+      "to": "hotels",
+      "label": "POST /reservations",
+      "semantic": "http"
+    },
+    {
+      "id": "charge",
+      "from": "orchestrator",
+      "to": "payments",
+      "label": "POST /charges",
+      "semantic": "http"
+    },
+    {
+      "id": "release-seat",
+      "from": "orchestrator",
+      "to": "flights",
+      "label": "DELETE /holds/{id}",
+      "semantic": "compensates",
+      "compensationFor": "hold-seat",
+      "compensationName": "Release seat",
+      "compensationProtocol": "http"
+    },
+    {
+      "id": "cancel-room",
+      "from": "orchestrator",
+      "to": "hotels",
+      "label": "DELETE /reservations/{id}",
+      "semantic": "compensates",
+      "compensationFor": "reserve-room",
+      "compensationName": "Cancel room",
+      "compensationProtocol": "http"
+    },
+    {
+      "id": "flights-tx",
+      "from": "flights",
+      "to": "flights-db",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "hotels-tx",
+      "from": "hotels",
+      "to": "hotels-db",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "card",
+      "from": "payments",
+      "to": "stripe",
+      "label": "Charges card",
+      "semantic": "http",
+      "response": true
+    }
+  ],
+  "flows": [
+    {
+      "id": "book",
+      "title": "Book a trip",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "request",
+          "caption": "The traveller confirms a flight and a hotel together."
+        },
+        {
+          "relationship": "start",
+          "caption": "The API starts a BookTrip workflow and answers with its id."
+        },
+        {
+          "relationship": "hold-seat",
+          "caption": "Step 1: a seat is held, committed in the Flights DB alone.",
+          "highlight": [
+            "flights-tx"
+          ]
+        },
+        {
+          "relationship": "reserve-room",
+          "caption": "Step 2 starts only once step 1 has answered.",
+          "highlight": [
+            "hotels-tx"
+          ]
+        },
+        {
+          "relationship": "charge",
+          "caption": "Step 3, the riskiest last: the trip total is charged."
+        },
+        {
+          "relationship": "card",
+          "caption": "The card is accepted; the workflow completes and the trip is booked."
+        }
+      ]
+    },
+    {
+      "id": "declined",
+      "title": "Card declined",
+      "color": "rose",
+      "variantOf": "book",
+      "steps": [
+        {
+          "relationship": "charge",
+          "caption": "The charge comes back 402: the card is declined."
+        },
+        {
+          "relationship": "cancel-room",
+          "caption": "The orchestrator undoes the last done step first: the room."
+        },
+        {
+          "relationship": "release-seat",
+          "caption": "Then the seat. The trip ends CANCELLED and the traveller is told."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Saga – Orchestration\nOne workflow books a trip, and undoes the finished steps when one fails.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "n.one",
+      "kind": "decision",
+      "about": "orchestrator",
+      "text": "One place knows the trip's state: the orchestrator. Each service only knows its own step."
+    },
+    {
+      "id": "n.wf",
+      "kind": "code",
+      "about": "orchestrator",
+      "language": "plaintext",
+      "code": "saga := NewCompensations()\nhold, err := HoldSeat(ctx, trip)\nif err != nil { return err }\nsaga.Add(ReleaseSeat, hold.ID)\n\nroom, err := ReserveRoom(ctx, trip)\nif err != nil { saga.Run(ctx); return err }\nsaga.Add(CancelRoom, room.ID)\n\nif err := Charge(ctx, trip); err != nil {\n  saga.Run(ctx) // newest first\n}"
+    },
+    {
+      "id": "n.idem",
+      "kind": "warning",
+      "about": "release-seat",
+      "text": "Compensations are retried until they succeed, so every DELETE must be idempotent — releasing a seat twice is a no-op."
+    },
+    {
+      "id": "n.semantic",
+      "kind": "note",
+      "about": "cancel-room",
+      "text": "Not a rollback: the room was really reserved for a moment. A cancellation fee is a business decision, not a database one."
+    }
+  ],
+  "_openPoints": [
+    {
+      "id": "op.timeout",
+      "kind": "tentative",
+      "context": "A hotel that does not answer in 30 s is treated as a failure, and the seat is released.",
+      "targets": [
+        {
+          "kind": "edge",
+          "id": "reserve-room"
+        }
+      ]
+    }
+  ],
+  "sequences": [
+    {
+      "id": "seq",
+      "title": "BookTrip, step by step",
+      "mermaid": "sequenceDiagram\n  participant O as Booking Orchestrator\n  participant F as Flights Service\n  participant H as Hotels Service\n  participant P as Payments Service\n  O->>F: POST /holds\n  F-->>O: 201 Hold\n  O->>H: POST /reservations\n  H-->>O: 201 Reservation\n  O->>P: POST /charges\n  alt card accepted\n    P-->>O: 200 Charged\n  else card declined\n    P-->>O: 402 Declined\n    O->>H: DELETE /reservations/{id}\n    O->>F: DELETE /holds/{id}\n  end",
+      "links": {
+        "O": "orchestrator",
+        "F": "flights",
+        "H": "hotels",
+        "P": "payments"
+      }
+    }
+  ],
+  "_patch": {
+    "nodes": {
+      "orchestrator": {
+        "held": true
+      }
+    },
+    "edges": {
+      "hold-seat": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.32
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.2062
+        }
+      },
+      "release-seat": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.68
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.7938
+        }
+      },
+      "reserve-room": {
+        "sourceAnchor": {
+          "side": "left",
+          "offset": 0.32
+        },
+        "targetAnchor": {
+          "side": "right",
+          "offset": 0.2062
+        }
+      },
+      "cancel-room": {
+        "sourceAnchor": {
+          "side": "left",
+          "offset": 0.68
+        },
+        "targetAnchor": {
+          "side": "right",
+          "offset": 0.7938
+        }
+      }
+    }
+  },
+  "_centers": {
+    "traveller": [
+      440,
+      120
+    ],
+    "trips": [
+      820,
+      120
+    ],
+    "orchestrator": [
+      820,
+      420
+    ],
+    "flights": [
+      1240,
+      420
+    ],
+    "flights-db": [
+      1600,
+      420
+    ],
+    "hotels": [
+      400,
+      420
+    ],
+    "hotels-db": [
+      40,
+      420
+    ],
+    "payments": [
+      820,
+      720
+    ],
+    "stripe": [
+      1240,
+      720
+    ]
+  },
+  "_clearRoutes": true,
+  "_place": [
+    {
+      "id": "seq",
+      "of": "@all",
+      "side": "below",
+      "gap": 120,
+      "align": "start",
+      "exclude": [
+        "title"
+      ]
+    },
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "align": "start",
+      "width": 1100,
+      "height": 110
+    }
+  ]
+}

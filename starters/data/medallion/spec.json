@@ -1,0 +1,449 @@
+{
+  "title": "Medallion",
+  "layout": {
+    "primaryFlow": "raw-to-insight",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "sources",
+      "label": "Sources",
+      "kind": "group"
+    },
+    {
+      "id": "lake",
+      "label": "Ride Lakehouse",
+      "kind": "system"
+    },
+    {
+      "id": "l-bronze",
+      "label": "Bronze · raw",
+      "kind": "group",
+      "parent": "lake",
+      "color": "rose"
+    },
+    {
+      "id": "l-silver",
+      "label": "Silver · clean",
+      "kind": "group",
+      "parent": "lake"
+    },
+    {
+      "id": "l-gold",
+      "label": "Gold · curated",
+      "kind": "group",
+      "parent": "lake",
+      "color": "amber"
+    },
+    {
+      "id": "consumers",
+      "label": "Consumers",
+      "kind": "group"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "rides",
+      "type": "sql-database",
+      "label": "Rides DB",
+      "technology": "PostgreSQL 16",
+      "description": "Stores every trip, fare and rating.",
+      "group": "sources"
+    },
+    {
+      "id": "events",
+      "type": "stream",
+      "label": "trip-events",
+      "technology": "Kafka",
+      "description": "Streams trip state changes.",
+      "group": "sources"
+    },
+    {
+      "id": "payouts",
+      "type": "object-storage",
+      "label": "Partner Exports",
+      "technology": "Amazon S3",
+      "description": "Daily payout CSVs from card partners.",
+      "group": "sources"
+    },
+    {
+      "id": "ingest",
+      "type": "worker",
+      "label": "Ingestion Jobs",
+      "technology": "Databricks",
+      "group": "lake",
+      "description": "Lands each source as received, with load time and file."
+    },
+    {
+      "id": "bronze",
+      "type": "table",
+      "label": "bronze.trips_raw",
+      "technology": "Delta",
+      "group": "l-bronze",
+      "description": "Keeps every row exactly as it arrived."
+    },
+    {
+      "id": "silver",
+      "type": "table",
+      "label": "silver.trips",
+      "technology": "Delta",
+      "group": "l-silver",
+      "description": "Holds clean, unique trips."
+    },
+    {
+      "id": "quarantine",
+      "type": "table",
+      "label": "silver.quarantine",
+      "technology": "Delta",
+      "group": "l-silver",
+      "description": "Failed rows, with the reason."
+    },
+    {
+      "id": "gold",
+      "type": "table",
+      "label": "gold.city_kpis",
+      "technology": "Delta",
+      "group": "l-gold",
+      "description": "Trips, revenue and waits per city."
+    },
+    {
+      "id": "looker",
+      "type": "service",
+      "label": "Ops Dashboards",
+      "technology": "Looker",
+      "group": "consumers",
+      "description": "Shows city managers yesterday's numbers."
+    },
+    {
+      "id": "pricing",
+      "type": "service",
+      "label": "Surge Pricing Model",
+      "technology": "MLflow",
+      "group": "consumers",
+      "description": "Trains surge multipliers on demand per city."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "load-rides",
+      "from": "rides",
+      "to": "ingest",
+      "label": "Copies new rides",
+      "semantic": "reads"
+    },
+    {
+      "id": "load-events",
+      "from": "events",
+      "to": "ingest",
+      "label": "Reads trip events",
+      "semantic": "consumes"
+    },
+    {
+      "id": "load-payouts",
+      "from": "payouts",
+      "to": "ingest",
+      "label": "Picks up CSVs",
+      "semantic": "reads"
+    },
+    {
+      "id": "land",
+      "from": "ingest",
+      "to": "bronze",
+      "label": "Appends raw rows",
+      "semantic": "writes"
+    },
+    {
+      "id": "refine",
+      "from": "bronze",
+      "to": "silver",
+      "label": "Types + dedupes",
+      "semantic": "transforms"
+    },
+    {
+      "id": "reject",
+      "from": "bronze",
+      "to": "quarantine",
+      "label": "Fails checks",
+      "semantic": "transforms",
+      "kind": "failure"
+    },
+    {
+      "id": "curate",
+      "from": "silver",
+      "to": "gold",
+      "label": "Aggregates per city",
+      "semantic": "transforms"
+    },
+    {
+      "id": "dashboards",
+      "from": "gold",
+      "to": "looker",
+      "semantic": "reads"
+    },
+    {
+      "id": "train",
+      "from": "gold",
+      "to": "pricing",
+      "semantic": "reads"
+    }
+  ],
+  "flows": [
+    {
+      "id": "raw-to-insight",
+      "title": "Raw to insight",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "load-rides",
+          "caption": "Every 15 minutes, new and changed rides are copied out of PostgreSQL."
+        },
+        {
+          "relationship": "land",
+          "caption": "Bronze appends them untouched, stamped with load time and source."
+        },
+        {
+          "relationship": "refine",
+          "caption": "Silver casts types, drops duplicate trip ids and checks every row."
+        },
+        {
+          "relationship": "curate",
+          "caption": "Each night Gold sums trips, revenue and wait time per city and day."
+        },
+        {
+          "relationship": "dashboards",
+          "caption": "City managers open yesterday's numbers in Looker.",
+          "highlight": [
+            "pricing",
+            "train"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bad-rows",
+      "title": "A bad row is quarantined",
+      "color": "amber",
+      "variantOf": "raw-to-insight",
+      "steps": [
+        {
+          "relationship": "load-payouts",
+          "caption": "A partner CSV arrives with a negative fare on one line."
+        },
+        {
+          "relationship": "land",
+          "caption": "Bronze still keeps it: raw means raw."
+        },
+        {
+          "relationship": "reject",
+          "caption": "The fare check fails; the row goes to quarantine with the rule it broke."
+        },
+        {
+          "relationship": "curate",
+          "caption": "Gold is built from the good rows only, so dashboards never see it.",
+          "highlight": [
+            "quarantine"
+          ]
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Medallion lakehouse\nRide data refined in layers: raw bronze, clean silver, curated gold.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "n.bronze",
+      "kind": "decision",
+      "about": "bronze",
+      "text": "Bronze is append-only and never cleaned. A bug in Silver is fixed by replaying from Bronze, not by asking the sources again."
+    },
+    {
+      "id": "n.expect",
+      "kind": "code",
+      "about": "refine",
+      "language": "sql",
+      "code": "CREATE OR REFRESH STREAMING TABLE silver.trips (\n  CONSTRAINT valid_fare EXPECT (fare_cents >= 0) ON VIOLATION DROP ROW,\n  CONSTRAINT known_city EXPECT (city_id IS NOT NULL) ON VIOLATION DROP ROW\n)\nAS SELECT DISTINCT trip_id, city_id, driver_id,\n       CAST(fare * 100 AS INT) AS fare_cents, ended_at\nFROM STREAM(bronze.trips_raw);"
+    },
+    {
+      "id": "n.copies",
+      "kind": "warning",
+      "about": "gold",
+      "text": "Gold is a copy of a copy: a fix in Silver reaches the dashboards only after the next nightly run."
+    },
+    {
+      "id": "n.resend",
+      "kind": "question",
+      "about": "payouts",
+      "text": "Do partners ever re-send a corrected CSV for the same day? Then Bronze needs a key per file to avoid counting it twice."
+    }
+  ],
+  "_patch": {
+    "edges": {
+      "load-rides": {
+        "cadence": "Every 15 min",
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.2
+        },
+        "waypoints": [
+          {
+            "x": 404,
+            "y": 220
+          },
+          {
+            "x": 404,
+            "y": 364
+          }
+        ]
+      },
+      "load-events": {
+        "cadence": "Streaming"
+      },
+      "load-payouts": {
+        "cadence": "Daily 02:00",
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.8
+        },
+        "waypoints": [
+          {
+            "x": 404,
+            "y": 580
+          },
+          {
+            "x": 404,
+            "y": 437
+          }
+        ]
+      },
+      "refine": {
+        "cadence": "Hourly"
+      },
+      "curate": {
+        "cadence": "Daily 04:00"
+      },
+      "reject": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      }
+    },
+    "nodes": {
+      "bronze": {
+        "width": 240
+      },
+      "silver": {
+        "width": 240
+      },
+      "quarantine": {
+        "width": 240
+      },
+      "gold": {
+        "width": 240
+      },
+      "rides": {
+        "width": 240
+      },
+      "events": {
+        "width": 240
+      },
+      "payouts": {
+        "width": 240
+      }
+    }
+  },
+  "_openPoints": [
+    {
+      "id": "op.triage",
+      "kind": "tentative",
+      "context": "Assumed: the data team triages quarantine weekly. Should the source team own it instead?",
+      "targets": [
+        {
+          "kind": "node",
+          "id": "quarantine"
+        }
+      ]
+    }
+  ],
+  "_centers": {
+    "rides": [
+      100,
+      220
+    ],
+    "events": [
+      100,
+      400
+    ],
+    "payouts": [
+      100,
+      608
+    ],
+    "ingest": [
+      540,
+      400
+    ],
+    "bronze": [
+      840,
+      400
+    ],
+    "silver": [
+      1220,
+      400
+    ],
+    "quarantine": [
+      1220,
+      600
+    ],
+    "gold": [
+      1600,
+      400
+    ],
+    "looker": [
+      2060,
+      300
+    ],
+    "pricing": [
+      2060,
+      500
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {},
+  "_alignRows": [
+    [
+      "l-bronze",
+      "l-silver",
+      "l-gold"
+    ]
+  ],
+  "_place": [
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 56,
+      "width": 1100,
+      "height": 110
+    }
+  ]
+}

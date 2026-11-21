@@ -1,0 +1,1279 @@
+{
+  "title": "Video streaming platform",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "f.play",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "devices",
+      "label": "Viewer devices",
+      "kind": "group"
+    },
+    {
+      "id": "cloud",
+      "label": "Reelwave cloud",
+      "kind": "system"
+    },
+    {
+      "id": "edge-api",
+      "label": "Edge",
+      "kind": "domain",
+      "parent": "cloud"
+    },
+    {
+      "id": "discovery",
+      "label": "Discovery",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "blue"
+    },
+    {
+      "id": "playback-d",
+      "label": "Playback",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "teal"
+    },
+    {
+      "id": "data",
+      "label": "Data platform",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "violet"
+    },
+    {
+      "id": "isp",
+      "label": "Partner ISP networks",
+      "kind": "network",
+      "color": "amber"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "viewer",
+      "type": "person",
+      "label": "Viewer",
+      "description": "Browses and watches on any screen.",
+      "place": {
+        "x": 0,
+        "y": 710
+      }
+    },
+    {
+      "id": "tv",
+      "type": "service",
+      "label": "TV App",
+      "technology": "Kotlin",
+      "group": "devices",
+      "description": "Plays on smart TVs and streaming sticks.",
+      "place": {
+        "x": 240,
+        "y": 715
+      }
+    },
+    {
+      "id": "mobile",
+      "type": "service",
+      "label": "Mobile App",
+      "technology": "Swift",
+      "group": "devices",
+      "description": "Streams and downloads on phones.",
+      "place": {
+        "x": 240,
+        "y": 555
+      }
+    },
+    {
+      "id": "web",
+      "type": "service",
+      "label": "Web Player",
+      "technology": "React",
+      "group": "devices",
+      "description": "Plays in the browser.",
+      "place": {
+        "x": 240,
+        "y": 395
+      }
+    },
+    {
+      "id": "j-api",
+      "type": "junction",
+      "label": "API calls",
+      "place": {
+        "x": 500,
+        "y": 600
+      }
+    },
+    {
+      "id": "gateway",
+      "type": "gateway",
+      "label": "Edge Gateway",
+      "technology": "Envoy",
+      "replicas": 6,
+      "group": "edge-api",
+      "description": "Authenticates, rate-limits and routes every API call.",
+      "place": {
+        "x": 620,
+        "y": 545
+      }
+    },
+    {
+      "id": "graph",
+      "type": "api",
+      "label": "Discovery Graph",
+      "technology": "Apollo GraphQL",
+      "replicas": 4,
+      "group": "discovery",
+      "description": "Composes the home screen in one query.",
+      "place": {
+        "x": 900,
+        "y": 215
+      }
+    },
+    {
+      "id": "recs",
+      "type": "api",
+      "label": "Recommendations",
+      "technology": "Python",
+      "replicas": 8,
+      "group": "discovery",
+      "description": "Ranks rows and titles for each profile.",
+      "place": {
+        "x": 1180,
+        "y": 120
+      }
+    },
+    {
+      "id": "features",
+      "type": "cache",
+      "label": "Feature Store",
+      "technology": "Redis",
+      "group": "discovery",
+      "description": "Serves profile features in under 5 ms.",
+      "place": {
+        "x": 1440,
+        "y": 120
+      }
+    },
+    {
+      "id": "catalog",
+      "type": "api",
+      "label": "Catalog",
+      "technology": "Spring Boot",
+      "group": "discovery",
+      "description": "Owns titles, artwork and availability by country.",
+      "place": {
+        "x": 1180,
+        "y": 300
+      }
+    },
+    {
+      "id": "search",
+      "type": "search-index",
+      "label": "Title Search",
+      "technology": "Elasticsearch",
+      "group": "discovery",
+      "description": "Finds titles by name, cast and genre.",
+      "place": {
+        "x": 1440,
+        "y": 300
+      }
+    },
+    {
+      "id": "playback",
+      "type": "api",
+      "label": "Playback API",
+      "technology": "Go",
+      "replicas": 6,
+      "group": "playback-d",
+      "description": "Checks rights, picks streams and edges, issues licences.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "p.tv",
+            "type": "service",
+            "label": "TV App",
+            "technology": "Kotlin"
+          },
+          {
+            "id": "p.handler",
+            "type": "component",
+            "label": "Play Handler",
+            "technology": "Go",
+            "description": "Answers POST /play with a manifest."
+          },
+          {
+            "id": "p.rights",
+            "type": "component",
+            "label": "Entitlements",
+            "description": "Checks plan, country and stream limit."
+          },
+          {
+            "id": "p.ladder",
+            "type": "component",
+            "label": "Stream Selector",
+            "description": "Picks codec and bitrate ladder for the device."
+          },
+          {
+            "id": "p.steering",
+            "type": "component",
+            "label": "Edge Steering",
+            "description": "Ranks edge appliances by health and distance."
+          },
+          {
+            "id": "p.licence",
+            "type": "adapter",
+            "label": "Licence Client",
+            "description": "Requests a DRM licence for the session."
+          },
+          {
+            "id": "p.members",
+            "type": "sql-database",
+            "label": "Members",
+            "technology": "PostgreSQL"
+          },
+          {
+            "id": "p.drm",
+            "type": "external-system",
+            "label": "DRM Licence Server",
+            "description": "Issues Widevine and FairPlay licences."
+          },
+          {
+            "id": "p.health",
+            "type": "cache",
+            "label": "Edge Health",
+            "technology": "Redis"
+          }
+        ],
+        "relationships": [
+          {
+            "id": "p.post",
+            "from": "p.tv",
+            "to": "p.handler",
+            "label": "POST /play",
+            "semantic": "http",
+            "response": "200 Manifest"
+          },
+          {
+            "id": "p.check",
+            "from": "p.handler",
+            "to": "p.rights",
+            "label": "canPlay(profile)",
+            "semantic": "uses"
+          },
+          {
+            "id": "p.plan",
+            "from": "p.rights",
+            "to": "p.members",
+            "label": "Plan and streams",
+            "semantic": "reads"
+          },
+          {
+            "id": "p.pick",
+            "from": "p.handler",
+            "to": "p.ladder",
+            "label": "ladderFor(device)",
+            "semantic": "uses"
+          },
+          {
+            "id": "p.steer",
+            "from": "p.ladder",
+            "to": "p.steering",
+            "label": "rankEdges(ip)",
+            "semantic": "uses"
+          },
+          {
+            "id": "p.healthy",
+            "from": "p.steering",
+            "to": "p.health",
+            "label": "Healthy edges",
+            "semantic": "reads"
+          },
+          {
+            "id": "p.lic",
+            "from": "p.handler",
+            "to": "p.licence",
+            "label": "licence(session)",
+            "semantic": "uses"
+          },
+          {
+            "id": "p.drmcall",
+            "from": "p.licence",
+            "to": "p.drm",
+            "label": "License request",
+            "semantic": "http"
+          }
+        ],
+        "flows": [
+          {
+            "id": "p.flow",
+            "title": "Press play, inside the Playback API",
+            "color": "teal",
+            "steps": [
+              {
+                "relationship": "p.post",
+                "caption": "The TV asks to play a title for one profile."
+              },
+              {
+                "relationship": "p.check",
+                "caption": "Is this plan allowed one more stream, in this country?"
+              },
+              {
+                "relationship": "p.plan",
+                "caption": "Plan and active streams come from Members."
+              },
+              {
+                "relationship": "p.pick",
+                "caption": "4K HDR for this TV, or 1080p if the plan doesn't include it."
+              },
+              {
+                "relationship": "p.steer",
+                "caption": "Edges are ranked for the viewer's ISP."
+              },
+              {
+                "relationship": "p.healthy",
+                "caption": "Only appliances that reported healthy in the last 10 s."
+              },
+              {
+                "relationship": "p.lic",
+                "caption": "A licence is requested for this session."
+              },
+              {
+                "relationship": "p.drmcall",
+                "caption": "The DRM server signs it; the manifest goes back to the TV."
+              }
+            ]
+          }
+        ]
+      },
+      "place": {
+        "x": 900,
+        "y": 545
+      }
+    },
+    {
+      "id": "drm",
+      "type": "external-system",
+      "label": "DRM Licence Server",
+      "description": "Issues Widevine, FairPlay and PlayReady licences.",
+      "place": {
+        "x": 900,
+        "y": 1100
+      }
+    },
+    {
+      "id": "events",
+      "type": "stream",
+      "label": "playback-events",
+      "technology": "Kafka",
+      "group": "data",
+      "description": "Every start, heartbeat, rebuffer and stop.",
+      "place": {
+        "x": 1180,
+        "y": 560
+      }
+    },
+    {
+      "id": "aggregator",
+      "type": "worker",
+      "label": "Viewing Aggregator",
+      "technology": "Apache Flink",
+      "replicas": 12,
+      "group": "data",
+      "description": "Turns heartbeats into progress and quality metrics.",
+      "place": {
+        "x": 1420,
+        "y": 545
+      }
+    },
+    {
+      "id": "history",
+      "type": "nosql-database",
+      "label": "Viewing History",
+      "technology": "Apache Cassandra",
+      "group": "data",
+      "description": "Where each profile stopped, for Continue Watching.",
+      "place": {
+        "x": 1700,
+        "y": 540
+      }
+    },
+    {
+      "id": "lake",
+      "type": "object-storage",
+      "label": "Data Lake",
+      "technology": "Amazon S3",
+      "group": "data",
+      "description": "Every event, kept for training and analysis.",
+      "place": {
+        "x": 1180,
+        "y": 790
+      }
+    },
+    {
+      "id": "training",
+      "type": "scheduler",
+      "label": "Model Training",
+      "technology": "Apache Spark",
+      "group": "data",
+      "description": "Retrains the ranking models every night.",
+      "place": {
+        "x": 1440,
+        "y": 790
+      }
+    },
+    {
+      "id": "studio",
+      "type": "external-actor",
+      "label": "Studio Partner",
+      "description": "Delivers finished masters and subtitles.",
+      "place": {
+        "x": 0,
+        "y": 1100
+      }
+    },
+    {
+      "id": "pipeline",
+      "type": "service",
+      "label": "Content Pipeline",
+      "technology": "FFmpeg",
+      "description": "Encodes each master into hundreds of streams.",
+      "inside": {
+        "level": "container",
+        "nodes": [
+          {
+            "id": "c.studio",
+            "type": "external-actor",
+            "label": "Studio Partner"
+          },
+          {
+            "id": "c.ingest",
+            "type": "api",
+            "label": "Ingest",
+            "technology": "Go",
+            "description": "Takes masters by Aspera and checks them."
+          },
+          {
+            "id": "c.masters",
+            "type": "object-storage",
+            "label": "Masters",
+            "technology": "Amazon S3",
+            "description": "Original files, kept forever."
+          },
+          {
+            "id": "c.jobs",
+            "type": "queue",
+            "label": "encode-jobs",
+            "technology": "Amazon SQS",
+            "description": "One job per chunk and rendition."
+          },
+          {
+            "id": "c.encoders",
+            "type": "worker",
+            "label": "Chunk Encoders",
+            "technology": "FFmpeg",
+            "replicas": 40,
+            "description": "Encode 4-second chunks in parallel."
+          },
+          {
+            "id": "c.dlq",
+            "type": "dead-letter-queue",
+            "label": "encode-jobs-dlq",
+            "technology": "Amazon SQS",
+            "description": "Chunks that failed every attempt."
+          },
+          {
+            "id": "c.packager",
+            "type": "worker",
+            "label": "Packager",
+            "technology": "Go",
+            "description": "Assembles chunks, encrypts and writes DASH and HLS."
+          },
+          {
+            "id": "c.origin",
+            "type": "object-storage",
+            "label": "Origin",
+            "technology": "Amazon S3",
+            "description": "Encrypted streams, ready for the edges."
+          }
+        ],
+        "relationships": [
+          {
+            "id": "c.deliver",
+            "from": "c.studio",
+            "to": "c.ingest",
+            "label": "Uploads master"
+          },
+          {
+            "id": "c.store",
+            "from": "c.ingest",
+            "to": "c.masters",
+            "label": "Stores master",
+            "semantic": "writes"
+          },
+          {
+            "id": "c.split",
+            "from": "c.ingest",
+            "to": "c.jobs",
+            "label": "EncodeChunk × 2,400",
+            "semantic": "command"
+          },
+          {
+            "id": "c.take",
+            "from": "c.jobs",
+            "to": "c.encoders",
+            "semantic": "consumes"
+          },
+          {
+            "id": "c.park",
+            "from": "c.jobs",
+            "to": "c.dlq",
+            "semantic": "deadLetters",
+            "deliveryAttempts": 3
+          },
+          {
+            "id": "c.done",
+            "from": "c.encoders",
+            "to": "c.packager",
+            "label": "Chunk encoded",
+            "semantic": "event"
+          },
+          {
+            "id": "c.write",
+            "from": "c.packager",
+            "to": "c.origin",
+            "label": "Writes streams",
+            "semantic": "writes"
+          }
+        ],
+        "flows": [
+          {
+            "id": "c.flow",
+            "title": "Encode a new title",
+            "color": "violet",
+            "steps": [
+              {
+                "relationship": "c.deliver",
+                "caption": "The studio uploads a 400 GB master."
+              },
+              {
+                "relationship": "c.store",
+                "caption": "The master is checked and kept as is."
+              },
+              {
+                "relationship": "c.split",
+                "caption": "It is cut into 4-second chunks: one job per chunk and rendition."
+              },
+              {
+                "relationship": "c.take",
+                "caption": "Forty encoders work through the jobs in parallel."
+              },
+              {
+                "relationship": "c.done",
+                "caption": "Each finished chunk is reported to the packager."
+              },
+              {
+                "relationship": "c.write",
+                "caption": "DASH and HLS streams are encrypted and written to the origin."
+              }
+            ]
+          }
+        ]
+      },
+      "place": {
+        "x": 240,
+        "y": 1100
+      }
+    },
+    {
+      "id": "origin",
+      "type": "object-storage",
+      "label": "Origin",
+      "technology": "Amazon S3",
+      "description": "Every encrypted stream.",
+      "place": {
+        "x": 640,
+        "y": 1100
+      }
+    },
+    {
+      "id": "edge",
+      "type": "service",
+      "label": "Edge Appliances",
+      "technology": "NGINX",
+      "replicas": 9,
+      "group": "isp",
+      "description": "Serve video from inside the viewer's ISP.",
+      "place": {
+        "x": 240,
+        "y": 920
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "watch",
+      "from": "viewer",
+      "to": "tv",
+      "label": "Presses play"
+    },
+    {
+      "id": "tv-api",
+      "from": "tv",
+      "to": "j-api"
+    },
+    {
+      "id": "mobile-api",
+      "from": "mobile",
+      "to": "j-api"
+    },
+    {
+      "id": "web-api",
+      "from": "web",
+      "to": "j-api"
+    },
+    {
+      "id": "api",
+      "from": "j-api",
+      "to": "gateway",
+      "label": "HTTPS"
+    },
+    {
+      "id": "home",
+      "from": "gateway",
+      "to": "graph",
+      "label": "/graphql",
+      "semantic": "routes"
+    },
+    {
+      "id": "play",
+      "from": "gateway",
+      "to": "playback",
+      "label": "/play",
+      "semantic": "routes"
+    },
+    {
+      "id": "rank",
+      "from": "graph",
+      "to": "recs",
+      "label": "Ranks rows",
+      "semantic": "grpc",
+      "response": "rows"
+    },
+    {
+      "id": "feat",
+      "from": "recs",
+      "to": "features",
+      "label": "Profile features",
+      "semantic": "reads"
+    },
+    {
+      "id": "titles",
+      "from": "graph",
+      "to": "catalog",
+      "label": "Titles by id",
+      "semantic": "grpc",
+      "response": true
+    },
+    {
+      "id": "find",
+      "from": "catalog",
+      "to": "search",
+      "semantic": "searches"
+    },
+    {
+      "id": "resume",
+      "from": "graph",
+      "to": "history",
+      "label": "Continue Watching",
+      "semantic": "reads"
+    },
+    {
+      "id": "licence",
+      "from": "playback",
+      "to": "drm",
+      "label": "Licence",
+      "semantic": "http",
+      "response": "signed"
+    },
+    {
+      "id": "heartbeat",
+      "from": "playback",
+      "to": "events",
+      "label": "PlaybackHeartbeat",
+      "semantic": "publishes"
+    },
+    {
+      "id": "aggregate",
+      "from": "events",
+      "to": "aggregator",
+      "semantic": "consumes"
+    },
+    {
+      "id": "progress",
+      "from": "aggregator",
+      "to": "history",
+      "label": "Progress per profile",
+      "semantic": "writes"
+    },
+    {
+      "id": "archive",
+      "from": "events",
+      "to": "lake",
+      "label": "Archives events"
+    },
+    {
+      "id": "learn",
+      "from": "lake",
+      "to": "training",
+      "label": "Viewing year",
+      "semantic": "reads"
+    },
+    {
+      "id": "publish-model",
+      "from": "training",
+      "to": "features",
+      "label": "New features",
+      "semantic": "writes"
+    },
+    {
+      "id": "segments",
+      "from": "tv",
+      "to": "edge",
+      "label": "Video segments",
+      "semantic": "http",
+      "response": "4 s chunks"
+    },
+    {
+      "id": "fill",
+      "from": "origin",
+      "to": "edge",
+      "label": "Nightly fill"
+    },
+    {
+      "id": "miss",
+      "from": "edge",
+      "to": "origin",
+      "label": "Cache miss",
+      "semantic": "reads",
+      "kind": "fallback"
+    },
+    {
+      "id": "deliver",
+      "from": "studio",
+      "to": "pipeline",
+      "label": "Delivers master"
+    },
+    {
+      "id": "encode",
+      "from": "pipeline",
+      "to": "origin",
+      "label": "Writes streams",
+      "semantic": "writes"
+    },
+    {
+      "id": "launch",
+      "from": "pipeline",
+      "to": "catalog",
+      "label": "Title ready",
+      "semantic": "http"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f.play",
+      "title": "Press play",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "watch",
+          "caption": "A viewer picks a film on the TV and presses play."
+        },
+        {
+          "relationship": "tv-api",
+          "caption": "The TV calls the API, like every other device."
+        },
+        {
+          "relationship": "api",
+          "caption": "One edge gateway in the nearest region takes the call."
+        },
+        {
+          "relationship": "play",
+          "caption": "It is authenticated and routed to the Playback API."
+        },
+        {
+          "relationship": "licence",
+          "caption": "Rights, streams and edges are chosen; a DRM licence is signed."
+        },
+        {
+          "relationship": "segments",
+          "caption": "The TV fetches 4-second chunks from an appliance inside its ISP."
+        },
+        {
+          "relationship": "heartbeat",
+          "caption": "Every 30 s the session reports position and quality."
+        },
+        {
+          "relationship": "aggregate",
+          "caption": "Flink folds heartbeats per session."
+        },
+        {
+          "relationship": "progress",
+          "caption": "Where the viewer stopped is saved for Continue Watching."
+        }
+      ]
+    },
+    {
+      "id": "f.miss",
+      "title": "The edge doesn't have it",
+      "color": "amber",
+      "variantOf": "f.play",
+      "steps": [
+        {
+          "relationship": "segments",
+          "caption": "A brand-new title, not yet filled to this appliance."
+        },
+        {
+          "relationship": "miss",
+          "caption": "The appliance fetches the chunk from the origin and keeps it.",
+          "highlight": [
+            "origin"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f.browse",
+      "title": "Open the home screen",
+      "color": "blue",
+      "steps": [
+        {
+          "relationship": "mobile-api",
+          "caption": "The app asks for the home screen in one GraphQL query."
+        },
+        {
+          "relationship": "api",
+          "caption": "The gateway checks the session token."
+        },
+        {
+          "relationship": "home",
+          "caption": "The query goes to the Discovery Graph."
+        },
+        {
+          "relationship": "rank",
+          "caption": "Recommendations ranks forty rows for this profile."
+        },
+        {
+          "relationship": "feat",
+          "caption": "Ranking reads the profile's features from Redis."
+        },
+        {
+          "relationship": "titles",
+          "caption": "Titles, artwork and availability fill each row."
+        },
+        {
+          "relationship": "resume",
+          "caption": "Continue Watching comes from the viewing history."
+        }
+      ]
+    },
+    {
+      "id": "f.launch",
+      "title": "Launch a new title",
+      "color": "violet",
+      "steps": [
+        {
+          "relationship": "deliver",
+          "caption": "The studio delivers the master and subtitles."
+        },
+        {
+          "relationship": "encode",
+          "caption": "Hundreds of streams are encoded and stored at the origin."
+        },
+        {
+          "relationship": "fill",
+          "caption": "Off-peak, appliances pull what their viewers will want tomorrow."
+        },
+        {
+          "relationship": "launch",
+          "caption": "At launch time the title becomes available in the catalog."
+        },
+        {
+          "relationship": "find",
+          "caption": "It is indexed, so viewers can find it by name."
+        }
+      ]
+    },
+    {
+      "id": "f.learn",
+      "title": "Retrain recommendations",
+      "color": "green",
+      "steps": [
+        {
+          "relationship": "archive",
+          "caption": "Every event lands in the lake, hourly."
+        },
+        {
+          "relationship": "learn",
+          "caption": "At night, Spark trains on a year of viewing."
+        },
+        {
+          "relationship": "publish-model",
+          "caption": "Fresh features go live without a deploy."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Reelwave\nA video streaming platform: **200M** members, **15k** titles, every screen.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "slo",
+      "kind": "label",
+      "about": "playback",
+      "attach": false,
+      "text": "### Playback SLOs\n| Path | Target |\n| --- | ---: |\n| Play → first frame | 2 s |\n| `POST /play` p99 | 150 ms |\n| Rebuffer ratio | < 0.1% |",
+      "style": {
+        "background": "card",
+        "color": "teal"
+      }
+    },
+    {
+      "id": "edge-callout",
+      "kind": "label",
+      "about": "edge",
+      "attach": false,
+      "text": "95% of bytes never touch the cloud",
+      "style": {
+        "font": "hand",
+        "color": "rose"
+      }
+    },
+    {
+      "id": "n.edge",
+      "kind": "decision",
+      "about": "edge",
+      "text": "Video is served from appliances inside ISPs. The cloud only decides which appliance; it never streams a byte."
+    },
+    {
+      "id": "n.graph",
+      "kind": "decision",
+      "about": "graph",
+      "text": "One GraphQL query per screen: devices ship slowly, so the shape of a screen changes on the server."
+    },
+    {
+      "id": "n.drm",
+      "kind": "warning",
+      "about": "licence",
+      "text": "No licence, no playback. Licences are cached for a session and for downloads, so a DRM outage stops new plays only."
+    },
+    {
+      "id": "n.hb",
+      "kind": "code",
+      "about": "heartbeat",
+      "language": "json",
+      "code": "{\n  \"type\": \"PlaybackHeartbeat\",\n  \"session\": \"s_81f2\",\n  \"profile\": \"p_4410\",\n  \"title\": \"tt_0092\",\n  \"positionMs\": 1843000,\n  \"bitrateKbps\": 15800,\n  \"rebufferMs\": 0\n}"
+    },
+    {
+      "id": "n.route",
+      "kind": "code",
+      "about": "gateway",
+      "language": "yaml",
+      "code": "routes:\n  - match: { prefix: /play }\n    route:\n      cluster: playback\n      timeout: 0.5s\n      retry_policy:\n        retry_on: 5xx,reset\n        num_retries: 2"
+    },
+    {
+      "id": "n.cold",
+      "kind": "question",
+      "about": "recs",
+      "text": "What does a brand-new profile see before it has watched anything?"
+    }
+  ],
+  "_openPoints": [
+    {
+      "id": "op.downloads",
+      "kind": "awaiting",
+      "context": "Downloads on mobile need longer licences. Legal to confirm the offline window per studio.",
+      "targets": [
+        {
+          "kind": "edge",
+          "id": "licence"
+        }
+      ]
+    }
+  ],
+  "_place": [
+    {
+      "id": "edge-callout",
+      "of": "edge",
+      "side": "left",
+      "gap": 28,
+      "align": "center",
+      "early": true
+    },
+    {
+      "id": "edge-api",
+      "of": [
+        "data"
+      ],
+      "side": "left",
+      "gap": 378,
+      "align": "start",
+      "height": 230
+    },
+    {
+      "id": "playback-d",
+      "of": [
+        "data"
+      ],
+      "side": "left",
+      "gap": 58,
+      "align": "start",
+      "height": 230
+    },
+    {
+      "id": "slo",
+      "of": [
+        "discovery"
+      ],
+      "side": "left",
+      "gap": 288,
+      "align": "start",
+      "width": 330
+    },
+    {
+      "id": "seq-play",
+      "of": [
+        "cloud"
+      ],
+      "side": "below",
+      "gap": 80,
+      "align": "end"
+    },
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "width": 1000,
+      "height": 110,
+      "exclude": [
+        "seq-play"
+      ]
+    }
+  ],
+  "_centers": {
+    "viewer": [
+      70,
+      800
+    ],
+    "web": [
+      330,
+      480
+    ],
+    "mobile": [
+      330,
+      640
+    ],
+    "tv": [
+      330,
+      800
+    ],
+    "j-api": [
+      560,
+      640
+    ],
+    "gateway": [
+      780,
+      640
+    ],
+    "playback": [
+      1100,
+      640
+    ],
+    "graph": [
+      1440,
+      270
+    ],
+    "recs": [
+      1800,
+      170
+    ],
+    "catalog": [
+      1800,
+      370
+    ],
+    "features": [
+      2140,
+      170
+    ],
+    "search": [
+      2140,
+      370
+    ],
+    "events": [
+      1440,
+      640
+    ],
+    "aggregator": [
+      1800,
+      640
+    ],
+    "history": [
+      2140,
+      640
+    ],
+    "lake": [
+      1440,
+      880
+    ],
+    "training": [
+      1800,
+      880
+    ],
+    "edge": [
+      330,
+      1010
+    ],
+    "studio": [
+      70,
+      1190
+    ],
+    "pipeline": [
+      330,
+      1190
+    ],
+    "origin": [
+      740,
+      1190
+    ],
+    "drm": [
+      1100,
+      1190
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {},
+  "_patch": {
+    "nodes": {
+      "slo": {
+        "parentId": null
+      },
+      "j-api": {
+        "text": null,
+        "textOrigin": null
+      }
+    },
+    "edges": {
+      "resume": {
+        "portal": true
+      },
+      "launch": {
+        "portal": true,
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        }
+      },
+      "publish-model": {
+        "portal": true
+      },
+      "fill": {
+        "cadence": "Nightly 02:00"
+      },
+      "archive": {
+        "cadence": "Hourly"
+      },
+      "learn": {
+        "cadence": "Daily"
+      },
+      "web-api": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "mobile-api": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "tv-api": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        }
+      },
+      "home": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      }
+    }
+  },
+  "_ink": [
+    {
+      "shape": "ellipse",
+      "of": [
+        "edge"
+      ],
+      "pad": 10,
+      "color": "red",
+      "size": 3
+    }
+  ],
+  "sequences": [
+    {
+      "id": "seq-play",
+      "title": "Press play, message by message",
+      "mermaid": "sequenceDiagram\n  participant tv as TV App\n  participant gw as Edge Gateway\n  participant pb as Playback API\n  participant drm as DRM Licence Server\n  participant edge as Edge Appliances\n  tv->>+gw: POST /play\n  gw->>+pb: /play\n  pb->>+drm: Licence request\n  drm-->>-pb: Signed licence\n  pb-->>-gw: Manifest and edge URLs\n  gw-->>-tv: 200 Manifest\n  loop every 4 s\n    tv->>+edge: GET segment\n    alt cached\n      edge-->>tv: 200 chunk\n    else not cached yet\n      edge->>edge: Fetch from origin\n      edge-->>-tv: 200 chunk\n    end\n  end",
+      "links": {
+        "tv": "tv",
+        "gw": "gateway",
+        "pb": "playback",
+        "drm": "drm",
+        "edge": "edge"
+      }
+    }
+  ],
+  "_alignCols": [
+    [
+      "discovery",
+      "data"
+    ]
+  ],
+  "_alignRows": [
+    [
+      "edge-api",
+      "playback-d"
+    ]
+  ]
+}

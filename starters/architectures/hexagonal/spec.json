@@ -1,0 +1,577 @@
+{
+  "title": "Hexagonal",
+  "level": "component",
+  "layout": {
+    "primaryFlow": "send-flow",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "core",
+      "label": "Transfers Core",
+      "kind": "domain"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "customer",
+      "type": "person",
+      "label": "Customer",
+      "description": "Sends money from the banking app."
+    },
+    {
+      "id": "http-adapter",
+      "type": "adapter",
+      "label": "REST Controller",
+      "technology": "Spring Boot 3",
+      "description": "Maps JSON to a SendMoney command."
+    },
+    {
+      "id": "job-adapter",
+      "type": "adapter",
+      "label": "Standing Orders Job",
+      "technology": "Spring",
+      "description": "Sends each standing order due today."
+    },
+    {
+      "id": "inbound-port",
+      "type": "port",
+      "label": "SendMoney",
+      "technology": "Kotlin",
+      "group": "core",
+      "description": "What the core offers: send an amount between accounts."
+    },
+    {
+      "id": "use-cases",
+      "type": "component",
+      "label": "Send Money Service",
+      "technology": "Kotlin",
+      "group": "core",
+      "description": "Checks limits, screens, moves money, announces it."
+    },
+    {
+      "id": "domain",
+      "type": "component",
+      "label": "Account Model",
+      "technology": "Kotlin",
+      "group": "core",
+      "description": "Accounts, balances and transfer rules. No framework imports.",
+      "inside": {
+        "nodes": [
+          {
+            "id": "d.service",
+            "type": "component",
+            "label": "Send Money Service",
+            "technology": "Kotlin"
+          },
+          {
+            "id": "d.account",
+            "type": "component",
+            "label": "Account",
+            "technology": "Kotlin",
+            "description": "Aggregate: owns the balance and its invariants."
+          },
+          {
+            "id": "d.policy",
+            "type": "component",
+            "label": "Transfer Policy",
+            "technology": "Kotlin",
+            "description": "Daily limit and overdraft rules."
+          },
+          {
+            "id": "d.money",
+            "type": "component",
+            "label": "Money",
+            "technology": "Kotlin",
+            "description": "Value object: amount and currency, never a Double."
+          },
+          {
+            "id": "d.event",
+            "type": "component",
+            "label": "MoneySent",
+            "technology": "Kotlin",
+            "description": "Domain event raised by a successful withdrawal."
+          }
+        ],
+        "relationships": [
+          {
+            "id": "d.withdraw",
+            "from": "d.service",
+            "to": "d.account",
+            "label": "withdraw(amount)",
+            "semantic": "uses"
+          },
+          {
+            "id": "d.check",
+            "from": "d.account",
+            "to": "d.policy",
+            "label": "allows(amount)",
+            "semantic": "uses"
+          },
+          {
+            "id": "d.subtract",
+            "from": "d.account",
+            "to": "d.money",
+            "label": "debit(amount)",
+            "semantic": "uses"
+          },
+          {
+            "id": "d.raise",
+            "from": "d.account",
+            "to": "d.event",
+            "label": "raises",
+            "semantic": "uses"
+          }
+        ],
+        "flows": [
+          {
+            "id": "d.flow",
+            "title": "Withdraw, inside the model",
+            "color": "blue",
+            "steps": [
+              {
+                "relationship": "d.withdraw",
+                "caption": "The use case asks the Account to withdraw; it never sets the balance."
+              },
+              {
+                "relationship": "d.check",
+                "caption": "The Account checks the daily limit and overdraft rules."
+              },
+              {
+                "relationship": "d.subtract",
+                "caption": "Money does the arithmetic in the account's currency."
+              },
+              {
+                "relationship": "d.raise",
+                "caption": "A MoneySent event is recorded for the use case to publish."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "accounts-port",
+      "type": "port",
+      "label": "AccountStore",
+      "technology": "Kotlin",
+      "group": "core",
+      "description": "Loads and saves accounts, in the core's words."
+    },
+    {
+      "id": "fraud-port",
+      "type": "port",
+      "label": "FraudCheck",
+      "technology": "Kotlin",
+      "group": "core",
+      "description": "Scores a transfer before money moves."
+    },
+    {
+      "id": "events-port",
+      "type": "port",
+      "label": "TransferEvents",
+      "technology": "Kotlin",
+      "group": "core",
+      "description": "Announces transfers that happened."
+    },
+    {
+      "id": "persistence-adapter",
+      "type": "adapter",
+      "label": "JPA Account Store",
+      "technology": "Hibernate",
+      "description": "Maps accounts to rows, with optimistic locking."
+    },
+    {
+      "id": "fraud-adapter",
+      "type": "adapter",
+      "label": "Fraud API Client",
+      "technology": "Spring",
+      "description": "Calls the fraud vendor and maps its score."
+    },
+    {
+      "id": "events-adapter",
+      "type": "adapter",
+      "label": "Kafka Publisher",
+      "technology": "Kafka",
+      "description": "Publishes MoneySent to the transfers topic."
+    },
+    {
+      "id": "database",
+      "type": "sql-database",
+      "label": "Accounts DB",
+      "technology": "PostgreSQL 16",
+      "description": "Accounts, balances and the ledger."
+    },
+    {
+      "id": "fraud",
+      "type": "external-system",
+      "label": "Fraud Screening",
+      "description": "Scores payments for fraud risk."
+    },
+    {
+      "id": "topic",
+      "type": "topic",
+      "label": "transfers",
+      "technology": "Kafka",
+      "description": "Transfers other teams react to."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "send",
+      "from": "customer",
+      "to": "http-adapter",
+      "label": "Sends €250",
+      "semantic": "http"
+    },
+    {
+      "id": "http-call",
+      "from": "http-adapter",
+      "to": "inbound-port",
+      "label": "send(cmd)",
+      "semantic": "uses"
+    },
+    {
+      "id": "job-call",
+      "from": "job-adapter",
+      "to": "inbound-port",
+      "label": "send(cmd)",
+      "semantic": "uses"
+    },
+    {
+      "id": "inbound-impl",
+      "from": "inbound-port",
+      "to": "use-cases",
+      "semantic": "implementedBy"
+    },
+    {
+      "id": "use-domain",
+      "from": "use-cases",
+      "to": "domain",
+      "label": "withdraw / deposit",
+      "semantic": "uses"
+    },
+    {
+      "id": "use-fraud-port",
+      "from": "use-cases",
+      "to": "fraud-port",
+      "label": "screen()",
+      "semantic": "uses"
+    },
+    {
+      "id": "use-accounts-port",
+      "from": "use-cases",
+      "to": "accounts-port",
+      "label": "load / save",
+      "semantic": "uses"
+    },
+    {
+      "id": "use-events-port",
+      "from": "use-cases",
+      "to": "events-port",
+      "label": "moneySent()",
+      "semantic": "uses"
+    },
+    {
+      "id": "fraud-impl",
+      "from": "fraud-port",
+      "to": "fraud-adapter",
+      "semantic": "implementedBy"
+    },
+    {
+      "id": "accounts-impl",
+      "from": "accounts-port",
+      "to": "persistence-adapter",
+      "semantic": "implementedBy"
+    },
+    {
+      "id": "events-impl",
+      "from": "events-port",
+      "to": "events-adapter",
+      "semantic": "implementedBy"
+    },
+    {
+      "id": "call-fraud",
+      "from": "fraud-adapter",
+      "to": "fraud",
+      "label": "POST /score",
+      "semantic": "http",
+      "response": "score"
+    },
+    {
+      "id": "write-database",
+      "from": "persistence-adapter",
+      "to": "database",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "publish",
+      "from": "events-adapter",
+      "to": "topic",
+      "label": "MoneySent",
+      "semantic": "publishes"
+    }
+  ],
+  "flows": [
+    {
+      "id": "send-flow",
+      "title": "Send money over HTTP",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "send",
+          "caption": "A customer sends €250 to a friend."
+        },
+        {
+          "relationship": "http-call",
+          "caption": "The controller turns JSON into a SendMoney command on the port."
+        },
+        {
+          "relationship": "inbound-impl",
+          "caption": "The use case behind the port takes over; HTTP stops here."
+        },
+        {
+          "relationship": "use-fraud-port",
+          "caption": "The core asks its own FraudCheck port, not a vendor."
+        },
+        {
+          "relationship": "fraud-impl",
+          "caption": "The adapter behind the port knows the vendor."
+        },
+        {
+          "relationship": "call-fraud",
+          "caption": "The vendor scores the transfer as low risk."
+        },
+        {
+          "relationship": "use-accounts-port",
+          "caption": "Both accounts are loaded through AccountStore."
+        },
+        {
+          "relationship": "use-domain",
+          "caption": "The Account model withdraws and deposits by its own rules."
+        },
+        {
+          "relationship": "accounts-impl",
+          "caption": "The JPA adapter saves both accounts."
+        },
+        {
+          "relationship": "write-database",
+          "caption": "One transaction, guarded by a version column."
+        },
+        {
+          "relationship": "use-events-port",
+          "caption": "The use case announces MoneySent through its port."
+        },
+        {
+          "relationship": "events-impl",
+          "caption": "The Kafka adapter does the publishing."
+        },
+        {
+          "relationship": "publish",
+          "caption": "MoneySent lands on the transfers topic."
+        }
+      ]
+    },
+    {
+      "id": "rejected",
+      "title": "Fraud check rejects",
+      "color": "rose",
+      "variantOf": "send-flow",
+      "steps": [
+        {
+          "relationship": "use-fraud-port",
+          "caption": "The use case asks FraudCheck to screen the transfer."
+        },
+        {
+          "relationship": "fraud-impl",
+          "caption": "The adapter behind the port calls the vendor."
+        },
+        {
+          "relationship": "call-fraud",
+          "caption": "The vendor scores 0.93; the adapter maps it to Verdict.REJECT, and nothing moves."
+        }
+      ]
+    },
+    {
+      "id": "standing",
+      "title": "Run standing orders",
+      "color": "blue",
+      "steps": [
+        {
+          "relationship": "job-call",
+          "caption": "At 06:00 the job sends each standing order due today."
+        },
+        {
+          "relationship": "inbound-impl",
+          "caption": "A different technology, the same port and the same use case."
+        },
+        {
+          "relationship": "use-accounts-port",
+          "caption": "Accounts are loaded exactly as for an HTTP transfer."
+        },
+        {
+          "relationship": "use-domain",
+          "caption": "The same rules apply: limits, overdraft, currency."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Bank transfers\nHexagonal: adapters on both sides of a core that owns its ports.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "n.inward",
+      "kind": "decision",
+      "about": "core",
+      "attach": true,
+      "text": "The core owns every port. Adapters depend on the core; the core imports no Spring, no JPA, no Kafka."
+    },
+    {
+      "id": "n.port",
+      "kind": "code",
+      "about": "accounts-port",
+      "language": "plaintext",
+      "code": "interface AccountStore {\n    fun load(id: AccountId): Account\n    fun save(account: Account)\n}"
+    },
+    {
+      "id": "n.test",
+      "kind": "code",
+      "about": "use-cases",
+      "language": "plaintext",
+      "code": "val service = SendMoneyService(\n    accounts = InMemoryAccountStore(),\n    fraud = FraudCheck { Verdict.ALLOW },\n    events = RecordingEvents(),\n)"
+    },
+    {
+      "id": "n.leak",
+      "kind": "warning",
+      "about": "fraud-port",
+      "text": "A port that mirrors one vendor's API (FraudShieldRequest) drags the adapter into the core. Name ports in the core's words."
+    },
+    {
+      "id": "n.outbox",
+      "kind": "question",
+      "about": "publish",
+      "text": "MoneySent is published after commit, so a crash in between loses it. Worth an outbox here?"
+    }
+  ],
+  "_patch": {
+    "nodes": {
+      "core": {
+        "held": true
+      }
+    },
+    "edges": {
+      "use-fraud-port": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.2
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "use-accounts-port": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "use-events-port": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.8
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      }
+    }
+  },
+  "_centers": {
+    "customer": [
+      0,
+      0
+    ],
+    "http-adapter": [
+      360,
+      0
+    ],
+    "job-adapter": [
+      360,
+      240
+    ],
+    "inbound-port": [
+      720,
+      0
+    ],
+    "use-cases": [
+      1120,
+      0
+    ],
+    "domain": [
+      1520,
+      0
+    ],
+    "fraud-port": [
+      760,
+      300
+    ],
+    "accounts-port": [
+      1120,
+      300
+    ],
+    "events-port": [
+      1480,
+      300
+    ],
+    "fraud-adapter": [
+      760,
+      600
+    ],
+    "persistence-adapter": [
+      1120,
+      600
+    ],
+    "events-adapter": [
+      1480,
+      600
+    ],
+    "fraud": [
+      760,
+      900
+    ],
+    "database": [
+      1120,
+      900
+    ],
+    "topic": [
+      1480,
+      900
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {},
+  "_place": [
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "width": 900,
+      "height": 110
+    }
+  ]
+}

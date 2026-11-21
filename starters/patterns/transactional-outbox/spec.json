@@ -1,0 +1,453 @@
+{
+  "title": "Transactional Outbox",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "send"
+  },
+  "groups": [
+    {
+      "id": "ledger",
+      "label": "Ledger DB · one transaction",
+      "kind": "boundary"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "holder",
+      "type": "person",
+      "label": "Account Holder",
+      "description": "Sends money from the banking app."
+    },
+    {
+      "id": "api",
+      "type": "api",
+      "label": "Transfers API",
+      "technology": "Spring Boot 3",
+      "replicas": 2,
+      "description": "Debits the account and records the transfer and its event together.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "t.holder",
+            "type": "person",
+            "label": "Account Holder"
+          },
+          {
+            "id": "t.controller",
+            "type": "component",
+            "label": "Transfers Controller",
+            "technology": "Spring",
+            "description": "Validates the request and answers 201."
+          },
+          {
+            "id": "t.send",
+            "type": "component",
+            "label": "Send Money",
+            "description": "One @Transactional method: debit, record, enqueue the event."
+          },
+          {
+            "id": "t.accounts",
+            "type": "adapter",
+            "label": "Account Repository",
+            "technology": "Hibernate",
+            "description": "Debits the balance with a version check."
+          },
+          {
+            "id": "t.outbox",
+            "type": "adapter",
+            "label": "Outbox Writer",
+            "technology": "Hibernate",
+            "description": "Adds the event row in the caller's transaction."
+          },
+          {
+            "id": "t.db",
+            "type": "sql-database",
+            "label": "Ledger DB",
+            "technology": "PostgreSQL 16"
+          }
+        ],
+        "relationships": [
+          {
+            "id": "t.post",
+            "from": "t.holder",
+            "to": "t.controller",
+            "label": "POST /transfers"
+          },
+          {
+            "id": "t.call",
+            "from": "t.controller",
+            "to": "t.send",
+            "label": "send(cmd)",
+            "semantic": "uses"
+          },
+          {
+            "id": "t.debit",
+            "from": "t.send",
+            "to": "t.accounts",
+            "label": "debit(acc, amount)",
+            "semantic": "uses"
+          },
+          {
+            "id": "t.enqueue",
+            "from": "t.send",
+            "to": "t.outbox",
+            "label": "add(TransferInitiated)",
+            "semantic": "uses"
+          },
+          {
+            "id": "t.sql1",
+            "from": "t.accounts",
+            "to": "t.db",
+            "label": "UPDATE accounts",
+            "semantic": "writes"
+          },
+          {
+            "id": "t.sql2",
+            "from": "t.outbox",
+            "to": "t.db",
+            "label": "INSERT outbox",
+            "semantic": "writes"
+          }
+        ],
+        "flows": [
+          {
+            "id": "t.flow",
+            "title": "Send money, inside the API",
+            "color": "blue",
+            "steps": [
+              {
+                "relationship": "t.post",
+                "caption": "The controller checks the IBAN and amount."
+              },
+              {
+                "relationship": "t.call",
+                "caption": "Send Money opens the transaction."
+              },
+              {
+                "relationship": "t.debit",
+                "caption": "The balance is debited, guarded by a version check."
+              },
+              {
+                "relationship": "t.sql1",
+                "caption": "Written, not yet committed."
+              },
+              {
+                "relationship": "t.enqueue",
+                "caption": "The event is added through the same connection."
+              },
+              {
+                "relationship": "t.sql2",
+                "caption": "On return, both rows commit together — or neither does."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "accounts",
+      "type": "table",
+      "label": "accounts",
+      "technology": "PostgreSQL 16",
+      "group": "ledger",
+      "description": "Balances, one row per account."
+    },
+    {
+      "id": "outbox",
+      "type": "table",
+      "label": "outbox",
+      "technology": "PostgreSQL 16",
+      "group": "ledger",
+      "description": "Events waiting to be published."
+    },
+    {
+      "id": "transfers",
+      "type": "table",
+      "label": "transfers",
+      "technology": "PostgreSQL 16",
+      "group": "ledger",
+      "description": "Every transfer and its status."
+    },
+    {
+      "id": "relay",
+      "type": "worker",
+      "label": "Outbox Relay",
+      "technology": "Debezium",
+      "description": "Tails new outbox rows from the WAL and publishes them."
+    },
+    {
+      "id": "topic",
+      "type": "stream",
+      "label": "transfers.events",
+      "technology": "Kafka",
+      "description": "Transfer events, keyed by transfer id."
+    },
+    {
+      "id": "notify",
+      "type": "worker",
+      "label": "Notification Service",
+      "technology": "Go",
+      "description": "Tells the account holder their money left."
+    },
+    {
+      "id": "inbox",
+      "type": "table",
+      "label": "processed_messages",
+      "technology": "PostgreSQL 16",
+      "description": "Event ids already handled."
+    },
+    {
+      "id": "fcm",
+      "type": "external-system",
+      "label": "Firebase Cloud Messaging",
+      "technology": "Firebase",
+      "description": "Delivers push notifications to phones."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "request",
+      "from": "holder",
+      "to": "api",
+      "label": "Sends €250",
+      "response": "201 Transfer"
+    },
+    {
+      "id": "debit",
+      "from": "api",
+      "to": "accounts",
+      "label": "UPDATE balance",
+      "semantic": "writes"
+    },
+    {
+      "id": "record",
+      "from": "api",
+      "to": "transfers",
+      "label": "INSERT transfer",
+      "semantic": "writes"
+    },
+    {
+      "id": "intent",
+      "from": "api",
+      "to": "outbox",
+      "label": "INSERT event",
+      "semantic": "writes"
+    },
+    {
+      "id": "tail",
+      "from": "outbox",
+      "to": "relay",
+      "label": "New rows (WAL)",
+      "semantic": "reads"
+    },
+    {
+      "id": "publish",
+      "from": "relay",
+      "to": "topic",
+      "label": "TransferInitiated",
+      "semantic": "publishes",
+      "kind": "event"
+    },
+    {
+      "id": "deliver",
+      "from": "topic",
+      "to": "notify",
+      "semantic": "consumes",
+      "kind": "event"
+    },
+    {
+      "id": "dedupe",
+      "from": "notify",
+      "to": "inbox",
+      "label": "Records event id",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "push",
+      "from": "notify",
+      "to": "fcm",
+      "label": "Push",
+      "semantic": "http"
+    }
+  ],
+  "flows": [
+    {
+      "id": "send",
+      "title": "Send money",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "request",
+          "caption": "The holder sends €250 to a friend's IBAN."
+        },
+        {
+          "relationship": "debit",
+          "caption": "BEGIN: the balance is debited…",
+          "highlight": [
+            "ledger"
+          ]
+        },
+        {
+          "relationship": "record",
+          "caption": "…the transfer is recorded…"
+        },
+        {
+          "relationship": "intent",
+          "caption": "…and TransferInitiated is added to the outbox. COMMIT: all three, or none."
+        },
+        {
+          "relationship": "tail",
+          "caption": "After the commit, Debezium reads the new outbox row from the WAL."
+        },
+        {
+          "relationship": "publish",
+          "caption": "It publishes the event to Kafka, keyed by transfer id."
+        },
+        {
+          "relationship": "deliver",
+          "caption": "Notification Service receives it."
+        },
+        {
+          "relationship": "dedupe",
+          "caption": "It records the event id; it has not seen this one before."
+        },
+        {
+          "relationship": "push",
+          "caption": "The holder's phone shows \"€250 sent\"."
+        }
+      ]
+    },
+    {
+      "id": "duplicate",
+      "title": "Relay crashes mid-publish",
+      "color": "rose",
+      "variantOf": "send",
+      "steps": [
+        {
+          "relationship": "publish",
+          "caption": "Debezium publishes, then dies before saving its offset."
+        },
+        {
+          "relationship": "deliver",
+          "caption": "On restart it re-reads the row: the event arrives a second time."
+        },
+        {
+          "relationship": "dedupe",
+          "caption": "The id is already in processed_messages: skipped, no second push."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Transactional Outbox\nA bank transfer and its event commit together; a relay publishes the event afterwards.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "n.tx",
+      "kind": "code",
+      "about": "api",
+      "language": "sql",
+      "code": "BEGIN;\nUPDATE accounts SET balance = balance - 250.00\n WHERE id = 'acc_17' AND version = 42;\nINSERT INTO transfers (id, from_acc, to_iban, amount)\n VALUES ('tr_9c1', 'acc_17', 'DE89 3704…', 250.00);\nINSERT INTO outbox (id, aggregate_id, type, payload)\n VALUES ('ev_51f', 'tr_9c1', 'TransferInitiated',\n         '{\"amount\": \"250.00\", \"currency\": \"EUR\"}');\nCOMMIT;"
+    },
+    {
+      "id": "n.never",
+      "kind": "decision",
+      "about": "intent",
+      "text": "Never publish to Kafka inside the transaction: a broker outage would block transfers, and a rollback cannot unsend."
+    },
+    {
+      "id": "n.router",
+      "kind": "code",
+      "about": "relay",
+      "language": "yaml",
+      "code": "transforms: outbox\ntransforms.outbox.type: io.debezium.transforms.outbox.EventRouter\ntransforms.outbox.table.field.event.key: aggregate_id\ntransforms.outbox.route.topic.replacement: transfers.events"
+    },
+    {
+      "id": "n.once",
+      "kind": "warning",
+      "about": "deliver",
+      "text": "At least once, never exactly once: every consumer must deduplicate by event id."
+    },
+    {
+      "id": "n.grow",
+      "kind": "note",
+      "about": "outbox",
+      "text": "Delete rows once published, or in the same transaction: Debezium reads the INSERT from the WAL either way."
+    }
+  ],
+  "_openPoints": [
+    {
+      "id": "op.order",
+      "kind": "awaiting",
+      "context": "Do consumers need events per account in order? Then key by account id, not transfer id.",
+      "targets": [
+        {
+          "kind": "edge",
+          "id": "publish"
+        }
+      ]
+    }
+  ],
+  "_centers": {
+    "holder": [
+      0,
+      300
+    ],
+    "api": [
+      300,
+      300
+    ],
+    "accounts": [
+      640,
+      160
+    ],
+    "outbox": [
+      640,
+      330
+    ],
+    "transfers": [
+      640,
+      500
+    ],
+    "relay": [
+      980,
+      300
+    ],
+    "topic": [
+      1300,
+      334
+    ],
+    "notify": [
+      1620,
+      300
+    ],
+    "inbox": [
+      1620,
+      500
+    ],
+    "fcm": [
+      1960,
+      300
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {},
+  "_place": [
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "align": "start",
+      "width": 1100,
+      "height": 110
+    }
+  ]
+}

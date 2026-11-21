@@ -1,0 +1,411 @@
+{
+  "title": "Monolith",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "book",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "nodes": [
+    {
+      "id": "patient",
+      "type": "person",
+      "label": "Patient",
+      "description": "Books and moves appointments online."
+    },
+    {
+      "id": "staff",
+      "type": "user-group",
+      "label": "Front Desk",
+      "description": "Checks patients in and runs the day's schedule."
+    },
+    {
+      "id": "lb",
+      "type": "gateway",
+      "label": "Load Balancer",
+      "technology": "NGINX",
+      "description": "Terminates TLS and spreads requests over the app copies.",
+      "group": "system"
+    },
+    {
+      "id": "app",
+      "type": "service",
+      "label": "Clinic App",
+      "technology": "Django",
+      "replicas": 3,
+      "description": "Serves the booking site, staff screens and API from one codebase.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "c.lb",
+            "type": "gateway",
+            "label": "Load Balancer",
+            "technology": "NGINX"
+          },
+          {
+            "id": "c.views",
+            "type": "component",
+            "label": "Booking Views",
+            "technology": "Django",
+            "description": "Renders slots and takes the booking form."
+          },
+          {
+            "id": "c.scheduling",
+            "type": "module",
+            "label": "Scheduling",
+            "technology": "Python",
+            "description": "Finds free slots and books them."
+          },
+          {
+            "id": "c.patients",
+            "type": "module",
+            "label": "Patients",
+            "technology": "Python",
+            "description": "Keeps patient records and consent."
+          },
+          {
+            "id": "c.notify",
+            "type": "module",
+            "label": "Notifications",
+            "technology": "Python",
+            "description": "Sends confirmations and reminders."
+          },
+          {
+            "id": "c.db",
+            "type": "sql-database",
+            "label": "Clinic DB",
+            "technology": "PostgreSQL 16"
+          },
+          {
+            "id": "c.vonage",
+            "type": "external-system",
+            "label": "Vonage",
+            "technology": "Vonage"
+          }
+        ],
+        "relationships": [
+          {
+            "id": "c.route",
+            "from": "c.lb",
+            "to": "c.views",
+            "semantic": "routes"
+          },
+          {
+            "id": "c.book",
+            "from": "c.views",
+            "to": "c.scheduling",
+            "label": "book(slot, patient)",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.lookup",
+            "from": "c.scheduling",
+            "to": "c.patients",
+            "label": "get_patient(id)",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.save",
+            "from": "c.scheduling",
+            "to": "c.db",
+            "label": "INSERT appointment",
+            "semantic": "readsWrites"
+          },
+          {
+            "id": "c.confirm",
+            "from": "c.scheduling",
+            "to": "c.notify",
+            "label": "appointment_booked",
+            "semantic": "uses"
+          },
+          {
+            "id": "c.sms",
+            "from": "c.notify",
+            "to": "c.vonage",
+            "label": "Sends SMS",
+            "semantic": "http"
+          }
+        ],
+        "flows": [
+          {
+            "id": "c.flow",
+            "title": "Book an appointment, inside the app",
+            "color": "blue",
+            "steps": [
+              {
+                "relationship": "c.route",
+                "caption": "The request reaches the booking view, one function call from everything else."
+              },
+              {
+                "relationship": "c.book",
+                "caption": "The view hands the chosen slot to Scheduling."
+              },
+              {
+                "relationship": "c.lookup",
+                "caption": "Scheduling reads the patient through the Patients module, not its tables."
+              },
+              {
+                "relationship": "c.save",
+                "caption": "The slot is booked in the same transaction that checks it is free."
+              },
+              {
+                "relationship": "c.confirm",
+                "caption": "Scheduling tells Notifications, in process."
+              },
+              {
+                "relationship": "c.sms",
+                "caption": "Notifications sends the confirmation text."
+              }
+            ]
+          }
+        ]
+      },
+      "group": "system"
+    },
+    {
+      "id": "db",
+      "type": "sql-database",
+      "label": "Clinic DB",
+      "technology": "PostgreSQL 16",
+      "description": "Patients, clinicians, slots and appointments in one schema.",
+      "group": "system"
+    },
+    {
+      "id": "cache",
+      "type": "cache",
+      "label": "Session Cache",
+      "technology": "Redis 7",
+      "description": "Holds sessions and the next week's free slots.",
+      "group": "system"
+    },
+    {
+      "id": "sms-provider",
+      "type": "external-system",
+      "label": "Vonage",
+      "technology": "Vonage",
+      "description": "Delivers confirmation and reminder texts."
+    },
+    {
+      "id": "files",
+      "type": "object-storage",
+      "label": "Documents",
+      "technology": "MinIO",
+      "description": "Stores referral letters patients upload.",
+      "group": "system"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "visit",
+      "from": "patient",
+      "to": "lb",
+      "label": "Books a visit",
+      "semantic": "http"
+    },
+    {
+      "id": "desk",
+      "from": "staff",
+      "to": "lb",
+      "label": "Checks patients in",
+      "semantic": "http"
+    },
+    {
+      "id": "route",
+      "from": "lb",
+      "to": "app",
+      "semantic": "routes"
+    },
+    {
+      "id": "session",
+      "from": "app",
+      "to": "cache",
+      "label": "Sessions, free slots",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "sql",
+      "from": "app",
+      "to": "db",
+      "label": "Reads and books slots",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "sms",
+      "from": "app",
+      "to": "sms-provider",
+      "label": "Sends SMS",
+      "semantic": "http",
+      "response": "201 Queued"
+    },
+    {
+      "id": "upload",
+      "from": "app",
+      "to": "files",
+      "label": "Stores letters",
+      "semantic": "writes"
+    }
+  ],
+  "flows": [
+    {
+      "id": "book",
+      "title": "Book an appointment",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "visit",
+          "caption": "A patient picks a free slot on the booking site."
+        },
+        {
+          "relationship": "route",
+          "caption": "NGINX sends the request to any of the three identical app copies."
+        },
+        {
+          "relationship": "session",
+          "caption": "The app reads the session and the cached free slots from Redis."
+        },
+        {
+          "relationship": "sql",
+          "caption": "The slot is booked in one transaction; a slot taken meanwhile is refused."
+        },
+        {
+          "relationship": "sms",
+          "caption": "The app texts the patient a confirmation before answering."
+        }
+      ]
+    },
+    {
+      "id": "sms-down",
+      "title": "Vonage is down",
+      "color": "amber",
+      "variantOf": "book",
+      "steps": [
+        {
+          "relationship": "sms",
+          "caption": "The text times out after 3 s. The error is logged; the booking stands.",
+          "highlight": [
+            "db"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "checkin",
+      "title": "Check a patient in",
+      "color": "blue",
+      "steps": [
+        {
+          "relationship": "desk",
+          "caption": "The front desk opens today's schedule on the staff screens."
+        },
+        {
+          "relationship": "route",
+          "caption": "The same app, the same deploy, serves the staff screens."
+        },
+        {
+          "relationship": "sql",
+          "caption": "The appointment is marked arrived, in the same schema."
+        },
+        {
+          "relationship": "upload",
+          "caption": "A scanned referral letter is stored for the clinician."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Clinic booking\nA monolith: one deployable and one database for patients, staff and reminders.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "n.one",
+      "kind": "decision",
+      "about": "app",
+      "text": "One codebase, one deploy: the booking site, staff screens and API ship together, as three identical copies."
+    },
+    {
+      "id": "n.stateless",
+      "kind": "note",
+      "about": "session",
+      "text": "Sessions live in Redis, not in the process, so any copy can serve a patient's next request."
+    },
+    {
+      "id": "n.nginx",
+      "kind": "code",
+      "about": "route",
+      "language": "plaintext",
+      "code": "upstream clinic_app {\n    least_conn;\n    server app-1:8000;\n    server app-2:8000;\n    server app-3:8000;\n}"
+    },
+    {
+      "id": "n.sync",
+      "kind": "warning",
+      "about": "sms",
+      "text": "The text is sent inside the booking request: a slow Vonage makes booking slow. Move it to a job queue when that starts to hurt."
+    },
+    {
+      "id": "n.schema",
+      "kind": "question",
+      "about": "db",
+      "text": "One schema for everything. Which tables would each team own if this were ever split?"
+    }
+  ],
+  "groups": [
+    {
+      "id": "system",
+      "label": "Clinic system",
+      "kind": "system"
+    }
+  ],
+  "_centers": {
+    "patient": [
+      0,
+      -150
+    ],
+    "staff": [
+      0,
+      150
+    ],
+    "lb": [
+      380,
+      0
+    ],
+    "app": [
+      760,
+      0
+    ],
+    "cache": [
+      760,
+      -270
+    ],
+    "db": [
+      1160,
+      45
+    ],
+    "files": [
+      1160,
+      270
+    ],
+    "sms-provider": [
+      760,
+      540
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {},
+  "_place": [
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "width": 1000,
+      "height": 110
+    }
+  ]
+}

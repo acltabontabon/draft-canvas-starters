@@ -1,0 +1,1306 @@
+{
+  "title": "Ride-hailing platform",
+  "level": "container",
+  "layout": {
+    "primaryFlow": "f.request",
+    "direction": "right",
+    "allowDegraded": true
+  },
+  "groups": [
+    {
+      "id": "apps",
+      "label": "Apps",
+      "kind": "group"
+    },
+    {
+      "id": "cloud",
+      "label": "Swiftride cloud",
+      "kind": "system"
+    },
+    {
+      "id": "edge-d",
+      "label": "Edge",
+      "kind": "domain",
+      "parent": "cloud"
+    },
+    {
+      "id": "locs",
+      "label": "Driver locations",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "blue"
+    },
+    {
+      "id": "trips-d",
+      "label": "Trips",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "teal"
+    },
+    {
+      "id": "market",
+      "label": "Marketplace",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "violet"
+    },
+    {
+      "id": "pay-d",
+      "label": "Payments",
+      "kind": "domain",
+      "parent": "cloud",
+      "color": "amber"
+    },
+    {
+      "id": "notify-d",
+      "label": "Notifications",
+      "kind": "domain",
+      "parent": "cloud"
+    },
+    {
+      "id": "data-d",
+      "label": "Data",
+      "kind": "domain",
+      "parent": "cloud"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "drivers",
+      "type": "user-group",
+      "label": "Drivers",
+      "description": "Accept trips near them."
+    },
+    {
+      "id": "driver-app",
+      "type": "service",
+      "label": "Driver App",
+      "technology": "Kotlin",
+      "group": "apps",
+      "description": "Sends location and takes ride offers."
+    },
+    {
+      "id": "rider",
+      "type": "person",
+      "label": "Rider",
+      "description": "Needs a car, now."
+    },
+    {
+      "id": "rider-app",
+      "type": "service",
+      "label": "Rider App",
+      "technology": "Swift",
+      "group": "apps",
+      "description": "Books rides and tracks the car."
+    },
+    {
+      "id": "j-api",
+      "type": "junction",
+      "label": "API calls"
+    },
+    {
+      "id": "loc-gw",
+      "type": "gateway",
+      "label": "Location Gateway",
+      "technology": "EMQX",
+      "replicas": 8,
+      "group": "edge-d",
+      "description": "Holds a live MQTT connection per driver."
+    },
+    {
+      "id": "gateway",
+      "type": "gateway",
+      "label": "API Gateway",
+      "technology": "Envoy",
+      "replicas": 6,
+      "group": "edge-d",
+      "description": "Authenticates and routes every API call."
+    },
+    {
+      "id": "locations",
+      "type": "stream",
+      "label": "driver-locations",
+      "technology": "Kafka",
+      "group": "locs",
+      "description": "Every driver's position, every 4 seconds."
+    },
+    {
+      "id": "indexer",
+      "type": "worker",
+      "label": "Geo Indexer",
+      "technology": "Go",
+      "replicas": 12,
+      "group": "locs",
+      "description": "Files each driver under their H3 cell."
+    },
+    {
+      "id": "trips-db",
+      "type": "sql-database",
+      "label": "Trips DB",
+      "technology": "PostgreSQL",
+      "group": "trips-d",
+      "description": "Every trip and its state history."
+    },
+    {
+      "id": "trips",
+      "type": "api",
+      "label": "Trips",
+      "technology": "Spring Boot",
+      "replicas": 6,
+      "group": "trips-d",
+      "description": "Runs each trip's state machine, request to drop-off.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "t.app",
+            "type": "service",
+            "label": "Rider App",
+            "technology": "Swift"
+          },
+          {
+            "id": "t.api",
+            "type": "component",
+            "label": "Trip Controller",
+            "technology": "Spring",
+            "description": "Takes requests, accepts and cancels."
+          },
+          {
+            "id": "t.machine",
+            "type": "component",
+            "label": "Trip State Machine",
+            "description": "Allows only legal moves between states."
+          },
+          {
+            "id": "t.fare",
+            "type": "component",
+            "label": "Fare Quote",
+            "description": "Prices distance, time and surge up front."
+          },
+          {
+            "id": "t.repo",
+            "type": "adapter",
+            "label": "Trip Repository",
+            "technology": "Hibernate",
+            "description": "Saves the trip and its outbox row together."
+          },
+          {
+            "id": "t.db",
+            "type": "sql-database",
+            "label": "Trips DB",
+            "technology": "PostgreSQL"
+          },
+          {
+            "id": "t.relay",
+            "type": "worker",
+            "label": "Outbox Relay",
+            "technology": "Debezium",
+            "description": "Publishes committed state changes."
+          },
+          {
+            "id": "t.events",
+            "type": "topic",
+            "label": "trip-events",
+            "technology": "Kafka"
+          }
+        ],
+        "relationships": [
+          {
+            "id": "t.post",
+            "from": "t.app",
+            "to": "t.api",
+            "label": "POST /trips",
+            "semantic": "http",
+            "response": "201 Trip"
+          },
+          {
+            "id": "t.move",
+            "from": "t.api",
+            "to": "t.machine",
+            "label": "request(trip)",
+            "semantic": "uses"
+          },
+          {
+            "id": "t.price",
+            "from": "t.machine",
+            "to": "t.fare",
+            "label": "quote(route)",
+            "semantic": "uses"
+          },
+          {
+            "id": "t.save",
+            "from": "t.machine",
+            "to": "t.repo",
+            "label": "save(trip, event)",
+            "semantic": "uses"
+          },
+          {
+            "id": "t.sql",
+            "from": "t.repo",
+            "to": "t.db",
+            "label": "One transaction",
+            "semantic": "writes"
+          },
+          {
+            "id": "t.tail",
+            "from": "t.db",
+            "to": "t.relay",
+            "label": "Outbox rows",
+            "semantic": "reads"
+          },
+          {
+            "id": "t.pub",
+            "from": "t.relay",
+            "to": "t.events",
+            "label": "TripStateChanged",
+            "semantic": "publishes"
+          }
+        ],
+        "flows": [
+          {
+            "id": "t.flow",
+            "title": "Request a ride, inside Trips",
+            "color": "teal",
+            "steps": [
+              {
+                "relationship": "t.post",
+                "caption": "The rider app posts pickup, drop-off and payment method."
+              },
+              {
+                "relationship": "t.move",
+                "caption": "A new trip starts in REQUESTED."
+              },
+              {
+                "relationship": "t.price",
+                "caption": "The fare is fixed up front, surge included."
+              },
+              {
+                "relationship": "t.save",
+                "caption": "The trip and its event are saved together."
+              },
+              {
+                "relationship": "t.sql",
+                "caption": "State and outbox row commit in one transaction."
+              },
+              {
+                "relationship": "t.tail",
+                "caption": "Debezium reads the committed outbox row."
+              },
+              {
+                "relationship": "t.pub",
+                "caption": "TripStateChanged reaches everyone who listens."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "trip-events",
+      "type": "topic",
+      "label": "trip-events",
+      "technology": "Kafka",
+      "group": "trips-d",
+      "description": "Every change of every trip's state."
+    },
+    {
+      "id": "geo",
+      "type": "cache",
+      "label": "Geo Index",
+      "technology": "Redis",
+      "group": "market",
+      "description": "Drivers and surge per H3 cell."
+    },
+    {
+      "id": "surge",
+      "type": "worker",
+      "label": "Surge Pricing",
+      "technology": "Apache Flink",
+      "group": "market",
+      "description": "Compares open requests with free drivers per cell."
+    },
+    {
+      "id": "dispatch",
+      "type": "api",
+      "label": "Dispatch",
+      "technology": "Go",
+      "replicas": 10,
+      "group": "market",
+      "description": "Matches each trip with the best nearby driver.",
+      "inside": {
+        "level": "component",
+        "nodes": [
+          {
+            "id": "d.trips",
+            "type": "api",
+            "label": "Trips",
+            "technology": "Spring Boot"
+          },
+          {
+            "id": "d.handler",
+            "type": "component",
+            "label": "Match Handler",
+            "technology": "gRPC",
+            "description": "Takes one trip and returns one driver."
+          },
+          {
+            "id": "d.search",
+            "type": "component",
+            "label": "Candidate Search",
+            "description": "Widens the H3 ring until drivers turn up."
+          },
+          {
+            "id": "d.geo",
+            "type": "cache",
+            "label": "Geo Index",
+            "technology": "Redis"
+          },
+          {
+            "id": "d.scorer",
+            "type": "component",
+            "label": "ETA Scorer",
+            "description": "Ranks candidates by pickup time, not distance."
+          },
+          {
+            "id": "d.eta",
+            "type": "api",
+            "label": "ETA Model",
+            "technology": "PyTorch"
+          },
+          {
+            "id": "d.sequencer",
+            "type": "component",
+            "label": "Offer Sequencer",
+            "description": "Offers the trip to one driver at a time."
+          },
+          {
+            "id": "d.timer",
+            "type": "component",
+            "label": "Acceptance Timer",
+            "description": "Moves on after 15 seconds without an answer."
+          }
+        ],
+        "relationships": [
+          {
+            "id": "d.find",
+            "from": "d.trips",
+            "to": "d.handler",
+            "label": "FindDriver",
+            "semantic": "grpc",
+            "response": "driver"
+          },
+          {
+            "id": "d.cand",
+            "from": "d.handler",
+            "to": "d.search",
+            "label": "candidates(pickup)",
+            "semantic": "uses"
+          },
+          {
+            "id": "d.ring",
+            "from": "d.search",
+            "to": "d.geo",
+            "label": "Drivers in k-ring",
+            "semantic": "reads",
+            "condition": "k = 2, then 4"
+          },
+          {
+            "id": "d.rank",
+            "from": "d.handler",
+            "to": "d.scorer",
+            "label": "rank(candidates)",
+            "semantic": "uses"
+          },
+          {
+            "id": "d.etas",
+            "from": "d.scorer",
+            "to": "d.eta",
+            "label": "ETA batch",
+            "semantic": "http",
+            "response": true
+          },
+          {
+            "id": "d.offer",
+            "from": "d.handler",
+            "to": "d.sequencer",
+            "label": "offer(ranked)",
+            "semantic": "uses"
+          },
+          {
+            "id": "d.wait",
+            "from": "d.sequencer",
+            "to": "d.timer",
+            "label": "start(15 s)",
+            "semantic": "uses"
+          }
+        ],
+        "flows": [
+          {
+            "id": "d.flow",
+            "title": "Match a driver, inside Dispatch",
+            "color": "teal",
+            "steps": [
+              {
+                "relationship": "d.find",
+                "caption": "Trips asks for one driver for this pickup."
+              },
+              {
+                "relationship": "d.cand",
+                "caption": "The search starts two H3 rings out, about 2 km."
+              },
+              {
+                "relationship": "d.ring",
+                "caption": "No drivers? It widens to four rings before giving up."
+              },
+              {
+                "relationship": "d.rank",
+                "caption": "Candidates are ranked by time to pickup."
+              },
+              {
+                "relationship": "d.etas",
+                "caption": "The ETA model scores all of them in one call."
+              },
+              {
+                "relationship": "d.offer",
+                "caption": "The best driver gets the offer first."
+              },
+              {
+                "relationship": "d.wait",
+                "caption": "Fifteen seconds to accept, then the next driver."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "eta",
+      "type": "api",
+      "label": "ETA Model",
+      "technology": "PyTorch",
+      "replicas": 4,
+      "group": "market",
+      "description": "Predicts pickup and trip times from live traffic."
+    },
+    {
+      "id": "maps",
+      "type": "external-system",
+      "label": "Maps & Routing",
+      "technology": "Mapbox",
+      "description": "Roads, routes and traffic."
+    },
+    {
+      "id": "payments",
+      "type": "api",
+      "label": "Payments",
+      "technology": "Spring Boot",
+      "group": "pay-d",
+      "description": "Holds fares, charges riders and pays drivers."
+    },
+    {
+      "id": "payouts",
+      "type": "scheduler",
+      "label": "Driver Payouts",
+      "technology": "Apache Airflow",
+      "group": "pay-d",
+      "description": "Pays each driver's week of earnings."
+    },
+    {
+      "id": "ledger",
+      "type": "sql-database",
+      "label": "Ledger",
+      "technology": "CockroachDB",
+      "group": "pay-d",
+      "description": "Every cent, double-entry."
+    },
+    {
+      "id": "adyen",
+      "type": "external-system",
+      "label": "Card & Payout Provider",
+      "technology": "Adyen",
+      "description": "Holds and charges cards, sends bank payouts."
+    },
+    {
+      "id": "notify",
+      "type": "worker",
+      "label": "Notifier",
+      "technology": "Node.js",
+      "group": "notify-d",
+      "description": "Turns trip events into pushes and texts."
+    },
+    {
+      "id": "fcm",
+      "type": "external-system",
+      "label": "Push Service",
+      "technology": "Firebase",
+      "description": "Delivers push notifications to phones."
+    },
+    {
+      "id": "warehouse",
+      "type": "table",
+      "label": "Trips Warehouse",
+      "technology": "Snowflake",
+      "group": "data-d",
+      "description": "Every trip, fare and payout, for finance."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "online",
+      "from": "drivers",
+      "to": "driver-app",
+      "label": "Go online"
+    },
+    {
+      "id": "ping",
+      "from": "driver-app",
+      "to": "loc-gw",
+      "label": "Location (MQTT)"
+    },
+    {
+      "id": "driver-api",
+      "from": "driver-app",
+      "to": "j-api"
+    },
+    {
+      "id": "request",
+      "from": "rider",
+      "to": "rider-app",
+      "label": "Requests a ride"
+    },
+    {
+      "id": "rider-api",
+      "from": "rider-app",
+      "to": "j-api"
+    },
+    {
+      "id": "api",
+      "from": "j-api",
+      "to": "gateway",
+      "label": "HTTPS"
+    },
+    {
+      "id": "publish-loc",
+      "from": "loc-gw",
+      "to": "locations",
+      "label": "DriverLocation",
+      "semantic": "publishes"
+    },
+    {
+      "id": "index",
+      "from": "locations",
+      "to": "indexer",
+      "semantic": "consumes"
+    },
+    {
+      "id": "cell",
+      "from": "indexer",
+      "to": "geo",
+      "label": "Driver per cell",
+      "semantic": "writes"
+    },
+    {
+      "id": "r-trips",
+      "from": "gateway",
+      "to": "trips",
+      "label": "/trips",
+      "semantic": "routes"
+    },
+    {
+      "id": "store",
+      "from": "trips",
+      "to": "trips-db",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "match",
+      "from": "trips",
+      "to": "dispatch",
+      "label": "FindDriver",
+      "semantic": "grpc",
+      "response": "matched"
+    },
+    {
+      "id": "nearby",
+      "from": "dispatch",
+      "to": "geo",
+      "label": "Drivers near pickup",
+      "semantic": "reads"
+    },
+    {
+      "id": "supply",
+      "from": "surge",
+      "to": "geo",
+      "label": "Supply in, surge out",
+      "semantic": "readsWrites"
+    },
+    {
+      "id": "eta-call",
+      "from": "dispatch",
+      "to": "eta",
+      "label": "ETA per driver",
+      "semantic": "http",
+      "response": true
+    },
+    {
+      "id": "routes",
+      "from": "eta",
+      "to": "maps",
+      "label": "Routes and traffic",
+      "semantic": "http"
+    },
+    {
+      "id": "hold",
+      "from": "trips",
+      "to": "payments",
+      "label": "HoldFare",
+      "semantic": "grpc",
+      "response": "held"
+    },
+    {
+      "id": "release",
+      "from": "trips",
+      "to": "payments",
+      "label": "ReleaseHold",
+      "semantic": "compensates",
+      "compensationFor": "hold",
+      "compensationName": "Release card hold",
+      "compensationProtocol": "grpc",
+      "compensationDescription": "When the rider cancels before pickup, the fare hold is released."
+    },
+    {
+      "id": "card",
+      "from": "payments",
+      "to": "adyen",
+      "label": "Holds, charges, payouts",
+      "semantic": "http"
+    },
+    {
+      "id": "book",
+      "from": "payments",
+      "to": "ledger",
+      "label": "Double entries",
+      "semantic": "writes"
+    },
+    {
+      "id": "state",
+      "from": "trips",
+      "to": "trip-events",
+      "label": "TripStateChanged",
+      "semantic": "publishes"
+    },
+    {
+      "id": "push",
+      "from": "trip-events",
+      "to": "notify",
+      "semantic": "deliversTo"
+    },
+    {
+      "id": "send",
+      "from": "notify",
+      "to": "fcm",
+      "label": "Push",
+      "semantic": "http"
+    },
+    {
+      "id": "offer",
+      "from": "fcm",
+      "to": "driver-app",
+      "label": "Ride offer"
+    },
+    {
+      "id": "land",
+      "from": "trip-events",
+      "to": "warehouse",
+      "label": "Every trip"
+    },
+    {
+      "id": "earnings",
+      "from": "warehouse",
+      "to": "payouts",
+      "label": "Week of earnings",
+      "semantic": "reads"
+    },
+    {
+      "id": "pay",
+      "from": "payouts",
+      "to": "payments",
+      "label": "Pay drivers",
+      "semantic": "triggers"
+    }
+  ],
+  "flows": [
+    {
+      "id": "f.request",
+      "title": "Request a ride",
+      "color": "teal",
+      "steps": [
+        {
+          "relationship": "request",
+          "caption": "A rider sets a pickup and taps Request."
+        },
+        {
+          "relationship": "rider-api",
+          "caption": "The app posts the trip."
+        },
+        {
+          "relationship": "api",
+          "caption": "The gateway checks the rider's session."
+        },
+        {
+          "relationship": "r-trips",
+          "caption": "Trips creates the trip in REQUESTED, with a fixed fare."
+        },
+        {
+          "relationship": "hold",
+          "caption": "The fare is held on the rider's card first."
+        },
+        {
+          "relationship": "match",
+          "caption": "Trips asks Dispatch for a driver."
+        },
+        {
+          "relationship": "nearby",
+          "caption": "Dispatch finds free drivers within 2 km of the pickup."
+        },
+        {
+          "relationship": "eta-call",
+          "caption": "They are ranked by how soon each can reach the rider."
+        },
+        {
+          "relationship": "routes",
+          "caption": "ETAs use live traffic on real roads."
+        },
+        {
+          "relationship": "state",
+          "caption": "The trip moves to OFFERED."
+        },
+        {
+          "relationship": "push",
+          "caption": "The notifier picks up the change."
+        },
+        {
+          "relationship": "send",
+          "caption": "A push goes to the best driver's phone."
+        },
+        {
+          "relationship": "offer",
+          "caption": "The driver has 15 seconds to accept."
+        }
+      ]
+    },
+    {
+      "id": "f.none",
+      "title": "No driver nearby",
+      "color": "amber",
+      "variantOf": "f.request",
+      "steps": [
+        {
+          "relationship": "match",
+          "caption": "Rush hour: every driver near the pickup is busy."
+        },
+        {
+          "relationship": "nearby",
+          "caption": "Nobody within 2 km, so the search widens to 5 km.",
+          "highlight": [
+            "geo"
+          ]
+        },
+        {
+          "relationship": "supply",
+          "caption": "Requests outnumber drivers here, so surge rises and draws drivers in."
+        }
+      ]
+    },
+    {
+      "id": "f.cancel",
+      "title": "Rider cancels",
+      "color": "rose",
+      "variantOf": "f.request",
+      "steps": [
+        {
+          "relationship": "r-trips",
+          "caption": "The rider cancels before the driver arrives."
+        },
+        {
+          "relationship": "release",
+          "caption": "Trips releases the card hold: nothing is charged."
+        },
+        {
+          "relationship": "state",
+          "caption": "The trip moves to CANCELLED."
+        },
+        {
+          "relationship": "push",
+          "caption": "The driver is told and goes back to being free."
+        }
+      ]
+    },
+    {
+      "id": "f.locate",
+      "title": "Drivers report location",
+      "color": "blue",
+      "steps": [
+        {
+          "relationship": "online",
+          "caption": "A driver goes online."
+        },
+        {
+          "relationship": "ping",
+          "caption": "Every 4 seconds the app sends a position over MQTT."
+        },
+        {
+          "relationship": "publish-loc",
+          "caption": "The gateway publishes it, keyed by driver."
+        },
+        {
+          "relationship": "index",
+          "caption": "Twelve indexers share the partitions."
+        },
+        {
+          "relationship": "cell",
+          "caption": "The driver moves to their new H3 cell."
+        }
+      ]
+    },
+    {
+      "id": "f.surge",
+      "title": "Surge recalculates",
+      "color": "violet",
+      "steps": [
+        {
+          "relationship": "supply",
+          "caption": "Every minute, Flink counts requests and free drivers per cell."
+        },
+        {
+          "relationship": "nearby",
+          "caption": "The next quote in that cell reads the new multiplier."
+        }
+      ]
+    },
+    {
+      "id": "f.payout",
+      "title": "Pay the drivers",
+      "color": "green",
+      "steps": [
+        {
+          "relationship": "land",
+          "caption": "Every completed trip lands in the warehouse."
+        },
+        {
+          "relationship": "earnings",
+          "caption": "Each Monday, a week of earnings is summed per driver."
+        },
+        {
+          "relationship": "pay",
+          "caption": "Payments is asked to pay each driver."
+        },
+        {
+          "relationship": "book",
+          "caption": "The ledger records each payout before money moves."
+        },
+        {
+          "relationship": "card",
+          "caption": "The provider sends the bank transfers."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "title",
+      "kind": "label",
+      "attach": false,
+      "text": "# Swiftride\nA ride-hailing platform: **1M** drivers online, **30M** trips a day, a car in **4 minutes**.",
+      "style": {
+        "role": "title"
+      }
+    },
+    {
+      "id": "surge-card",
+      "kind": "label",
+      "about": "surge",
+      "attach": false,
+      "text": "### Surge per H3 cell\n| Requests ÷ drivers | Surge |\n| --- | ---: |\n| under 1.0 | 1.0× |\n| 1.0 – 1.5 | 1.3× |\n| 1.5 – 2.5 | 1.8× |\n| over 2.5 | 2.5× |\n\n> [!WARNING]\n> Capped at 1.0× during declared emergencies.",
+      "style": {
+        "background": "card",
+        "color": "violet"
+      }
+    },
+    {
+      "id": "hand",
+      "kind": "label",
+      "about": "locations",
+      "attach": false,
+      "text": "250k positions a second",
+      "style": {
+        "font": "hand",
+        "color": "blue"
+      }
+    },
+    {
+      "id": "n.dispatch",
+      "kind": "decision",
+      "about": "dispatch",
+      "text": "One offer, one driver, 15 seconds. Offering a trip to several drivers at once makes them race, and most of them lose."
+    },
+    {
+      "id": "n.h3",
+      "kind": "code",
+      "about": "geo",
+      "language": "plaintext",
+      "code": "cell  = h3.latlng_to_cell(lat, lng, 9)\nring  = h3.grid_disk(cell, 2)      # ~2 km\nfree  = redis.sunion(\n          *[f\"free:{c}\" for c in ring])\nsurge = redis.get(f\"surge:{cell}\")"
+    },
+    {
+      "id": "n.loc",
+      "kind": "code",
+      "about": "publish-loc",
+      "language": "json",
+      "code": "{\n  \"driver\": \"d_51c0\",\n  \"lat\": -23.5614,\n  \"lng\": -46.6559,\n  \"heading\": 270,\n  \"speedKmh\": 34,\n  \"status\": \"FREE\",\n  \"at\": \"2026-11-21T08:14:03Z\"\n}"
+    },
+    {
+      "id": "n.states",
+      "kind": "code",
+      "about": "trips",
+      "language": "yaml",
+      "code": "states: [REQUESTED, OFFERED, ACCEPTED,\n         ARRIVED, ON_TRIP, COMPLETED, CANCELLED]\ntransitions:\n  REQUESTED: [OFFERED, CANCELLED]\n  OFFERED:   [ACCEPTED, REQUESTED, CANCELLED]\n  ACCEPTED:  [ARRIVED, CANCELLED]\n  ARRIVED:   [ON_TRIP, CANCELLED]\n  ON_TRIP:   [COMPLETED]"
+    },
+    {
+      "id": "n.lossy",
+      "kind": "warning",
+      "about": "ping",
+      "text": "Locations are lossy on purpose: a dropped position is replaced 4 seconds later. Never retry one, and never block a driver on it."
+    },
+    {
+      "id": "n.release",
+      "kind": "warning",
+      "about": "release",
+      "text": "A missed release leaves a pending charge on the rider's card for days. Releases retry until the provider confirms."
+    },
+    {
+      "id": "n.ledger",
+      "kind": "decision",
+      "about": "payouts",
+      "text": "Drivers are paid from the ledger, not from provider events: the ledger is the one source of truth for money."
+    },
+    {
+      "id": "n.sched",
+      "kind": "question",
+      "about": "surge",
+      "text": "Should surge apply to rides booked a day ahead?"
+    }
+  ],
+  "sequences": [
+    {
+      "id": "seq-request",
+      "title": "Request a ride, message by message",
+      "mermaid": "sequenceDiagram\n  participant ra as Rider App\n  participant tr as Trips\n  participant pay as Payments\n  participant ds as Dispatch\n  participant da as Driver App\n  ra->>+tr: POST /trips\n  tr->>+pay: HoldFare\n  pay-->>-tr: held\n  tr->>+ds: FindDriver\n  loop until a driver accepts\n    ds->>da: Ride offer, 15 s\n    alt accepts\n      da-->>ds: Accept\n    else declines or times out\n      da-->>ds: Decline\n      Note over ds: offer the next nearest driver\n    end\n  end\n  ds-->>-tr: matched\n  tr-->>-ra: 201 Driver on the way",
+      "links": {
+        "ra": "rider-app",
+        "tr": "trips",
+        "pay": "payments",
+        "ds": "dispatch",
+        "da": "driver-app"
+      }
+    }
+  ],
+  "_openPoints": [
+    {
+      "id": "op.window",
+      "kind": "tentative",
+      "context": "15 seconds to accept is a guess. Driver research suggests 20 in busy city centres.",
+      "targets": [
+        {
+          "kind": "node",
+          "id": "dispatch"
+        }
+      ]
+    },
+    {
+      "id": "op.tips",
+      "kind": "awaiting",
+      "context": "Tips after the trip: hold a larger amount, or charge the tip separately? Finance to decide.",
+      "targets": [
+        {
+          "kind": "edge",
+          "id": "hold"
+        }
+      ]
+    }
+  ],
+  "_centers": {
+    "loc-gw": [
+      800,
+      150
+    ],
+    "locations": [
+      1120,
+      150
+    ],
+    "indexer": [
+      1460,
+      150
+    ],
+    "geo": [
+      1800,
+      150
+    ],
+    "surge": [
+      2140,
+      150
+    ],
+    "drivers": [
+      70,
+      440
+    ],
+    "driver-app": [
+      330,
+      440
+    ],
+    "trips-db": [
+      1120,
+      440
+    ],
+    "j-api": [
+      560,
+      720
+    ],
+    "gateway": [
+      800,
+      720
+    ],
+    "trips": [
+      1120,
+      720
+    ],
+    "dispatch": [
+      1800,
+      720
+    ],
+    "eta": [
+      2140,
+      720
+    ],
+    "maps": [
+      2480,
+      720
+    ],
+    "rider": [
+      70,
+      1000
+    ],
+    "rider-app": [
+      330,
+      1000
+    ],
+    "trip-events": [
+      1120,
+      1000
+    ],
+    "payments": [
+      1460,
+      1000
+    ],
+    "adyen": [
+      2480,
+      1000
+    ],
+    "notify": [
+      800,
+      1250
+    ],
+    "fcm": [
+      560,
+      1250
+    ],
+    "warehouse": [
+      1120,
+      1250
+    ],
+    "payouts": [
+      1460,
+      1250
+    ],
+    "ledger": [
+      1800,
+      1250
+    ]
+  },
+  "_clearRoutes": true,
+  "_fitGroups": {
+    "header": 80
+  },
+  "_patch": {
+    "nodes": {
+      "surge-card": {
+        "parentId": null
+      },
+      "hand": {
+        "parentId": "locs"
+      },
+      "dispatch": {
+        "held": true
+      },
+      "j-api": {
+        "text": null,
+        "textOrigin": null
+      }
+    },
+    "edges": {
+      "offer": {
+        "portal": true
+      },
+      "ping": {
+        "cadence": "Every 4 s",
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.25
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "supply": {
+        "cadence": "Every 60 s"
+      },
+      "land": {
+        "cadence": "Streaming"
+      },
+      "earnings": {
+        "cadence": "Weekly, Monday"
+      },
+      "hold": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.8
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.62
+        }
+      },
+      "release": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.97
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.85
+        }
+      },
+      "push": {
+        "sourceAnchor": {
+          "side": "left",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "driver-api": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.75
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "rider-api": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        }
+      },
+      "t.tail": {
+        "sourceAnchor": null,
+        "targetAnchor": null,
+        "waypoints": null
+      }
+    }
+  },
+  "_place": [
+    {
+      "id": "hand",
+      "of": [
+        "indexer"
+      ],
+      "side": "above",
+      "gap": 28,
+      "align": "center",
+      "early": true
+    },
+    {
+      "id": "surge-card",
+      "of": [
+        "geo",
+        "surge"
+      ],
+      "side": "below",
+      "gap": 60,
+      "align": "center",
+      "width": 290
+    },
+    {
+      "id": "seq-request",
+      "of": [
+        "cloud"
+      ],
+      "side": "below",
+      "gap": 100,
+      "align": "center"
+    },
+    {
+      "id": "title",
+      "of": "@all",
+      "side": "above",
+      "gap": 48,
+      "width": 1200,
+      "height": 110,
+      "exclude": [
+        "seq-request"
+      ]
+    }
+  ],
+  "_ink": [
+    {
+      "shape": "ellipse",
+      "of": [
+        "dispatch"
+      ],
+      "pad": 14,
+      "color": "red",
+      "size": 3
+    },
+    {
+      "shape": "underline",
+      "of": [
+        "hand"
+      ],
+      "tool": "highlighter",
+      "color": "yellow",
+      "size": 14,
+      "pad": -14
+    }
+  ],
+  "_alignRows": [
+    [
+      "notify-d",
+      "data-d"
+    ]
+  ],
+  "_alignCols": [
+    [
+      "trips-d",
+      "data-d"
+    ]
+  ]
+}
