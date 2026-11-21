@@ -30,6 +30,6 @@
     "Two models to keep in step as the domain changes, and projections to rebuild.",
     "An event a projection can't apply leaves that read model stale until someone acts."
   ],
-  "featured": true,
+  "featured": false,
   "order": 70
 }

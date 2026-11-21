@@ -7,6 +7,12 @@ Every starter is a worked example in a realistic, fictional system: named servic
 technologies, a main flow and its failure path to present, notes on the decisions and risks, and a
 drill-down view where the internals are the point. Rename the parts and keep the shape.
 
+Two whole systems show everything Draft Canvas can draw on one canvas: a
+[video streaming platform](starters/examples/video-streaming/) and a
+[music streaming service](starters/examples/music-streaming/). Each has nested boundaries,
+junctions, styled text, sketch ink, portals, native sequence diagrams, drill-down views, and a
+flow for each journey through it.
+
 Draft Canvas lists these under **Starters**, but only after you choose to load them. Loading
 reads this repository from GitHub; nothing about your own diagrams is sent. When a starter here
 changes, the app marks it **Updated** the next time you refresh. Diagrams you already made from
@@ -48,6 +54,8 @@ it stay as they are.
 
 | Starter | Shows |
 | --- | --- |
+| [Video streaming platform](starters/examples/video-streaming/) | A whole streaming service: devices, edge, playback, discovery, data and an ISP-hosted video edge |
+| [Music streaming service](starters/examples/music-streaming/) | A whole music service: playback from a CDN, an AI DJ, weekly mixes, royalties and artist releases |
 | [Order processing](starters/examples/order-processing/) | A shop takes the payment, queues fulfilment, and parks orders the warehouse keeps refusing |
 
 <!-- gallery:end -->

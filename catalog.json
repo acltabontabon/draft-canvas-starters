@@ -198,7 +198,7 @@
         "Ports drift into thin wrappers if they mirror one adapter or one vendor's API.",
         "Arrows here read at runtime (port, then the adapter behind it); source dependencies point the other way, inward."
       ],
-      "featured": true,
+      "featured": false,
       "order": 50,
       "path": "starters/architectures/hexagonal/hexagonal.draftcanvas",
       "sha256": "492c9d4ced04d17c841256a73fce034955de072661e37d2d3ed252c464f80699",
@@ -279,7 +279,7 @@
         "Two models to keep in step as the domain changes, and projections to rebuild.",
         "An event a projection can't apply leaves that read model stale until someone acts."
       ],
-      "featured": true,
+      "featured": false,
       "order": 70,
       "path": "starters/architectures/cqrs/cqrs.draftcanvas",
       "sha256": "def736b31494b884eb8ed9d0130a274919557b9c5e55b989c78ff83f479d90fe",
@@ -537,6 +537,89 @@
       "sha256": "498a4671d0b18b4ff6756ec1495e073238fbfaeae13d86cebe078445a47f6a0f",
       "bytes": 17506,
       "formatVersion": 28,
+      "updated": "2026-11-21"
+    },
+    {
+      "id": "video-streaming",
+      "name": "Video streaming platform",
+      "category": "example",
+      "summary": "A whole streaming service: devices, edge, playback, discovery, data and an ISP-hosted video edge",
+      "aliases": [
+        "video streaming",
+        "streaming service",
+        "video on demand",
+        "vod",
+        "netflix-style architecture",
+        "ott platform",
+        "cdn",
+        "drm",
+        "encoding pipeline"
+      ],
+      "tags": [
+        "example",
+        "system design",
+        "streaming",
+        "cdn",
+        "recommendations",
+        "kafka"
+      ],
+      "useWhen": [
+        "Seeing every Draft Canvas feature at work in one realistic system before drawing your own.",
+        "Explaining how video reaches screens: playback decisions in the cloud, bytes from the edge.",
+        "Starting a system-design discussion about a large consumer platform."
+      ],
+      "watchOutFor": [
+        "It is a big picture on purpose: present it flow by flow rather than all at once.",
+        "Scale numbers are illustrative; replace them with your own before you reason from them.",
+        "Three connectors are portals and the file is format 29, so it needs a current Draft Canvas."
+      ],
+      "featured": true,
+      "order": 100,
+      "path": "starters/examples/video-streaming/video-streaming.draftcanvas",
+      "sha256": "2fc8cbf4398404eb29514bab38311fcb6eecbbe13dba427e390c5d18784eaa26",
+      "bytes": 47793,
+      "formatVersion": 29,
+      "updated": "2026-11-21"
+    },
+    {
+      "id": "music-streaming",
+      "name": "Music streaming service",
+      "category": "example",
+      "summary": "A whole music service: playback from a CDN, an AI DJ, weekly mixes, royalties and artist releases",
+      "aliases": [
+        "music streaming",
+        "audio streaming",
+        "spotify-style architecture",
+        "playlists",
+        "royalties",
+        "ai dj",
+        "recommendations",
+        "podcast platform"
+      ],
+      "tags": [
+        "example",
+        "system design",
+        "streaming",
+        "ai agent",
+        "recommendations",
+        "analytics"
+      ],
+      "useWhen": [
+        "Seeing how an AI agent, batch jobs and a live API share one realistic system.",
+        "Explaining how one play becomes a song, a recommendation and a royalty payment.",
+        "Starting a system-design discussion about a consumer platform with a data business."
+      ],
+      "watchOutFor": [
+        "It is a big picture on purpose: present it flow by flow rather than all at once.",
+        "Scale numbers are illustrative; replace them with your own before you reason from them.",
+        "Two connectors are portals and the file is format 29, so it needs a current Draft Canvas."
+      ],
+      "featured": true,
+      "order": 110,
+      "path": "starters/examples/music-streaming/music-streaming.draftcanvas",
+      "sha256": "960781b5be0a40562ac19d163026987c1f8c12022559cce657e39261200a0be1",
+      "bytes": 45091,
+      "formatVersion": 29,
       "updated": "2026-11-21"
     },
     {

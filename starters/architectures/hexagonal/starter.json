@@ -31,6 +31,6 @@
     "Ports drift into thin wrappers if they mirror one adapter or one vendor's API.",
     "Arrows here read at runtime (port, then the adapter behind it); source dependencies point the other way, inward."
   ],
-  "featured": true,
+  "featured": false,
   "order": 50
 }
