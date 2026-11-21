@@ -11,10 +11,10 @@
     {
       "id": "shop",
       "type": "group",
-      "x": 225,
-      "y": 0,
-      "width": 1399,
-      "height": 434,
+      "x": 250,
+      "y": 224,
+      "width": 1250,
+      "height": 440,
       "z": -1,
       "text": "Shop Platform",
       "textOrigin": "explicit",
@@ -24,7 +24,7 @@
       "id": "shopper",
       "type": "actor",
       "x": 0,
-      "y": 141.5,
+      "y": 271,
       "width": 120,
       "height": 118,
       "z": 0,
@@ -37,8 +37,8 @@
     {
       "id": "web",
       "type": "service",
-      "x": 261,
-      "y": 159,
+      "x": 282,
+      "y": 289,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -52,8 +52,8 @@
     {
       "id": "api",
       "type": "service",
-      "x": 552,
-      "y": 146,
+      "x": 612,
+      "y": 276,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -69,8 +69,8 @@
           {
             "id": "c.web",
             "type": "service",
-            "x": 222,
-            "y": 0,
+            "x": 0,
+            "y": 199,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -82,8 +82,8 @@
           {
             "id": "c.controller",
             "type": "component",
-            "x": 234,
-            "y": 162,
+            "x": 291,
+            "y": 193,
             "width": 152,
             "height": 80,
             "z": 0,
@@ -96,8 +96,8 @@
           {
             "id": "c.place",
             "type": "component",
-            "x": 234,
-            "y": 336,
+            "x": 575,
+            "y": 185,
             "width": 152,
             "height": 95,
             "z": 0,
@@ -109,8 +109,8 @@
           {
             "id": "c.payments",
             "type": "component",
-            "x": 12,
-            "y": 569,
+            "x": 1115,
+            "y": 0,
             "width": 152,
             "height": 119,
             "z": 0,
@@ -123,8 +123,8 @@
           {
             "id": "c.repo",
             "type": "component",
-            "x": 234,
-            "y": 569,
+            "x": 1115,
+            "y": 173,
             "width": 152,
             "height": 119,
             "z": 0,
@@ -137,8 +137,8 @@
           {
             "id": "c.publisher",
             "type": "component",
-            "x": 456,
-            "y": 569,
+            "x": 1115,
+            "y": 346,
             "width": 152,
             "height": 119,
             "z": 0,
@@ -151,8 +151,8 @@
           {
             "id": "c.stripe",
             "type": "service",
-            "x": 0,
-            "y": 805,
+            "x": 1429,
+            "y": 25.5,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -164,8 +164,8 @@
           {
             "id": "c.db",
             "type": "database",
-            "x": 250,
-            "y": 782,
+            "x": 1457,
+            "y": 193.63636363636363,
             "width": 120,
             "height": 114,
             "z": 0,
@@ -177,8 +177,8 @@
           {
             "id": "c.queue",
             "type": "queue",
-            "x": 462,
-            "y": 803,
+            "x": 1447,
+            "y": 388.75,
             "width": 140,
             "height": 72,
             "z": 0,
@@ -334,8 +334,8 @@
     {
       "id": "stripe",
       "type": "service",
-      "x": 552,
-      "y": 569,
+      "x": 612,
+      "y": -87,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -348,8 +348,8 @@
     {
       "id": "db",
       "type": "database",
-      "x": 866,
-      "y": 119.25,
+      "x": 640,
+      "y": 489,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -363,8 +363,8 @@
     {
       "id": "queue",
       "type": "queue",
-      "x": 856,
-      "y": 294,
+      "x": 970,
+      "y": 278,
       "width": 140,
       "height": 104,
       "z": 0,
@@ -388,8 +388,8 @@
     {
       "id": "worker",
       "type": "service",
-      "x": 1119,
-      "y": 256.25,
+      "x": 1292,
+      "y": 276,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -404,8 +404,8 @@
     {
       "id": "shipments",
       "type": "database",
-      "x": 1468,
-      "y": 229.5,
+      "x": 1320,
+      "y": 489,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -419,8 +419,8 @@
     {
       "id": "dlq",
       "type": "queue",
-      "x": 1137,
-      "y": 56,
+      "x": 970,
+      "y": 508,
       "width": 140,
       "height": 104,
       "z": 0,
@@ -435,8 +435,8 @@
     {
       "id": "wms",
       "type": "service",
-      "x": 1119,
-      "y": 569,
+      "x": 1292,
+      "y": -87,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -444,6 +444,18 @@
       "description": "Picks, packs and ships parcels.",
       "textOrigin": "explicit",
       "serviceKind": "external"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "x": 0,
+      "y": -245,
+      "width": 1200,
+      "height": 110,
+      "z": 0,
+      "text": "# Order processing\nA shop takes the payment, queues fulfilment, and parks what the warehouse refuses.",
+      "textOrigin": "explicit",
+      "textRole": "title"
     }
   ],
   "edges": [
@@ -499,14 +511,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "readsWrites",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -529,14 +533,6 @@
       "semantic": "command",
       "kind": "async",
       "async": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -558,14 +554,6 @@
       "semantic": "consumes",
       "kind": "async",
       "async": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -584,7 +572,7 @@
       "id": "mark",
       "source": "worker",
       "target": "shipments",
-      "label": "Records tracking number",
+      "label": "Tracking number",
       "directed": true,
       "routing": "smoothstep",
       "semantic": "writes",
@@ -599,14 +587,6 @@
       "semantic": "deadLetters",
       "kind": "failure",
       "async": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit",
       "deliveryAttempts": 5
     }

@@ -576,8 +576,8 @@
       "featured": true,
       "order": 100,
       "path": "starters/examples/video-streaming/video-streaming.draftcanvas",
-      "sha256": "1003073c36a4648c7ed1bfffb6c30881d1ea4dbe439fc1be03ca8b02815ca6fe",
-      "bytes": 48311,
+      "sha256": "00c81411e4015289928ef80a928cae32a2a9f5a5bec79a0080aa38cda9456fb7",
+      "bytes": 48470,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },
@@ -617,8 +617,8 @@
       "featured": true,
       "order": 110,
       "path": "starters/examples/music-streaming/music-streaming.draftcanvas",
-      "sha256": "507a94038615d1a49b9d7a656140286621b57809faedfb494b2bb46abba89b7a",
-      "bytes": 45609,
+      "sha256": "debf2294ce59d8577a0340adedb51fe8cf6d2d393a66080b91d9dcf780850c96",
+      "bytes": 46195,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },
@@ -737,8 +737,8 @@
       "featured": false,
       "order": 140,
       "path": "starters/examples/order-processing/order-processing.draftcanvas",
-      "sha256": "6e239f6b9dd13f995ed05ac38d2b1d9c50200d5aaefeb6b2cbf6b41f1615868d",
-      "bytes": 18962,
+      "sha256": "a24d033188dca779e7ec261116d1eac0898aeb87f8d17eb68c84aae4f269949a",
+      "bytes": 18651,
       "formatVersion": 28,
       "updated": "2026-11-21"
     }

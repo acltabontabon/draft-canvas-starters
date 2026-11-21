@@ -25,7 +25,7 @@
       "type": "group",
       "x": 628,
       "y": -5,
-      "width": 1646,
+      "width": 1686,
       "height": 1021,
       "z": -2,
       "text": "Reelwave cloud",
@@ -36,9 +36,9 @@
       "id": "edge-api",
       "type": "group",
       "x": 660,
-      "y": 528,
+      "y": 504,
       "width": 240,
-      "height": 205,
+      "height": 230,
       "z": -1,
       "parentId": "cloud",
       "text": "Edge",
@@ -48,9 +48,9 @@
     {
       "id": "discovery",
       "type": "group",
-      "x": 980,
+      "x": 1278,
       "y": 47,
-      "width": 962,
+      "width": 1004,
       "height": 427,
       "z": -1,
       "parentId": "cloud",
@@ -63,9 +63,9 @@
       "id": "playback-d",
       "type": "group",
       "x": 980,
-      "y": 527,
+      "y": 504,
       "width": 240,
-      "height": 207,
+      "height": 230,
       "z": -1,
       "parentId": "cloud",
       "text": "Playback",
@@ -78,7 +78,7 @@
       "type": "group",
       "x": 1278,
       "y": 504,
-      "width": 964,
+      "width": 1004,
       "height": 480,
       "z": -1,
       "parentId": "cloud",
@@ -197,7 +197,7 @@
     {
       "id": "graph",
       "type": "service",
-      "x": 1012,
+      "x": 1352,
       "y": 216,
       "width": 176,
       "height": 109,
@@ -223,7 +223,7 @@
     {
       "id": "recs",
       "type": "service",
-      "x": 1352,
+      "x": 1712,
       "y": 116,
       "width": 176,
       "height": 109,
@@ -249,7 +249,7 @@
     {
       "id": "features",
       "type": "database",
-      "x": 1690,
+      "x": 2030,
       "y": 99,
       "width": 220,
       "height": 143,
@@ -264,7 +264,7 @@
     {
       "id": "catalog",
       "type": "service",
-      "x": 1352,
+      "x": 1712,
       "y": 316,
       "width": 176,
       "height": 109,
@@ -279,7 +279,7 @@
     {
       "id": "search",
       "type": "database",
-      "x": 1690,
+      "x": 2030,
       "y": 299,
       "width": 220,
       "height": 143,
@@ -999,8 +999,8 @@
     {
       "id": "slo",
       "type": "text",
-      "x": 12,
-      "y": 177,
+      "x": 660,
+      "y": 47,
       "width": 330,
       "height": 172,
       "z": 0,
@@ -1038,8 +1038,8 @@
     {
       "id": "seq-play",
       "type": "sequence",
-      "x": 1348,
-      "y": 1093,
+      "x": -65,
+      "y": 1382,
       "width": 973,
       "height": 814,
       "z": 0,
@@ -1289,6 +1289,14 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "routes",
+      "sourceAnchor": {
+        "side": "top",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "left",
+        "offset": 0.5
+      },
       "semanticsOrigin": "explicit"
     },
     {
