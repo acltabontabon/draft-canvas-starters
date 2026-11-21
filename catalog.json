@@ -659,8 +659,8 @@
       "featured": false,
       "order": 120,
       "path": "starters/examples/ride-hailing/ride-hailing.draftcanvas",
-      "sha256": "1114067dc331d64a42e9113bb27493394f8a104668912102790f40f660738a2c",
-      "bytes": 52101,
+      "sha256": "f95206960fbb825e1e2ccd0147e5d022b8401f8e92cf330b2d70d2d81a6960c0",
+      "bytes": 52261,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },
@@ -700,8 +700,8 @@
       "featured": false,
       "order": 130,
       "path": "starters/examples/food-delivery/food-delivery.draftcanvas",
-      "sha256": "f87f346b19e79e5bbebfdcb20409d919e6c855dca6cdca0e8da8d98b043d0078",
-      "bytes": 55471,
+      "sha256": "dea86f5d02392d3ce96e66c745a167f74bab062c893a1ff3c766c2e0eac2752a",
+      "bytes": 55664,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },

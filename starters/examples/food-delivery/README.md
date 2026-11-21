@@ -60,8 +60,8 @@ Play these in Draft Canvas with **Present**:
 - **A saga with linked compensating actions**: *Refund payment* undoes *Authorize*, and
   *Cancel ticket* (drawn as a portal, with its `no answer in 3 min` condition) undoes
   *SendTicket*.
-- **A transactional outbox** as two tables inside an *Orders DB · one transaction* boundary,
-  nested in the Ordering domain.
+- **A transactional outbox**: the `orders` and `outbox` tables sit in an *Orders DB* boundary
+  nested in the Ordering domain, and are written in one transaction.
 - **Boundaries in boundaries**: eight domains inside the system boundary, four of them tinted,
   and a group for the three apps.
 - **A junction** where the customer, kitchen and courier apps converge on one gateway.

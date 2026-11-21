@@ -12,9 +12,9 @@
       "id": "apps",
       "type": "group",
       "x": 210,
-      "y": 39,
+      "y": 319,
       "width": 240,
-      "height": 735,
+      "height": 755,
       "z": -2,
       "text": "Apps",
       "textOrigin": "explicit",
@@ -24,9 +24,9 @@
       "id": "cloud",
       "type": "group",
       "x": 648,
-      "y": -60,
-      "width": 1616,
-      "height": 1446,
+      "y": -81,
+      "width": 1644,
+      "height": 1467,
       "z": -2,
       "text": "Swiftride cloud",
       "textOrigin": "explicit",
@@ -36,9 +36,9 @@
       "id": "edge-d",
       "type": "group",
       "x": 680,
-      "y": 28,
+      "y": 18,
       "width": 240,
-      "height": 757,
+      "height": 787,
       "z": -1,
       "parentId": "cloud",
       "text": "Edge",
@@ -49,7 +49,7 @@
       "id": "locs",
       "type": "group",
       "x": 1018,
-      "y": 20,
+      "y": 10,
       "width": 562,
       "height": 232,
       "z": -1,
@@ -62,10 +62,10 @@
     {
       "id": "trips-d",
       "type": "group",
-      "x": 1000,
-      "y": 299,
-      "width": 240,
-      "height": 735,
+      "x": 968,
+      "y": 289,
+      "width": 304,
+      "height": 795,
       "z": -1,
       "parentId": "cloud",
       "text": "Trips",
@@ -76,10 +76,10 @@
     {
       "id": "market",
       "type": "group",
-      "x": 1298,
-      "y": 299,
-      "width": 622,
-      "height": 488,
+      "x": 1680,
+      "y": -1,
+      "width": 580,
+      "height": 808,
       "z": -1,
       "parentId": "cloud",
       "text": "Marketplace",
@@ -90,10 +90,10 @@
     {
       "id": "pay-d",
       "type": "group",
-      "x": 1680,
-      "y": 819,
+      "x": 1340,
+      "y": 869,
       "width": 552,
-      "height": 535,
+      "height": 485,
       "z": -1,
       "parentId": "cloud",
       "text": "Payments",
@@ -105,9 +105,9 @@
       "id": "notify-d",
       "type": "group",
       "x": 680,
-      "y": 1116,
+      "y": 1099,
       "width": 240,
-      "height": 221,
+      "height": 255,
       "z": -1,
       "parentId": "cloud",
       "text": "Notifications",
@@ -131,7 +131,7 @@
       "id": "drivers",
       "type": "actor",
       "x": 10,
-      "y": 101,
+      "y": 381,
       "width": 120,
       "height": 118,
       "z": 0,
@@ -145,7 +145,7 @@
       "id": "driver-app",
       "type": "service",
       "x": 242,
-      "y": 119,
+      "y": 399,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -160,7 +160,7 @@
       "id": "rider",
       "type": "actor",
       "x": 10,
-      "y": 648,
+      "y": 948,
       "width": 120,
       "height": 104,
       "z": 0,
@@ -174,7 +174,7 @@
       "id": "rider-app",
       "type": "service",
       "x": 242,
-      "y": 659,
+      "y": 959,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -189,7 +189,7 @@
       "id": "j-api",
       "type": "ellipse",
       "x": 542,
-      "y": 682,
+      "y": 702,
       "width": 36,
       "height": 36,
       "z": 0
@@ -198,7 +198,7 @@
       "id": "loc-gw",
       "type": "service",
       "x": 712,
-      "y": 108,
+      "y": 98,
       "width": 176,
       "height": 105,
       "z": 0,
@@ -214,7 +214,7 @@
       "id": "gateway",
       "type": "service",
       "x": 712,
-      "y": 648,
+      "y": 668,
       "width": 176,
       "height": 105,
       "z": 0,
@@ -230,7 +230,7 @@
       "id": "locations",
       "type": "queue",
       "x": 1050,
-      "y": 100,
+      "y": 90,
       "width": 140,
       "height": 120,
       "z": 0,
@@ -245,7 +245,7 @@
       "id": "indexer",
       "type": "service",
       "x": 1372,
-      "y": 106,
+      "y": 96,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -261,7 +261,7 @@
       "id": "trips-db",
       "type": "database",
       "x": 1060,
-      "y": 379,
+      "y": 369,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -276,7 +276,7 @@
       "id": "trips",
       "type": "service",
       "x": 1032,
-      "y": 639,
+      "y": 659,
       "width": 176,
       "height": 123,
       "z": 0,
@@ -562,7 +562,7 @@
       "id": "trip-events",
       "type": "queue",
       "x": 1050,
-      "y": 898,
+      "y": 948,
       "width": 140,
       "height": 104,
       "z": 0,
@@ -576,9 +576,9 @@
     {
       "id": "geo",
       "type": "database",
-      "x": 1330,
-      "y": 379,
-      "width": 260,
+      "x": 1740,
+      "y": 79,
+      "width": 120,
       "height": 143,
       "z": 0,
       "parentId": "market",
@@ -601,8 +601,8 @@
     {
       "id": "surge",
       "type": "service",
-      "x": 1712,
-      "y": 396,
+      "x": 2052,
+      "y": 96,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -626,8 +626,8 @@
     {
       "id": "dispatch",
       "type": "service",
-      "x": 1372,
-      "y": 646,
+      "x": 1712,
+      "y": 666,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -888,8 +888,8 @@
     {
       "id": "eta",
       "type": "service",
-      "x": 1712,
-      "y": 646,
+      "x": 2052,
+      "y": 666,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -905,7 +905,7 @@
       "id": "maps",
       "type": "service",
       "x": 2392,
-      "y": 643,
+      "y": 663,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -918,8 +918,8 @@
     {
       "id": "payments",
       "type": "service",
-      "x": 1712,
-      "y": 899,
+      "x": 1372,
+      "y": 949,
       "width": 176,
       "height": 103,
       "z": 0,
@@ -933,7 +933,7 @@
     {
       "id": "payouts",
       "type": "service",
-      "x": 1712,
+      "x": 1372,
       "y": 1199,
       "width": 176,
       "height": 103,
@@ -958,7 +958,7 @@
     {
       "id": "ledger",
       "type": "database",
-      "x": 2080,
+      "x": 1740,
       "y": 1179,
       "width": 120,
       "height": 143,
@@ -974,7 +974,7 @@
       "id": "adyen",
       "type": "service",
       "x": 2392,
-      "y": 883,
+      "y": 933,
       "width": 176,
       "height": 134,
       "z": 0,
@@ -1002,8 +1002,8 @@
     {
       "id": "fcm",
       "type": "service",
-      "x": 712,
-      "y": 1443,
+      "x": 472,
+      "y": 1193,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -1031,12 +1031,12 @@
     {
       "id": "surge-card",
       "type": "text",
-      "x": 1998,
-      "y": 305,
-      "width": 303,
+      "x": 1839,
+      "y": 282,
+      "width": 290,
       "height": 292,
       "z": 0,
-      "text": "### Surge per H3 cell\n| Requests per free driver | Multiplier |\n| --- | ---: |\n| under 1.0 | 1.0× |\n| 1.0 – 1.5 | 1.3× |\n| 1.5 – 2.5 | 1.8× |\n| over 2.5 | 2.5× |\n\n> [!WARNING]\n> Capped at 1.0× during declared emergencies.",
+      "text": "### Surge per H3 cell\n| Requests ÷ drivers | Surge |\n| --- | ---: |\n| under 1.0 | 1.0× |\n| 1.0 – 1.5 | 1.3× |\n| 1.5 – 2.5 | 1.8× |\n| over 2.5 | 2.5× |\n\n> [!WARNING]\n> Capped at 1.0× during declared emergencies.",
       "textOrigin": "explicit",
       "accent": "violet",
       "textBackground": "card"
@@ -1044,8 +1044,8 @@
     {
       "id": "hand",
       "type": "text",
-      "x": 1608,
-      "y": 143,
+      "x": 1374,
+      "y": 275,
       "width": 173,
       "height": 36,
       "z": 0,
@@ -1058,7 +1058,7 @@
       "id": "title",
       "type": "text",
       "x": 10,
-      "y": -218,
+      "y": -239,
       "width": 1200,
       "height": 110,
       "z": 0,
@@ -1069,8 +1069,8 @@
     {
       "id": "seq-request",
       "type": "sequence",
-      "x": 152,
-      "y": 1718,
+      "x": 10,
+      "y": 1468,
       "width": 717,
       "height": 818,
       "z": 0,
@@ -1267,6 +1267,14 @@
       "routing": "smoothstep",
       "semantic": "calls",
       "cadence": "Every 4 s",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.25
+      },
+      "targetAnchor": {
+        "side": "left",
+        "offset": 0.5
+      },
       "semanticsOrigin": "inferred",
       "attachments": [
         {
@@ -1284,7 +1292,15 @@
       "source": "driver-app",
       "target": "j-api",
       "directed": true,
-      "routing": "smoothstep"
+      "routing": "smoothstep",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.75
+      },
+      "targetAnchor": {
+        "side": "top",
+        "offset": 0.5
+      }
     },
     {
       "id": "request",
@@ -1301,7 +1317,15 @@
       "source": "rider-app",
       "target": "j-api",
       "directed": true,
-      "routing": "smoothstep"
+      "routing": "smoothstep",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "bottom",
+        "offset": 0.5
+      }
     },
     {
       "id": "api",
@@ -1437,22 +1461,12 @@
       "hasResponse": true,
       "sourceAnchor": {
         "side": "right",
-        "offset": 0.75
+        "offset": 0.8
       },
       "targetAnchor": {
-        "side": "left",
-        "offset": 0.25
+        "side": "top",
+        "offset": 0.62
       },
-      "waypoints": [
-        {
-          "x": 1280,
-          "y": 731
-        },
-        {
-          "x": 1280,
-          "y": 925
-        }
-      ],
       "semanticsOrigin": "explicit"
     },
     {
@@ -1470,22 +1484,12 @@
       "compensationDescription": "When the rider cancels before pickup, the fare hold is released.",
       "sourceAnchor": {
         "side": "right",
-        "offset": 0.9
+        "offset": 0.97
       },
       "targetAnchor": {
-        "side": "left",
-        "offset": 0.6
+        "side": "top",
+        "offset": 0.85
       },
-      "waypoints": [
-        {
-          "x": 1300,
-          "y": 750
-        },
-        {
-          "x": 1300,
-          "y": 961
-        }
-      ],
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -1831,8 +1835,8 @@
       "tool": "pen",
       "color": "red",
       "size": 3,
-      "x": 1400,
-      "y": 645.1,
+      "x": 1740,
+      "y": 665.1,
       "points": [
         0,
         0,
@@ -1987,8 +1991,8 @@
       "tool": "highlighter",
       "color": "yellow",
       "size": 14,
-      "x": 1604,
-      "y": 165,
+      "x": 1370,
+      "y": 297,
       "points": [
         0,
         0,
