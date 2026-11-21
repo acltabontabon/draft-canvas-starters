@@ -12,7 +12,7 @@
       "id": "customer",
       "type": "actor",
       "x": -70,
-      "y": 201,
+      "y": 141,
       "width": 140,
       "height": 118,
       "z": 0,
@@ -25,8 +25,8 @@
     {
       "id": "order",
       "type": "service",
-      "x": 172,
-      "y": 209,
+      "x": 242,
+      "y": 149,
       "width": 176,
       "height": 103,
       "z": 0,
@@ -39,8 +39,8 @@
     {
       "id": "order-db",
       "type": "database",
-      "x": 200,
-      "y": -31,
+      "x": 270,
+      "y": -111,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -53,8 +53,8 @@
     {
       "id": "orders-events",
       "type": "queue",
-      "x": 435,
-      "y": 418,
+      "x": 645,
+      "y": 183,
       "width": 170,
       "height": 104,
       "z": 0,
@@ -77,8 +77,8 @@
     {
       "id": "payment",
       "type": "service",
-      "x": 692,
-      "y": 219,
+      "x": 1042,
+      "y": 159,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -91,8 +91,8 @@
     {
       "id": "payment-db",
       "type": "database",
-      "x": 720,
-      "y": -31,
+      "x": 1070,
+      "y": -111,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -105,8 +105,8 @@
     {
       "id": "adyen",
       "type": "service",
-      "x": 952,
-      "y": -17,
+      "x": 1392,
+      "y": 143,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -119,8 +119,8 @@
     {
       "id": "payments-events",
       "type": "queue",
-      "x": 955,
-      "y": 408,
+      "x": 1045,
+      "y": 438,
       "width": 170,
       "height": 124,
       "z": 0,
@@ -133,8 +133,8 @@
     {
       "id": "kitchen",
       "type": "service",
-      "x": 1212,
-      "y": 219,
+      "x": 1042,
+      "y": 759,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -157,8 +157,8 @@
     {
       "id": "kitchen-db",
       "type": "database",
-      "x": 1240,
-      "y": -31,
+      "x": 1420,
+      "y": 729,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -171,8 +171,8 @@
     {
       "id": "kitchen-events",
       "type": "queue",
-      "x": 1475,
-      "y": 418,
+      "x": 645,
+      "y": 783,
       "width": 170,
       "height": 104,
       "z": 0,
@@ -195,8 +195,8 @@
     {
       "id": "delivery",
       "type": "service",
-      "x": 1732,
-      "y": 219,
+      "x": 242,
+      "y": 759,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -210,7 +210,7 @@
       "id": "title",
       "type": "text",
       "x": -70,
-      "y": -189,
+      "y": -269,
       "width": 1100,
       "height": 110,
       "z": 0,
@@ -249,8 +249,8 @@
       "semantic": "publishes",
       "kind": "event",
       "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.7
+        "side": "right",
+        "offset": 0.5
       },
       "targetAnchor": {
         "side": "left",
@@ -272,8 +272,8 @@
         "offset": 0.5
       },
       "targetAnchor": {
-        "side": "bottom",
-        "offset": 0.3
+        "side": "left",
+        "offset": 0.5
       },
       "semanticsOrigin": "explicit"
     },
@@ -291,7 +291,7 @@
         "offset": 0.5
       },
       "targetAnchor": {
-        "side": "bottom",
+        "side": "left",
         "offset": 0.5
       },
       "semanticsOrigin": "explicit"
@@ -316,10 +316,10 @@
       "kind": "event",
       "sourceAnchor": {
         "side": "bottom",
-        "offset": 0.7
+        "offset": 0.5
       },
       "targetAnchor": {
-        "side": "left",
+        "side": "top",
         "offset": 0.5
       },
       "semanticsOrigin": "explicit"
@@ -334,12 +334,12 @@
       "semantic": "deliversTo",
       "kind": "event",
       "sourceAnchor": {
-        "side": "right",
+        "side": "bottom",
         "offset": 0.5
       },
       "targetAnchor": {
-        "side": "bottom",
-        "offset": 0.3
+        "side": "top",
+        "offset": 0.5
       },
       "semanticsOrigin": "explicit"
     },
@@ -362,11 +362,11 @@
       "semantic": "publishes",
       "kind": "event",
       "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.7
+        "side": "left",
+        "offset": 0.5
       },
       "targetAnchor": {
-        "side": "left",
+        "side": "right",
         "offset": 0.5
       },
       "semanticsOrigin": "explicit"
@@ -379,16 +379,25 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "deliversTo",
-      "portal": true,
       "kind": "event",
       "sourceAnchor": {
         "side": "top",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "right",
         "offset": 0.3
       },
+      "targetAnchor": {
+        "side": "bottom",
+        "offset": 0.5
+      },
+      "waypoints": [
+        {
+          "x": 696,
+          "y": 480
+        },
+        {
+          "x": 330,
+          "y": 480
+        }
+      ],
       "semanticsOrigin": "explicit"
     },
     {
@@ -401,11 +410,11 @@
       "semantic": "deliversTo",
       "kind": "event",
       "sourceAnchor": {
-        "side": "right",
+        "side": "left",
         "offset": 0.5
       },
       "targetAnchor": {
-        "side": "bottom",
+        "side": "right",
         "offset": 0.5
       },
       "semanticsOrigin": "explicit"
@@ -420,21 +429,21 @@
       "semantic": "deliversTo",
       "kind": "failure",
       "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.5
+        "side": "top",
+        "offset": 0.7
       },
       "targetAnchor": {
         "side": "bottom",
-        "offset": 0.5
+        "offset": 0.27
       },
       "waypoints": [
         {
-          "x": 1560,
-          "y": 600
+          "x": 764,
+          "y": 390
         },
         {
-          "x": 780,
-          "y": 600
+          "x": 1090,
+          "y": 390
         }
       ],
       "semanticsOrigin": "explicit",
@@ -460,12 +469,12 @@
       "portal": true,
       "kind": "failure",
       "sourceAnchor": {
-        "side": "top",
+        "side": "left",
         "offset": 0.5
       },
       "targetAnchor": {
-        "side": "right",
-        "offset": 0.7
+        "side": "bottom",
+        "offset": 0.85
       },
       "semanticsOrigin": "explicit"
     }

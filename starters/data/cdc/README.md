@@ -42,8 +42,8 @@ Play these in Draft Canvas with **Present**:
 
 ## Look closer
 
-- A card above the pipeline lists what every derived view can rely on: per-listing order,
-  at-least-once delivery, lag and retention.
+- A card above the pipeline lists its design targets: per-listing order, at-least-once
+  delivery, lag and topic retention. Replace the numbers with your own.
 - The connector carries its Debezium configuration.
 - Notes explain why the API never writes twice, and warn about schema changes and stale reads.
 - A question asks whether analysts need deletes; an open point records the assumed WAL retention.

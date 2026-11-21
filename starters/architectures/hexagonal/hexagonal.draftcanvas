@@ -11,10 +11,10 @@
     {
       "id": "core",
       "type": "group",
-      "x": 582,
-      "y": -349,
-      "width": 1096,
-      "height": 689,
+      "x": 612,
+      "y": -109,
+      "width": 1016,
+      "height": 499,
       "z": -1,
       "text": "Transfers Core",
       "textOrigin": "explicit",
@@ -48,7 +48,7 @@
     {
       "id": "http-adapter",
       "type": "component",
-      "x": 254,
+      "x": 284,
       "y": -57,
       "width": 152,
       "height": 115,
@@ -62,8 +62,8 @@
     {
       "id": "job-adapter",
       "type": "component",
-      "x": 254,
-      "y": 191,
+      "x": 284,
+      "y": 181,
       "width": 152,
       "height": 119,
       "z": 0,
@@ -76,7 +76,7 @@
     {
       "id": "inbound-port",
       "type": "component",
-      "x": 614,
+      "x": 644,
       "y": -57,
       "width": 152,
       "height": 115,
@@ -91,7 +91,7 @@
     {
       "id": "use-cases",
       "type": "component",
-      "x": 974,
+      "x": 1044,
       "y": -57,
       "width": 152,
       "height": 115,
@@ -116,8 +116,8 @@
     {
       "id": "domain",
       "type": "component",
-      "x": 974,
-      "y": 213,
+      "x": 1444,
+      "y": -47,
       "width": 152,
       "height": 95,
       "z": 0,
@@ -280,8 +280,8 @@
     {
       "id": "accounts-port",
       "type": "component",
-      "x": 1494,
-      "y": -57,
+      "x": 1044,
+      "y": 243,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -305,8 +305,8 @@
     {
       "id": "fraud-port",
       "type": "component",
-      "x": 1494,
-      "y": -297,
+      "x": 684,
+      "y": 243,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -330,8 +330,8 @@
     {
       "id": "events-port",
       "type": "component",
-      "x": 1494,
-      "y": 183,
+      "x": 1404,
+      "y": 243,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -345,8 +345,8 @@
     {
       "id": "persistence-adapter",
       "type": "component",
-      "x": 1854,
-      "y": -67,
+      "x": 1044,
+      "y": 533,
       "width": 152,
       "height": 134,
       "z": 0,
@@ -359,8 +359,8 @@
     {
       "id": "fraud-adapter",
       "type": "component",
-      "x": 1854,
-      "y": -307,
+      "x": 684,
+      "y": 533,
       "width": 152,
       "height": 134,
       "z": 0,
@@ -373,8 +373,8 @@
     {
       "id": "events-adapter",
       "type": "component",
-      "x": 1854,
-      "y": 173,
+      "x": 1404,
+      "y": 533,
       "width": 152,
       "height": 134,
       "z": 0,
@@ -387,8 +387,8 @@
     {
       "id": "database",
       "type": "database",
-      "x": 2180,
-      "y": -71,
+      "x": 1010,
+      "y": 829,
       "width": 220,
       "height": 143,
       "z": 0,
@@ -401,8 +401,8 @@
     {
       "id": "fraud",
       "type": "service",
-      "x": 2202,
-      "y": -297,
+      "x": 672,
+      "y": 843,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -414,8 +414,8 @@
     {
       "id": "topic",
       "type": "queue",
-      "x": 2220,
-      "y": 188,
+      "x": 1410,
+      "y": 848,
       "width": 140,
       "height": 104,
       "z": 0,
@@ -429,7 +429,7 @@
       "id": "title",
       "type": "text",
       "x": -60,
-      "y": -507,
+      "y": -267,
       "width": 900,
       "height": 110,
       "z": 0,
@@ -496,6 +496,14 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "uses",
+      "sourceAnchor": {
+        "side": "bottom",
+        "offset": 0.2
+      },
+      "targetAnchor": {
+        "side": "top",
+        "offset": 0.5
+      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -506,6 +514,14 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "uses",
+      "sourceAnchor": {
+        "side": "bottom",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "top",
+        "offset": 0.5
+      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -516,6 +532,14 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "uses",
+      "sourceAnchor": {
+        "side": "bottom",
+        "offset": 0.8
+      },
+      "targetAnchor": {
+        "side": "top",
+        "offset": 0.5
+      },
       "semanticsOrigin": "explicit"
     },
     {

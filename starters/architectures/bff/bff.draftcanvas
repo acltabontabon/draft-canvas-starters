@@ -58,10 +58,10 @@
     {
       "id": "platform",
       "type": "group",
-      "x": 1240,
+      "x": 1340,
       "y": 74,
       "width": 240,
-      "height": 773,
+      "height": 772,
       "z": -1,
       "text": "Streaming platform",
       "textOrigin": "explicit",
@@ -446,7 +446,7 @@
     {
       "id": "profiles",
       "type": "service",
-      "x": 1272,
+      "x": 1372,
       "y": 146,
       "width": 176,
       "height": 109,
@@ -461,7 +461,7 @@
     {
       "id": "catalog",
       "type": "service",
-      "x": 1272,
+      "x": 1372,
       "y": 426,
       "width": 176,
       "height": 109,
@@ -477,8 +477,8 @@
     {
       "id": "playback",
       "type": "service",
-      "x": 1272,
-      "y": 706,
+      "x": 1372,
+      "y": 705,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -611,6 +611,14 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.3
+      },
+      "targetAnchor": {
+        "side": "left",
+        "offset": 0.3
+      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -621,6 +629,14 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.75
+      },
+      "targetAnchor": {
+        "side": "left",
+        "offset": 0.3
+      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -660,6 +676,14 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "left",
+        "offset": 0.5
+      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -670,6 +694,14 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.25
+      },
+      "targetAnchor": {
+        "side": "left",
+        "offset": 0.7
+      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -682,6 +714,14 @@
       "semantic": "http",
       "response": "signed URL",
       "hasResponse": true,
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.7
+      },
+      "targetAnchor": {
+        "side": "left",
+        "offset": 0.7
+      },
       "semanticsOrigin": "explicit"
     }
   ],

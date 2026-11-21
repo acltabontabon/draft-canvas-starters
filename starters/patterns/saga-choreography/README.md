@@ -41,11 +41,13 @@ Play these in Draft Canvas with **Present**:
 
 ## Look closer
 
-- Services run left to right in the order the saga runs. Each topic sits between the service that
-  publishes it and the one that reacts, and the refund travels back along a lane underneath.
-- The two events that travel back to the Order Service are drawn as **portals** (new in Draft
-  Canvas's next release): a short labelled stub at each end instead of a line across the whole
-  diagram. Click a stub's words to jump to the other end.
+- The saga is drawn as the cycle it is: Order → Payment along the top, Payment → Kitchen down the
+  right, Kitchen → Delivery back along the bottom. Each topic sits on the edge between the service
+  that publishes it and the ones that react, and `TicketAccepted` and `TicketRejected` cross the
+  open middle back to Order and Payment.
+- `PaymentRefunded`, the one event that would cross the whole diagram, is drawn as a **portal**
+  (new in Draft Canvas's next release): a short labelled stub at each end instead of a line. Click
+  a stub's words to jump to the other end.
 - Notes hold the design decision, a `TicketRejected` event, a warning about tracing, and the
   question every choreography has to answer: who cancels an order nobody answers?
 - A parked open point sets partial refunds aside.

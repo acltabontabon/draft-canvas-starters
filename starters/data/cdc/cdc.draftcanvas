@@ -264,7 +264,7 @@
       "width": 290,
       "height": 202,
       "z": 0,
-      "text": "### What every view can rely on\n| Guarantee | Value |\n| --- | --- |\n| Order | per listing, by key |\n| Delivery | at least once |\n| Lag, p99 | under 2 s |\n| Topic retention | 7 days |",
+      "text": "### Pipeline design targets\n| Property | Target |\n| --- | --- |\n| Order | per listing, by key |\n| Delivery | at least once |\n| Lag, p99 | under 2 s |\n| Topic retention | 7 days |",
       "textOrigin": "explicit",
       "accent": "teal",
       "textBackground": "card"

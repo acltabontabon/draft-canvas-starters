@@ -40,6 +40,8 @@ Play these in Draft Canvas with **Present**:
 ## Look closer
 
 - Connectors read at runtime: a port, then the adapter that implements it (**implemented by**). The source dependency points the other way, inward.
+- Driving adapters call in from the left; the use case fans out to its three outbound ports below
+  it, each with its adapter and infrastructure straight underneath.
 - The **Transfers Core** boundary is **held in place**: Arrange and Tidy up lay the adapters out around it and leave the core where it is.
 - Step into **Account Model** for the aggregate and value objects behind `withdraw`.
 - Code notes show the `AccountStore` port and a use case wired with in-memory adapters for a test; a warning covers ports that mirror a vendor, and a question asks about an outbox for `MoneySent`.
