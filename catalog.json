@@ -76,9 +76,9 @@
       "featured": false,
       "order": 20,
       "path": "starters/architectures/modular-monolith/modular-monolith.draftcanvas",
-      "sha256": "4f45a1852e91413bc9c9cf128df133e1bd54adfd91c2dd50f8ef91e52f79480f",
-      "bytes": 17411,
-      "formatVersion": 28,
+      "sha256": "c865dfbeb48e7fdb9290dcbcd8965e56b2eeff606e5feae595ce86e5c9d21cbf",
+      "bytes": 17418,
+      "formatVersion": 31,
       "updated": "2026-11-21"
     },
     {
@@ -366,9 +366,9 @@
       "featured": false,
       "order": 90,
       "path": "starters/data/kappa/kappa.draftcanvas",
-      "sha256": "fb3c9d6ed909c73db4ac6916a4d3c29ae2823d58c058f663e104c5cae3728c98",
-      "bytes": 17513,
-      "formatVersion": 29,
+      "sha256": "30946fb9e1f1e649d3715d081361d478e8e52546d78ae70eb2e9b4a1deeec85d",
+      "bytes": 17495,
+      "formatVersion": 31,
       "updated": "2026-11-21"
     },
     {
@@ -408,9 +408,9 @@
       "featured": false,
       "order": 100,
       "path": "starters/data/cdc/cdc.draftcanvas",
-      "sha256": "99dadc3264781e5442db94e2d30e5f94f3623d238982de84af91bb0a02d59cff",
-      "bytes": 14286,
-      "formatVersion": 28,
+      "sha256": "7cb11907948fa732e789218d1ff7b77ad125c62619e571e461086c685ab68ca1",
+      "bytes": 14318,
+      "formatVersion": 31,
       "updated": "2026-11-21"
     },
     {
@@ -451,9 +451,9 @@
       "featured": false,
       "order": 110,
       "path": "starters/patterns/saga-orchestration/saga-orchestration.draftcanvas",
-      "sha256": "1f2d252e7f05ed2611d1cf1185bc2fc1b94f053cc40d6bc5117147b5707c10bd",
-      "bytes": 21730,
-      "formatVersion": 29,
+      "sha256": "5418b38e4647db38f237f99672ab41a59e02c8e5be36d771d7cf0c4158d9969f",
+      "bytes": 21732,
+      "formatVersion": 31,
       "updated": "2026-11-21"
     },
     {
@@ -617,9 +617,9 @@
       "featured": true,
       "order": 110,
       "path": "starters/examples/music-streaming/music-streaming.draftcanvas",
-      "sha256": "9b6df1cd50707ab2147d8204287bb7f33502db7c5ad9967d613510bbdc9d087b",
-      "bytes": 46230,
-      "formatVersion": 29,
+      "sha256": "f8aa23288d37caea71364308abdd50c5b13652ba87e98b2378c1e326e2798c58",
+      "bytes": 46255,
+      "formatVersion": 31,
       "updated": "2026-11-21"
     },
     {
@@ -659,9 +659,9 @@
       "featured": false,
       "order": 120,
       "path": "starters/examples/ride-hailing/ride-hailing.draftcanvas",
-      "sha256": "e288f74ed4ec4d147142ed0b558c96afe975241aa63b79ca6f663373d4794772",
-      "bytes": 52079,
-      "formatVersion": 29,
+      "sha256": "9ed20b60f29b2e365be2e753e62aaa35b735766ea69eeed054e06f9a4e1ad723",
+      "bytes": 52289,
+      "formatVersion": 31,
       "updated": "2026-11-21"
     },
     {

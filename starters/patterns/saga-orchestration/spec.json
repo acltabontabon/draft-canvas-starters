@@ -20,7 +20,7 @@
     },
     {
       "id": "orchestrator",
-      "type": "worker",
+      "type": "service",
       "label": "Booking Orchestrator",
       "technology": "Temporal",
       "replicas": 2,
@@ -465,7 +465,7 @@
     ],
     "orchestrator": [
       820,
-      420
+      417
     ],
     "flights": [
       1240,

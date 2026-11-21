@@ -67,11 +67,15 @@ try {
   const top = 70, pad = 24;
   const want = Math.min((pane.width - pad * 2) / (x1 - x0), (pane.height - top - pad) / (y1 - y0));
   await page.mouse.move(pane.x + pane.width / 2, pane.y + pane.height / 2);
-  for (let i = 0; i < 40; i++) {
+  // Big steps while far off, small ones to settle: a wide diagram starts a long way from its fit,
+  // and forty small steps used to stop short of it, leaving the sides cut off.
+  for (let i = 0; i < 80; i++) {
     const { s } = await camera();
-    if (Math.abs(s - want) / want < 0.015) break;
+    const off = Math.abs(s - want) / want;
+    if (off < 0.015) break;
+    const step = off > 0.15 ? 60 : 20;
     await page.keyboard.down('Control');
-    await page.mouse.wheel(0, s < want ? -20 : 20);
+    await page.mouse.wheel(0, s < want ? -step : step);
     await page.keyboard.up('Control');
     await page.waitForTimeout(250);
   }
