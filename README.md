@@ -32,9 +32,9 @@ it stay as they are.
 
 | Starter | Shows |
 | --- | --- |
-| [Medallion](starters/data/medallion/) | Refine raw data into validated, business-ready datasets |
-| [Kappa](starters/data/kappa/) | Process live and historical data through one durable stream |
-| [Change Data Capture](starters/data/cdc/) | Capture committed changes once, fan out to derived views |
+| [Medallion](starters/data/medallion/) | A ride-hailing lakehouse refines raw trips into Bronze, Silver and Gold, and quarantines bad rows |
+| [Kappa](starters/data/kappa/) | Card fraud scoring from one durable log: live scoring, and a full replay to rebuild with new rules |
+| [Change Data Capture](starters/data/cdc/) | A marketplace streams committed listing changes from PostgreSQL to search, cache and warehouse |
 
 ### Patterns
 

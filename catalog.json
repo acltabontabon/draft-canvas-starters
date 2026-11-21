@@ -271,7 +271,7 @@
       "id": "medallion",
       "name": "Medallion",
       "category": "data",
-      "summary": "Refine raw data into validated, business-ready datasets",
+      "summary": "A ride-hailing lakehouse refines raw trips into Bronze, Silver and Gold, and quarantines bad rows",
       "aliases": [
         "medallion",
         "medallion architecture",
@@ -279,35 +279,41 @@
         "lakehouse",
         "data lake",
         "etl",
-        "data pipeline"
+        "elt",
+        "data pipeline",
+        "data quality",
+        "quarantine"
       ],
       "tags": [
         "lakehouse",
         "bronze silver gold",
         "data pipeline",
-        "analytics"
+        "analytics",
+        "data quality"
       ],
       "useWhen": [
-        "Building analytics on data from several operational sources.",
-        "Showing where data quality is enforced."
+        "Building analytics on data from several operational sources at different cadences.",
+        "Showing where data quality is enforced, and where rows that fail it go.",
+        "You need to rebuild cleaned data after a bug fix without asking the sources again."
       ],
       "watchOutFor": [
-        "Each layer stores another copy of the data.",
-        "Late-arriving or corrected data needs reprocessing through every layer."
+        "Each layer stores another copy of the data, and each copy costs storage and compute.",
+        "Late or corrected source data has to be reprocessed through every layer after it.",
+        "A quarantine table nobody triages quietly drops data from every report."
       ],
       "featured": false,
       "order": 80,
       "path": "starters/data/medallion/medallion.draftcanvas",
-      "sha256": "d574ee692474aeaebfa860a2a0e34af6275e1bbc28bac9a7ffc1d42f47218965",
-      "bytes": 9750,
-      "formatVersion": 25,
-      "updated": "2026-11-11"
+      "sha256": "15dede27d45b0a4bf820e784267bf8cebb5d6136f92dedc9d32fb9d28483feef",
+      "bytes": 12133,
+      "formatVersion": 28,
+      "updated": "2026-11-21"
     },
     {
       "id": "kappa",
       "name": "Kappa",
       "category": "data",
-      "summary": "Process live and historical data through one durable stream",
+      "summary": "Card fraud scoring from one durable log: live scoring, and a full replay to rebuild with new rules",
       "aliases": [
         "kappa",
         "kappa architecture",
@@ -315,64 +321,77 @@
         "log replay",
         "materialized view",
         "stream processing",
-        "unified log"
+        "unified log",
+        "fraud detection",
+        "reprocessing",
+        "blue green view"
       ],
       "tags": [
         "streaming",
         "event log",
         "replay",
-        "materialized view"
+        "materialized view",
+        "fraud"
       ],
       "useWhen": [
-        "Real-time views where reprocessing history must use the same code.",
-        "Replacing a separate batch layer."
+        "Real-time views where reprocessing history must use the same code as live processing.",
+        "Replacing a separate batch layer with one stream processor and a log you can replay.",
+        "Changing scoring rules and rebuilding a view side by side before switching to it."
       ],
       "watchOutFor": [
-        "Replays of a long log take time and capacity.",
-        "The log's retention decides how far back you can rebuild."
+        "Replaying a long log takes hours and cluster capacity; plan the cutover.",
+        "The log's retention decides how far back you can rebuild.",
+        "Logic that reads the clock instead of event time scores a replay differently from live."
       ],
       "featured": false,
       "order": 90,
       "path": "starters/data/kappa/kappa.draftcanvas",
-      "sha256": "acb3a51ccf445600a83efef17104a857fd458e354cf479f1e0688d9995055ef1",
-      "bytes": 7435,
-      "formatVersion": 25,
-      "updated": "2026-11-11"
+      "sha256": "c9d08a20241f4d5746f05ff4c9d0dc3848fc86903e3fae3e774332746df2d4c5",
+      "bytes": 17694,
+      "formatVersion": 29,
+      "updated": "2026-11-21"
     },
     {
       "id": "cdc",
       "name": "Change Data Capture",
       "category": "data",
-      "summary": "Capture committed changes once, fan out to derived views",
+      "summary": "A marketplace streams committed listing changes from PostgreSQL to search, cache and warehouse",
       "aliases": [
         "cdc",
         "change data capture",
         "cdc pipeline",
         "change stream",
         "log-based replication",
-        "debezium"
+        "debezium",
+        "wal",
+        "outbox alternative",
+        "cache invalidation",
+        "search sync"
       ],
       "tags": [
         "change data capture",
         "replication",
         "derived views",
-        "search index"
+        "search index",
+        "cache"
       ],
       "useWhen": [
-        "Keeping other systems in sync with a database without dual writes.",
-        "Feeding search, caches or analytics from the source of truth."
+        "Keeping search, caches or analytics in sync with a database without dual writes.",
+        "Feeding several derived views, each at its own pace, from one source of truth.",
+        "Backfilling a new view from a snapshot without querying production."
       ],
       "watchOutFor": [
-        "Derived views are eventually consistent.",
-        "Schema changes in the source ripple to every consumer."
+        "Derived views are eventually consistent: they can show the old value for a moment.",
+        "Events mirror the table: a renamed column breaks every consumer.",
+        "If the connector stops for longer than the WAL is kept, it must snapshot again."
       ],
       "featured": false,
       "order": 100,
       "path": "starters/data/cdc/cdc.draftcanvas",
-      "sha256": "62f3a6104b7aba98f49aed91d4dcfcb3ef00f6f53f8f48176673f42fc85e52ca",
-      "bytes": 8910,
-      "formatVersion": 25,
-      "updated": "2026-11-11"
+      "sha256": "5c7b0e603d62e9087233e7d44737f43004257ce144b6ada9ff3fb47589462499",
+      "bytes": 13694,
+      "formatVersion": 28,
+      "updated": "2026-11-21"
     },
     {
       "id": "saga-orchestration",
