@@ -9,15 +9,15 @@
     "distributed services",
     "independent services",
     "api gateway",
-    "database per service",
-    "service mesh"
+    "database per service"
   ],
   "tags": [
     "services",
     "api gateway",
     "database per service",
     "events",
-    "circuit breaker"
+    "circuit breaker",
+    "service mesh"
   ],
   "useWhen": [
     "Teams need to deploy and scale parts of the system independently.",

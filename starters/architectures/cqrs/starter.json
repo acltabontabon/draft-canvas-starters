@@ -10,7 +10,6 @@
     "read model",
     "write model",
     "projection",
-    "event sourcing",
     "ledger"
   ],
   "tags": [
@@ -18,7 +17,8 @@
     "read model",
     "projection",
     "eventual consistency",
-    "event store"
+    "event store",
+    "event sourcing"
   ],
   "useWhen": [
     "Reads and writes have very different shapes or loads.",
