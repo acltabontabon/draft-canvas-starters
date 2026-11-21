@@ -23,10 +23,10 @@ it stay as they are.
 | [Monolith](starters/architectures/monolith/) | One application, built and deployed as a unit |
 | [Modular Monolith](starters/architectures/modular-monolith/) | One deployable, explicitly encapsulated modules inside |
 | [Microservices](starters/architectures/microservices/) | Independently deployed services, each owning its data |
-| [Event-Driven](starters/architectures/event-driven/) | Pub/sub: a topic fanning out to per-subscriber queues |
+| [Event-Driven](starters/architectures/event-driven/) | One event, many reactions: a topic fans out to a queue per subscriber, with a dead-letter queue for failures |
 | [Hexagonal](starters/architectures/hexagonal/) | Adapters around a core that owns its ports |
-| [Backend for Frontend](starters/architectures/bff/) | A backend per frontend, over shared capabilities |
-| [CQRS](starters/architectures/cqrs/) | Distinct command and query paths, async read projection |
+| [Backend for Frontend](starters/architectures/bff/) | Web, mobile and TV each get a backend shaped for their screens, over shared platform APIs |
+| [CQRS](starters/architectures/cqrs/) | A bank's payments write events on one side; projections build balances and searchable history on the other |
 
 ### Data architectures
 
