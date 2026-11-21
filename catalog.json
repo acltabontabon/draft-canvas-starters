@@ -160,8 +160,8 @@
       "featured": true,
       "order": 40,
       "path": "starters/architectures/event-driven/event-driven.draftcanvas",
-      "sha256": "86c2dc9428b84b70791f0f065485e87c6aaffc2700a86d48eaa49c75f1e4767f",
-      "bytes": 19966,
+      "sha256": "e02c57d0e6427e164c4862f77105013f31625e2a25b933ca2d9cc2dfa604eb2a",
+      "bytes": 20824,
       "formatVersion": 28,
       "updated": "2026-11-21"
     },
@@ -242,8 +242,8 @@
       "featured": false,
       "order": 60,
       "path": "starters/architectures/bff/bff.draftcanvas",
-      "sha256": "167370f948953ab617a475da2e2448e3abb2dbe3c025435082f0851c394ed925",
-      "bytes": 22406,
+      "sha256": "7813e456ca795fe63d804fb1c9f3a2b8f7231df6702006c689c2794eb54379a5",
+      "bytes": 21508,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },
@@ -282,9 +282,9 @@
       "featured": false,
       "order": 70,
       "path": "starters/architectures/cqrs/cqrs.draftcanvas",
-      "sha256": "def736b31494b884eb8ed9d0130a274919557b9c5e55b989c78ff83f479d90fe",
-      "bytes": 20719,
-      "formatVersion": 29,
+      "sha256": "6c2ab8f1c1715777b3410a6ee58aa4a0d0fa3698c319d96fe5077727a68cdf07",
+      "bytes": 19398,
+      "formatVersion": 28,
       "updated": "2026-11-21"
     },
     {

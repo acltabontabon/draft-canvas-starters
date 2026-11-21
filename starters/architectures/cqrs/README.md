@@ -48,8 +48,8 @@ Play these in Draft Canvas with **Present**:
 
 - Step into **Payments API** to see the write model: the Account aggregate decides events from the
   account's replayed history.
-- The app's call to the Accounts API is drawn as a **portal** — a labelled stub at each end instead
-  of a line across the whole diagram. Click a stub's words to jump to the other end.
+- The two sides are two bands: commands along the top, questions along the bottom, and
+  `ledger-events` the only bridge between them.
 - Notes record why commands answer `202`, warn about read lag, ask how Statements gets rebuilt, and
   show the `MoneySent` event and the event table whose primary key stops two writers taking the same
   version.

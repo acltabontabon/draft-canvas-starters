@@ -1,6 +1,6 @@
 {
   "format": "draft-canvas",
-  "version": 29,
+  "version": 28,
   "metadata": {
     "id": "starter-cqrs",
     "title": "CQRS",
@@ -11,32 +11,34 @@
     {
       "id": "command-side",
       "type": "group",
-      "x": 574,
-      "y": 101,
-      "width": 913,
-      "height": 241,
+      "x": 600,
+      "y": 77,
+      "width": 920,
+      "height": 227,
       "z": -1,
       "text": "Command side",
       "textOrigin": "explicit",
+      "accent": "blue",
       "boundaryPreset": "domain"
     },
     {
       "id": "query-side",
       "type": "group",
-      "x": 1827,
-      "y": 0,
-      "width": 917,
-      "height": 596,
+      "x": 600,
+      "y": 358,
+      "width": 920,
+      "height": 546,
       "z": -1,
       "text": "Query side",
       "textOrigin": "explicit",
+      "accent": "teal",
       "boundaryPreset": "domain"
     },
     {
       "id": "customer",
       "type": "actor",
       "x": 0,
-      "y": 153,
+      "y": 351,
       "width": 140,
       "height": 118,
       "z": 0,
@@ -49,8 +51,8 @@
     {
       "id": "app",
       "type": "service",
-      "x": 257,
-      "y": 178,
+      "x": 292,
+      "y": 376,
       "width": 176,
       "height": 68,
       "z": 0,
@@ -63,8 +65,8 @@
     {
       "id": "command-api",
       "type": "service",
-      "x": 610,
-      "y": 157.5,
+      "x": 632,
+      "y": 146,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -80,8 +82,8 @@
           {
             "id": "c.app",
             "type": "service",
-            "x": 81,
-            "y": 0,
+            "x": 0,
+            "y": 89.5,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -93,8 +95,8 @@
           {
             "id": "c.controller",
             "type": "component",
-            "x": 93,
-            "y": 140,
+            "x": 303,
+            "y": 74,
             "width": 152,
             "height": 99,
             "z": 0,
@@ -107,8 +109,8 @@
           {
             "id": "c.handler",
             "type": "component",
-            "x": 93,
-            "y": 311,
+            "x": 603,
+            "y": 74,
             "width": 152,
             "height": 99,
             "z": 0,
@@ -120,8 +122,8 @@
           {
             "id": "c.aggregate",
             "type": "component",
-            "x": 17,
-            "y": 502,
+            "x": 890,
+            "y": 27.5,
             "width": 152,
             "height": 95,
             "z": 0,
@@ -133,8 +135,8 @@
           {
             "id": "c.repo",
             "type": "component",
-            "x": 206,
-            "y": 482,
+            "x": 890,
+            "y": 149,
             "width": 152,
             "height": 134,
             "z": 0,
@@ -147,8 +149,8 @@
           {
             "id": "c.store",
             "type": "database",
-            "x": 124,
-            "y": 688,
+            "x": 1183,
+            "y": 177.13636363636363,
             "width": 160,
             "height": 114,
             "z": 0,
@@ -190,11 +192,11 @@
             "routing": "smoothstep",
             "semantic": "uses",
             "sourceAnchor": {
-              "side": "bottom",
+              "side": "right",
               "offset": 0.25
             },
             "targetAnchor": {
-              "side": "top",
+              "side": "left",
               "offset": 0.75
             },
             "semanticsOrigin": "explicit"
@@ -208,11 +210,11 @@
             "routing": "smoothstep",
             "semantic": "uses",
             "sourceAnchor": {
-              "side": "right",
+              "side": "bottom",
               "offset": 0.75
             },
             "targetAnchor": {
-              "side": "top",
+              "side": "left",
               "offset": 0.25
             },
             "semanticsOrigin": "explicit"
@@ -225,14 +227,6 @@
             "directed": true,
             "routing": "smoothstep",
             "semantic": "readsWrites",
-            "sourceAnchor": {
-              "side": "bottom",
-              "offset": 0.25
-            },
-            "targetAnchor": {
-              "side": "top",
-              "offset": 0.75
-            },
             "semanticsOrigin": "explicit"
           }
         ],
@@ -284,8 +278,8 @@
     {
       "id": "event-store",
       "type": "database",
-      "x": 936,
-      "y": 163.25,
+      "x": 950,
+      "y": 129,
       "width": 220,
       "height": 143,
       "z": 0,
@@ -309,8 +303,8 @@
     {
       "id": "relay",
       "type": "service",
-      "x": 1275,
-      "y": 157.5,
+      "x": 1312,
+      "y": 146,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -324,8 +318,8 @@
     {
       "id": "events",
       "type": "queue",
-      "x": 1599,
-      "y": 195.25,
+      "x": 1670,
+      "y": 148,
       "width": 140,
       "height": 104,
       "z": 0,
@@ -338,8 +332,8 @@
     {
       "id": "projector",
       "type": "service",
-      "x": 1863,
-      "y": 189.25,
+      "x": 1312,
+      "y": 559,
       "width": 176,
       "height": 123,
       "z": 0,
@@ -354,8 +348,8 @@
     {
       "id": "dlq",
       "type": "queue",
-      "x": 2217,
-      "y": 456,
+      "x": 1330,
+      "y": 768,
       "width": 140,
       "height": 104,
       "z": 0,
@@ -370,8 +364,8 @@
     {
       "id": "balances",
       "type": "database",
-      "x": 2217,
-      "y": 65,
+      "x": 990,
+      "y": 410,
       "width": 140,
       "height": 140,
       "z": 0,
@@ -385,8 +379,8 @@
     {
       "id": "statements",
       "type": "database",
-      "x": 2187,
-      "y": 259,
+      "x": 960,
+      "y": 689,
       "width": 200,
       "height": 143,
       "z": 0,
@@ -410,8 +404,8 @@
     {
       "id": "query-api",
       "type": "service",
-      "x": 2532,
-      "y": 84.41666666666666,
+      "x": 632,
+      "y": 566,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -422,6 +416,18 @@
       "textOrigin": "explicit",
       "serviceKind": "api",
       "replicas": 4
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "x": 0,
+      "y": -89,
+      "width": 1100,
+      "height": 110,
+      "z": 0,
+      "text": "# CQRS\nCommands append to a ledger; projections answer every question from views built for it.",
+      "textOrigin": "explicit",
+      "textRole": "title"
     }
   ],
   "edges": [
@@ -445,14 +451,6 @@
       "semantic": "http",
       "response": "202 Accepted",
       "hasResponse": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -493,14 +491,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "reads",
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -521,14 +511,6 @@
       "routing": "smoothstep",
       "semantic": "consumes",
       "kind": "event",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -539,14 +521,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "writes",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -557,14 +531,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "indexes",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -576,14 +542,6 @@
       "semantic": "deadLetters",
       "kind": "failure",
       "async": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit",
       "deliveryAttempts": 3
     },
@@ -595,17 +553,8 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
-      "portal": true,
       "response": "200 Balance",
       "hasResponse": true,
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -616,14 +565,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "reads",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -642,15 +583,7 @@
       "target": "query-api",
       "label": "Transaction search",
       "directed": true,
-      "routing": "smoothstep",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      }
+      "routing": "smoothstep"
     }
   ],
   "viewport": {

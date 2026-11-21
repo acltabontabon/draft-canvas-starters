@@ -11,10 +11,10 @@
     {
       "id": "web-team",
       "type": "group",
-      "x": 287,
-      "y": 0,
-      "width": 557,
-      "height": 201,
+      "x": 420,
+      "y": 74,
+      "width": 600,
+      "height": 213,
       "z": -1,
       "text": "Web experience",
       "textOrigin": "explicit",
@@ -23,13 +23,14 @@
     {
       "id": "mobile-team",
       "type": "group",
-      "x": 282,
-      "y": 255,
-      "width": 566,
-      "height": 201,
+      "x": 420,
+      "y": 354,
+      "width": 600,
+      "height": 213,
       "z": -1,
       "text": "Mobile experience",
       "textOrigin": "explicit",
+      "accent": "blue",
       "boundaryPreset": "domain",
       "attachments": [
         {
@@ -45,10 +46,10 @@
     {
       "id": "tv-team",
       "type": "group",
-      "x": 303,
-      "y": 510,
-      "width": 525,
-      "height": 195,
+      "x": 420,
+      "y": 637,
+      "width": 600,
+      "height": 207,
       "z": -1,
       "text": "TV experience",
       "textOrigin": "explicit",
@@ -57,13 +58,14 @@
     {
       "id": "platform",
       "type": "group",
-      "x": 989,
-      "y": 92,
-      "width": 248,
-      "height": 527,
+      "x": 1240,
+      "y": 74,
+      "width": 240,
+      "height": 773,
       "z": -1,
       "text": "Streaming platform",
       "textOrigin": "explicit",
+      "accent": "violet",
       "boundaryPreset": "domain",
       "attachments": [
         {
@@ -80,7 +82,7 @@
       "id": "viewer",
       "type": "actor",
       "x": 0,
-      "y": 306.5,
+      "y": 421,
       "width": 140,
       "height": 118,
       "z": 0,
@@ -93,8 +95,8 @@
     {
       "id": "web",
       "type": "service",
-      "x": 323,
-      "y": 69,
+      "x": 452,
+      "y": 159,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -108,8 +110,8 @@
     {
       "id": "mobile",
       "type": "service",
-      "x": 318,
-      "y": 324,
+      "x": 452,
+      "y": 439,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -123,8 +125,8 @@
     {
       "id": "tv",
       "type": "service",
-      "x": 339,
-      "y": 576,
+      "x": 452,
+      "y": 719,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -138,8 +140,8 @@
     {
       "id": "web-bff",
       "type": "service",
-      "x": 632,
-      "y": 56,
+      "x": 812,
+      "y": 146,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -154,8 +156,8 @@
     {
       "id": "mobile-bff",
       "type": "service",
-      "x": 636,
-      "y": 311,
+      "x": 812,
+      "y": 426,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -171,8 +173,8 @@
           {
             "id": "m.app",
             "type": "service",
-            "x": 115,
-            "y": 0,
+            "x": 0,
+            "y": 108,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -184,8 +186,8 @@
           {
             "id": "m.schema",
             "type": "component",
-            "x": 127,
-            "y": 140,
+            "x": 318,
+            "y": 102,
             "width": 152,
             "height": 80,
             "z": 0,
@@ -198,8 +200,8 @@
           {
             "id": "m.home",
             "type": "component",
-            "x": 127,
-            "y": 292,
+            "x": 593,
+            "y": 102,
             "width": 152,
             "height": 80,
             "z": 0,
@@ -211,8 +213,8 @@
           {
             "id": "m.loader",
             "type": "component",
-            "x": 127,
-            "y": 444,
+            "x": 841,
+            "y": 102,
             "width": 152,
             "height": 80,
             "z": 0,
@@ -224,8 +226,8 @@
           {
             "id": "m.catalog-client",
             "type": "component",
-            "x": 12,
-            "y": 596,
+            "x": 1118,
+            "y": 35.75,
             "width": 152,
             "height": 115,
             "z": 0,
@@ -237,8 +239,8 @@
           {
             "id": "m.profiles-client",
             "type": "component",
-            "x": 242,
-            "y": 596,
+            "x": 1118,
+            "y": 169,
             "width": 152,
             "height": 115,
             "z": 0,
@@ -250,8 +252,8 @@
           {
             "id": "m.catalog",
             "type": "service",
-            "x": 0,
-            "y": 783,
+            "x": 1382,
+            "y": 59.25,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -263,8 +265,8 @@
           {
             "id": "m.profiles",
             "type": "service",
-            "x": 230,
-            "y": 783,
+            "x": 1382,
+            "y": 192.5,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -316,12 +318,12 @@
             "routing": "smoothstep",
             "semantic": "uses",
             "sourceAnchor": {
-              "side": "bottom",
-              "offset": 0.25
+              "side": "right",
+              "offset": 0.3
             },
             "targetAnchor": {
-              "side": "top",
-              "offset": 0.75
+              "side": "left",
+              "offset": 0.5
             },
             "semanticsOrigin": "explicit"
           },
@@ -334,12 +336,12 @@
             "routing": "smoothstep",
             "semantic": "uses",
             "sourceAnchor": {
-              "side": "bottom",
-              "offset": 0.75
+              "side": "right",
+              "offset": 0.7
             },
             "targetAnchor": {
-              "side": "top",
-              "offset": 0.25
+              "side": "left",
+              "offset": 0.5
             },
             "semanticsOrigin": "explicit"
           },
@@ -419,8 +421,8 @@
     {
       "id": "tv-bff",
       "type": "service",
-      "x": 616,
-      "y": 566,
+      "x": 812,
+      "y": 709,
       "width": 176,
       "height": 103,
       "z": 0,
@@ -444,8 +446,8 @@
     {
       "id": "profiles",
       "type": "service",
-      "x": 1025,
-      "y": 148,
+      "x": 1272,
+      "y": 146,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -459,8 +461,8 @@
     {
       "id": "catalog",
       "type": "service",
-      "x": 1025,
-      "y": 311,
+      "x": 1272,
+      "y": 426,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -475,8 +477,8 @@
     {
       "id": "playback",
       "type": "service",
-      "x": 1025,
-      "y": 474,
+      "x": 1272,
+      "y": 706,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -486,6 +488,18 @@
       "technology": "Rust",
       "textOrigin": "explicit",
       "serviceKind": "api"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "x": 0,
+      "y": -92,
+      "width": 1100,
+      "height": 110,
+      "z": 0,
+      "text": "# Backend for Frontend\nOne backend per screen, each owned by its app's team, over shared platform APIs.",
+      "textOrigin": "explicit",
+      "textRole": "title"
     }
   ],
   "edges": [
@@ -499,11 +513,11 @@
       "semantic": "calls",
       "sourceAnchor": {
         "side": "right",
-        "offset": 0.25
+        "offset": 0.5
       },
       "targetAnchor": {
         "side": "left",
-        "offset": 0.75
+        "offset": 0.5
       },
       "semanticsOrigin": "inferred"
     },
@@ -535,11 +549,11 @@
       "semantic": "calls",
       "sourceAnchor": {
         "side": "right",
-        "offset": 0.75
+        "offset": 0.5
       },
       "targetAnchor": {
         "side": "left",
-        "offset": 0.25
+        "offset": 0.5
       },
       "semanticsOrigin": "inferred"
     },
@@ -553,14 +567,6 @@
       "semantic": "http",
       "response": "200 Page",
       "hasResponse": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -573,14 +579,6 @@
       "semantic": "http",
       "response": "200 JSON",
       "hasResponse": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -603,14 +601,6 @@
       "semantic": "http",
       "response": "200 Rails",
       "hasResponse": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -621,14 +611,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -639,14 +621,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -663,8 +637,8 @@
         "offset": 0.5
       },
       "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
+        "side": "bottom",
+        "offset": 0.5
       },
       "semanticsOrigin": "explicit",
       "attachments": [
@@ -686,14 +660,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -704,14 +670,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -724,14 +682,6 @@
       "semantic": "http",
       "response": "signed URL",
       "hasResponse": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     }
   ],
