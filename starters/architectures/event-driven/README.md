@@ -47,6 +47,8 @@ Play these in Draft Canvas with **Present**:
 
 ## Look closer
 
+- An amber card beside `tickets-dlq` says what happens when a ticket lands there: page the
+  restaurant team, fix the POS, move the messages back. The idempotent relay prints each once.
 - Step into **Dispatch Service** to see how a consumer stays idempotent: every event passes a guard
   before anything changes.
 - Notes explain why each subscriber gets its own queue, warn about duplicate delivery, ask whether

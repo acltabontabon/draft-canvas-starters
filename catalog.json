@@ -160,8 +160,8 @@
       "featured": true,
       "order": 40,
       "path": "starters/architectures/event-driven/event-driven.draftcanvas",
-      "sha256": "e02c57d0e6427e164c4862f77105013f31625e2a25b933ca2d9cc2dfa604eb2a",
-      "bytes": 20824,
+      "sha256": "7bfaf2a8d8be7a722e29c57f337de4a2687f1e6d4d47009e82a2a53aa2616538",
+      "bytes": 21321,
       "formatVersion": 28,
       "updated": "2026-11-21"
     },
@@ -617,8 +617,8 @@
       "featured": true,
       "order": 110,
       "path": "starters/examples/music-streaming/music-streaming.draftcanvas",
-      "sha256": "b7fa8d5d1d98db316634176aa6078218194ceab0221b317eefd744de85ad764a",
-      "bytes": 46198,
+      "sha256": "9b6df1cd50707ab2147d8204287bb7f33502db7c5ad9967d613510bbdc9d087b",
+      "bytes": 46230,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },
