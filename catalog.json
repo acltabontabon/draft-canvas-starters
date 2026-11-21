@@ -324,8 +324,8 @@
       "featured": false,
       "order": 80,
       "path": "starters/data/medallion/medallion.draftcanvas",
-      "sha256": "15dede27d45b0a4bf820e784267bf8cebb5d6136f92dedc9d32fb9d28483feef",
-      "bytes": 12133,
+      "sha256": "c3e12e04cde3aaded7dcf87531ff2e72afa6b15ce178e7a6e8727f7422d8460d",
+      "bytes": 12934,
       "formatVersion": 28,
       "updated": "2026-11-21"
     },
@@ -366,8 +366,8 @@
       "featured": false,
       "order": 90,
       "path": "starters/data/kappa/kappa.draftcanvas",
-      "sha256": "c9d08a20241f4d5746f05ff4c9d0dc3848fc86903e3fae3e774332746df2d4c5",
-      "bytes": 17694,
+      "sha256": "fb3c9d6ed909c73db4ac6916a4d3c29ae2823d58c058f663e104c5cae3728c98",
+      "bytes": 17513,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },
@@ -408,8 +408,8 @@
       "featured": false,
       "order": 100,
       "path": "starters/data/cdc/cdc.draftcanvas",
-      "sha256": "5c7b0e603d62e9087233e7d44737f43004257ce144b6ada9ff3fb47589462499",
-      "bytes": 13694,
+      "sha256": "b5594dbee670b3053bbaa020a77b4d4a67cc1085e046f6fa31a6629fe53b6617",
+      "bytes": 14290,
       "formatVersion": 28,
       "updated": "2026-11-21"
     },

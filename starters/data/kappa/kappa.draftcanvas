@@ -11,20 +11,48 @@
     {
       "id": "fraud",
       "type": "group",
-      "x": 320,
-      "y": 0,
-      "width": 1072,
-      "height": 590,
-      "z": -1,
+      "x": 378,
+      "y": -14,
+      "width": 1342,
+      "height": 740,
+      "z": -2,
       "text": "Fraud Platform",
       "textOrigin": "explicit",
       "boundaryPreset": "system"
     },
     {
+      "id": "lane-live",
+      "type": "group",
+      "x": 740,
+      "y": 177,
+      "width": 572,
+      "height": 227,
+      "z": -1,
+      "parentId": "fraud",
+      "text": "Live · rules v7",
+      "textOrigin": "explicit",
+      "accent": "teal",
+      "boundaryPreset": "group"
+    },
+    {
+      "id": "lane-replay",
+      "type": "group",
+      "x": 740,
+      "y": 467,
+      "width": 572,
+      "height": 227,
+      "z": -1,
+      "parentId": "fraud",
+      "text": "Replay · rules v8",
+      "textOrigin": "explicit",
+      "accent": "amber",
+      "boundaryPreset": "group"
+    },
+    {
       "id": "gateway",
       "type": "service",
-      "x": 0,
-      "y": 193,
+      "x": 12,
+      "y": 346,
       "width": 176,
       "height": 103,
       "z": 0,
@@ -37,8 +65,8 @@
     {
       "id": "network",
       "type": "service",
-      "x": 0,
-      "y": 350,
+      "x": 12,
+      "y": 510,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -50,8 +78,8 @@
     {
       "id": "log",
       "type": "queue",
-      "x": 356,
-      "y": 261.5,
+      "x": 410,
+      "y": 385,
       "width": 140,
       "height": 120,
       "z": 0,
@@ -75,12 +103,12 @@
     {
       "id": "live",
       "type": "service",
-      "x": 652,
-      "y": 223.75,
+      "x": 772,
+      "y": 246,
       "width": 176,
       "height": 109,
       "z": 0,
-      "parentId": "fraud",
+      "parentId": "lane-live",
       "text": "Fraud Scoring v7",
       "description": "Scores each card live from its recent activity.",
       "technology": "Apache Flink",
@@ -295,12 +323,12 @@
     {
       "id": "replay",
       "type": "service",
-      "x": 652,
-      "y": 397,
+      "x": 772,
+      "y": 536,
       "width": 176,
       "height": 109,
       "z": 0,
-      "parentId": "fraud",
+      "parentId": "lane-replay",
       "text": "Fraud Scoring v8",
       "description": "Replays the log from the start with new rules.",
       "technology": "Apache Flink",
@@ -320,8 +348,8 @@
     {
       "id": "dlq",
       "type": "queue",
-      "x": 952,
-      "y": 56,
+      "x": 790,
+      "y": 38,
       "width": 140,
       "height": 104,
       "z": 0,
@@ -346,12 +374,12 @@
     {
       "id": "view7",
       "type": "database",
-      "x": 962,
-      "y": 238.25,
+      "x": 1160,
+      "y": 229,
       "width": 120,
       "height": 143,
       "z": 0,
-      "parentId": "fraud",
+      "parentId": "lane-live",
       "text": "risk_v7",
       "description": "Holds the latest score per card.",
       "technology": "Apache Cassandra",
@@ -361,12 +389,12 @@
     {
       "id": "view8",
       "type": "database",
-      "x": 962,
-      "y": 411.5,
+      "x": 1160,
+      "y": 519,
       "width": 120,
       "height": 143,
       "z": 0,
-      "parentId": "fraud",
+      "parentId": "lane-replay",
       "text": "risk_v8",
       "description": "Fills up as v8 catches up.",
       "technology": "Apache Cassandra",
@@ -376,8 +404,8 @@
     {
       "id": "api",
       "type": "service",
-      "x": 1180,
-      "y": 240.75,
+      "x": 1512,
+      "y": 394,
       "width": 176,
       "height": 103,
       "z": 0,
@@ -387,6 +415,18 @@
       "technology": "Spring Boot 3",
       "textOrigin": "explicit",
       "serviceKind": "api"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "x": 12,
+      "y": -180,
+      "width": 1200,
+      "height": 110,
+      "z": 0,
+      "text": "# Kappa architecture\nCard fraud scoring from one durable log: live scoring and full replays run the same job.",
+      "textOrigin": "explicit",
+      "textRole": "title"
     }
   ],
   "edges": [
@@ -399,14 +439,6 @@
       "routing": "smoothstep",
       "semantic": "publishes",
       "kind": "event",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -418,14 +450,6 @@
       "routing": "smoothstep",
       "semantic": "publishes",
       "kind": "event",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -437,14 +461,6 @@
       "semantic": "consumes",
       "cadence": "Streaming",
       "kind": "event",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -467,14 +483,6 @@
       "semantic": "consumes",
       "cadence": "On demand",
       "kind": "event",
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -496,14 +504,6 @@
       "semantic": "deadLetters",
       "kind": "failure",
       "async": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -533,14 +533,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "reads",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -551,14 +543,6 @@
       "routing": "smoothstep",
       "semantic": "reads",
       "condition": "after cutover",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {

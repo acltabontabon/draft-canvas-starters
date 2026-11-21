@@ -42,6 +42,8 @@ Play these in Draft Canvas with **Present**:
 
 ## Look closer
 
+- The live job (rules v7) and the replay (rules v8) run as two parallel lanes off the same log,
+  so the cutover reads as one lane taking over from the other.
 - Step into **Fraud Scoring v7** to see the job's operators: source, key by card, velocity windows,
   rules and model, and the Cassandra sink.
 - The gateway's call to the Risk API is drawn as a **portal**: a labelled stub at each end instead of

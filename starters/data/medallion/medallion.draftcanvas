@@ -9,25 +9,78 @@
   },
   "nodes": [
     {
+      "id": "sources",
+      "type": "group",
+      "x": -52,
+      "y": 97,
+      "width": 304,
+      "height": 615,
+      "z": -2,
+      "text": "Sources",
+      "textOrigin": "explicit",
+      "boundaryPreset": "group"
+    },
+    {
       "id": "lake",
       "type": "group",
-      "x": 400,
-      "y": 0,
-      "width": 1400,
-      "height": 510,
-      "z": -1,
+      "x": 420,
+      "y": 225,
+      "width": 1364,
+      "height": 511,
+      "z": -2,
       "text": "Ride Lakehouse",
       "textOrigin": "explicit",
       "boundaryPreset": "system"
     },
     {
+      "id": "l-bronze",
+      "type": "group",
+      "x": 688,
+      "y": 277,
+      "width": 304,
+      "height": 427,
+      "z": -1,
+      "parentId": "lake",
+      "text": "Bronze · raw",
+      "textOrigin": "explicit",
+      "accent": "rose",
+      "boundaryPreset": "group"
+    },
+    {
+      "id": "l-silver",
+      "type": "group",
+      "x": 1068,
+      "y": 277,
+      "width": 304,
+      "height": 427,
+      "z": -1,
+      "parentId": "lake",
+      "text": "Silver · clean",
+      "textOrigin": "explicit",
+      "boundaryPreset": "group"
+    },
+    {
+      "id": "l-gold",
+      "type": "group",
+      "x": 1448,
+      "y": 277,
+      "width": 304,
+      "height": 427,
+      "z": -1,
+      "parentId": "lake",
+      "text": "Gold · curated",
+      "textOrigin": "explicit",
+      "accent": "amber",
+      "boundaryPreset": "group"
+    },
+    {
       "id": "consumers",
       "type": "group",
-      "x": 1880,
-      "y": 60,
-      "width": 248,
-      "height": 299,
-      "z": -1,
+      "x": 1940,
+      "y": 207,
+      "width": 240,
+      "height": 367,
+      "z": -2,
       "text": "Consumers",
       "textOrigin": "explicit",
       "boundaryPreset": "group"
@@ -35,11 +88,12 @@
     {
       "id": "rides",
       "type": "database",
-      "x": 100,
-      "y": -80,
-      "width": 120,
+      "x": -20,
+      "y": 149,
+      "width": 240,
       "height": 143,
       "z": 0,
+      "parentId": "sources",
       "text": "Rides DB",
       "description": "Stores every trip, fare and rating.",
       "technology": "PostgreSQL 16",
@@ -49,11 +103,12 @@
     {
       "id": "events",
       "type": "queue",
-      "x": 90,
-      "y": 133.25,
-      "width": 140,
+      "x": -20,
+      "y": 348,
+      "width": 240,
       "height": 104,
       "z": 0,
+      "parentId": "sources",
       "text": "trip-events",
       "description": "Streams trip state changes.",
       "technology": "Kafka",
@@ -63,13 +118,14 @@
     {
       "id": "payouts",
       "type": "database",
-      "x": 20,
-      "y": 307,
-      "width": 280,
+      "x": -20,
+      "y": 537,
+      "width": 240,
       "height": 143,
       "z": 0,
+      "parentId": "sources",
       "text": "Partner Exports",
-      "description": "Receives daily payout CSVs from card partners.",
+      "description": "Daily payout CSVs from card partners.",
       "technology": "Amazon S3",
       "textOrigin": "explicit",
       "databaseKind": "object-storage",
@@ -87,8 +143,8 @@
     {
       "id": "ingest",
       "type": "service",
-      "x": 440,
-      "y": 88.5,
+      "x": 452,
+      "y": 339,
       "width": 176,
       "height": 123,
       "z": 0,
@@ -102,12 +158,12 @@
     {
       "id": "bronze",
       "type": "database",
-      "x": 760,
-      "y": 101.25,
-      "width": 220,
+      "x": 720,
+      "y": 329,
+      "width": 240,
       "height": 143,
       "z": 0,
-      "parentId": "lake",
+      "parentId": "l-bronze",
       "text": "bronze.trips_raw",
       "description": "Keeps every row exactly as it arrived.",
       "technology": "Delta",
@@ -127,12 +183,12 @@
     {
       "id": "silver",
       "type": "database",
-      "x": 1120,
-      "y": 101.25,
-      "width": 220,
+      "x": 1100,
+      "y": 329,
+      "width": 240,
       "height": 143,
       "z": 0,
-      "parentId": "lake",
+      "parentId": "l-silver",
       "text": "silver.trips",
       "description": "Holds clean, unique trips.",
       "technology": "Delta",
@@ -142,14 +198,14 @@
     {
       "id": "quarantine",
       "type": "database",
-      "x": 1090,
-      "y": 330,
-      "width": 280,
+      "x": 1100,
+      "y": 529,
+      "width": 240,
       "height": 143,
       "z": 0,
-      "parentId": "lake",
+      "parentId": "l-silver",
       "text": "silver.quarantine",
-      "description": "Holds rows that failed a check, with the reason.",
+      "description": "Failed rows, with the reason.",
       "technology": "Delta",
       "textOrigin": "explicit",
       "databaseKind": "table"
@@ -157,14 +213,14 @@
     {
       "id": "gold",
       "type": "database",
-      "x": 1500,
-      "y": 101.25,
-      "width": 260,
+      "x": 1480,
+      "y": 329,
+      "width": 240,
       "height": 143,
       "z": 0,
-      "parentId": "lake",
+      "parentId": "l-gold",
       "text": "gold.city_kpis",
-      "description": "Daily trips, revenue and wait times per city.",
+      "description": "Trips, revenue and waits per city.",
       "technology": "Delta",
       "textOrigin": "explicit",
       "databaseKind": "table",
@@ -182,8 +238,8 @@
     {
       "id": "looker",
       "type": "service",
-      "x": 1916,
-      "y": 108.5,
+      "x": 1972,
+      "y": 259,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -197,8 +253,8 @@
     {
       "id": "pricing",
       "type": "service",
-      "x": 1916,
-      "y": 240,
+      "x": 1972,
+      "y": 459,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -208,6 +264,18 @@
       "technology": "MLflow",
       "textOrigin": "explicit",
       "serviceKind": "generic"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "x": -52,
+      "y": -69,
+      "width": 1100,
+      "height": 110,
+      "z": 0,
+      "text": "# Medallion lakehouse\nRide data refined in layers: raw bronze, clean silver, curated gold.",
+      "textOrigin": "explicit",
+      "textRole": "title"
     }
   ],
   "edges": [
@@ -228,6 +296,16 @@
         "side": "left",
         "offset": 0.2
       },
+      "waypoints": [
+        {
+          "x": 404,
+          "y": 220
+        },
+        {
+          "x": 404,
+          "y": 364
+        }
+      ],
       "semanticsOrigin": "explicit"
     },
     {
@@ -240,14 +318,6 @@
       "semantic": "consumes",
       "cadence": "Streaming",
       "kind": "event",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -267,6 +337,16 @@
         "side": "left",
         "offset": 0.8
       },
+      "waypoints": [
+        {
+          "x": 404,
+          "y": 580
+        },
+        {
+          "x": 404,
+          "y": 437
+        }
+      ],
       "semanticsOrigin": "explicit"
     },
     {
@@ -277,14 +357,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "writes",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -296,14 +368,6 @@
       "routing": "smoothstep",
       "semantic": "transforms",
       "cadence": "Hourly",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -344,14 +408,6 @@
       "routing": "smoothstep",
       "semantic": "transforms",
       "cadence": "Daily 04:00",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -361,14 +417,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "reads",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -378,14 +426,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "reads",
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     }
   ],

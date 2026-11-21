@@ -41,6 +41,8 @@ Play these in Draft Canvas with **Present**:
 
 ## Look closer
 
+- Bronze, Silver and Gold are drawn as three equal layer boundaries inside the lakehouse, with
+  the sources and consumers framed on either side.
 - The Silver connector carries the Delta Live Tables definition, with its expectations.
 - Notes explain why Bronze is never cleaned, warn that Gold lags a Silver fix by a night, and ask
   whether partners re-send corrected files.
