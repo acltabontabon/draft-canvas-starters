@@ -40,9 +40,9 @@ it stay as they are.
 
 | Starter | Shows |
 | --- | --- |
-| [Saga – Orchestration](starters/patterns/saga-orchestration/) | Local transactions and compensation, one coordinator |
-| [Saga – Choreography](starters/patterns/saga-choreography/) | Local transactions chained by events, with no coordinator |
-| [Transactional Outbox](starters/patterns/transactional-outbox/) | Persist state and event intent atomically, publish after |
+| [Saga – Orchestration](starters/patterns/saga-orchestration/) | One orchestrator books a trip step by step, and cancels the done steps in reverse when the card is declined |
+| [Saga – Choreography](starters/patterns/saga-choreography/) | A food order moves through payment and kitchen by events alone, and unwinds by events when a restaurant says no |
+| [Transactional Outbox](starters/patterns/transactional-outbox/) | A bank transfer and its event commit in one transaction; Debezium publishes it after, and consumers drop duplicates |
 
 ### Examples
 

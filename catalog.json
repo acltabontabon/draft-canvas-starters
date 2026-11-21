@@ -397,7 +397,7 @@
       "id": "saga-orchestration",
       "name": "Saga – Orchestration",
       "category": "pattern",
-      "summary": "Local transactions and compensation, one coordinator",
+      "summary": "One orchestrator books a trip step by step, and cancels the done steps in reverse when the card is declined",
       "aliases": [
         "saga",
         "saga orchestration",
@@ -405,98 +405,119 @@
         "orchestrator",
         "distributed transaction",
         "compensating transaction",
-        "compensation"
+        "compensation",
+        "workflow engine",
+        "temporal",
+        "travel booking"
       ],
       "tags": [
         "saga",
         "orchestrator",
         "compensation",
-        "distributed transaction"
+        "distributed transaction",
+        "workflow"
       ],
       "useWhen": [
         "A workflow spans several services and must undo completed steps on failure.",
-        "You want one place that knows the workflow's state."
+        "You want one place that knows the workflow's state and can answer \"where is my booking?\".",
+        "Steps have a fixed order and the riskiest one can go last."
       ],
       "watchOutFor": [
-        "The orchestrator can become a bottleneck or a god service.",
-        "Every step needs a compensation that really undoes it."
+        "The orchestrator can grow into a god service that owns other teams' business rules.",
+        "Every step needs a compensation that really undoes it, and is idempotent when retried.",
+        "A compensation is a new transaction, not a rollback: the seat was held for a while.",
+        "Without durable workflow state, a crash mid-saga leaves steps nobody will undo."
       ],
       "featured": false,
       "order": 110,
       "path": "starters/patterns/saga-orchestration/saga-orchestration.draftcanvas",
-      "sha256": "bfa018f453ca0424cdaf46c10c57b1471157b35f0b604ef100bd5516782387f9",
-      "bytes": 9834,
-      "formatVersion": 25,
-      "updated": "2026-11-11"
+      "sha256": "80a18e93679d6dfa2b6eafce7c92ae159a257147974c16d2f1331c837306caf7",
+      "bytes": 22062,
+      "formatVersion": 29,
+      "updated": "2026-11-21"
     },
     {
       "id": "saga-choreography",
       "name": "Saga – Choreography",
       "category": "pattern",
-      "summary": "Local transactions chained by events, with no coordinator",
+      "summary": "A food order moves through payment and kitchen by events alone, and unwinds by events when a restaurant says no",
       "aliases": [
         "saga choreography",
         "choreographed saga",
         "choreography",
         "event-driven saga",
         "no orchestrator",
-        "reactive saga"
+        "reactive saga",
+        "food delivery",
+        "kafka saga"
       ],
       "tags": [
         "saga",
         "choreography",
         "events",
-        "compensation"
+        "compensation",
+        "kafka"
       ],
       "useWhen": [
         "Few steps, owned by different teams, that already communicate through events.",
-        "Avoiding a central workflow service."
+        "Avoiding a central workflow service that every change has to go through.",
+        "Each step can decide on its own what to do when it sees a fact."
       ],
       "watchOutFor": [
-        "The whole workflow is visible only by following the events.",
-        "Cyclic dependencies between services creep in as steps grow."
+        "The whole workflow is visible only by following the events; trace a correlation id.",
+        "Nothing times out a stuck saga unless some service is made responsible for it.",
+        "Cyclic dependencies between services creep in as steps grow.",
+        "Compensations are reactions too: a missed event leaves money taken for a cancelled order."
       ],
       "featured": false,
       "order": 120,
       "path": "starters/patterns/saga-choreography/saga-choreography.draftcanvas",
-      "sha256": "cfb1a00cac9a867bd0e0124d0a9f628ed4de7ce3acdfba347bad7cda59a9f53d",
-      "bytes": 12017,
-      "formatVersion": 25,
-      "updated": "2026-11-11"
+      "sha256": "c683b2168a280460515cb81692daa5aa481f4417ebab8c58685d4ca2ec099892",
+      "bytes": 14168,
+      "formatVersion": 29,
+      "updated": "2026-11-21"
     },
     {
       "id": "transactional-outbox",
       "name": "Transactional Outbox",
       "category": "pattern",
-      "summary": "Persist state and event intent atomically, publish after",
+      "summary": "A bank transfer and its event commit in one transaction; Debezium publishes it after, and consumers drop duplicates",
       "aliases": [
         "outbox",
         "transactional outbox",
         "outbox pattern",
         "dual write",
-        "reliable publish"
+        "reliable publish",
+        "debezium outbox",
+        "inbox pattern",
+        "idempotent consumer"
       ],
       "tags": [
         "outbox",
         "reliable messaging",
         "events",
-        "consistency"
+        "consistency",
+        "cdc",
+        "idempotency"
       ],
       "useWhen": [
         "A state change and its event must never disagree.",
-        "Publishing events from a service that owns a database."
+        "Publishing events from a service that owns a relational database.",
+        "The broker must not be on the request path: a Kafka outage should not block writes."
       ],
       "watchOutFor": [
-        "Events arrive at least once and slightly late.",
-        "The outbox table needs cleaning up."
+        "Events arrive at least once and slightly late; every consumer must deduplicate.",
+        "The outbox table grows unless rows are deleted once published.",
+        "Ordering holds only per message key; choose the key for the order consumers need.",
+        "The relay is one more thing to run and monitor: lag means late events."
       ],
       "featured": false,
       "order": 130,
       "path": "starters/patterns/transactional-outbox/transactional-outbox.draftcanvas",
-      "sha256": "98a7c16ee25d631f7e38c2e27606d152b9025b6d46726861f5b68d313aa38e52",
-      "bytes": 6689,
-      "formatVersion": 25,
-      "updated": "2026-11-11"
+      "sha256": "498a4671d0b18b4ff6756ec1495e073238fbfaeae13d86cebe078445a47f6a0f",
+      "bytes": 17506,
+      "formatVersion": 28,
+      "updated": "2026-11-21"
     },
     {
       "id": "order-processing",
