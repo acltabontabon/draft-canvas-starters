@@ -11,22 +11,23 @@
     {
       "id": "ordering",
       "type": "group",
-      "x": 811,
-      "y": 0,
-      "width": 491,
-      "height": 250,
+      "x": 940,
+      "y": -106,
+      "width": 240,
+      "height": 500,
       "z": -1,
       "text": "Ordering",
       "textOrigin": "explicit",
+      "accent": "blue",
       "boundaryPreset": "domain"
     },
     {
       "id": "kitchen",
       "type": "group",
-      "x": 811,
-      "y": 311,
-      "width": 491,
-      "height": 250,
+      "x": 940,
+      "y": -483,
+      "width": 592,
+      "height": 227,
       "z": -1,
       "text": "Restaurants",
       "textOrigin": "explicit",
@@ -35,20 +36,21 @@
     {
       "id": "dispatch",
       "type": "group",
-      "x": 1676,
-      "y": 3,
-      "width": 569,
-      "height": 238,
+      "x": 1700,
+      "y": -106,
+      "width": 240,
+      "height": 500,
       "z": -1,
       "text": "Delivery",
       "textOrigin": "explicit",
+      "accent": "teal",
       "boundaryPreset": "domain"
     },
     {
       "id": "customer",
       "type": "actor",
-      "x": 0,
-      "y": 51.5,
+      "x": -60,
+      "y": -59,
       "width": 120,
       "height": 118,
       "z": 0,
@@ -61,8 +63,8 @@
     {
       "id": "app",
       "type": "service",
-      "x": 236,
-      "y": 69,
+      "x": 252,
+      "y": -41,
       "width": 176,
       "height": 83,
       "z": 0,
@@ -75,8 +77,8 @@
     {
       "id": "gateway",
       "type": "service",
-      "x": 527,
-      "y": 50,
+      "x": 612,
+      "y": -60,
       "width": 176,
       "height": 121,
       "z": 0,
@@ -108,8 +110,8 @@
     {
       "id": "orders",
       "type": "service",
-      "x": 891,
-      "y": 56,
+      "x": 972,
+      "y": -54,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -136,7 +138,7 @@
             "id": "o.gateway",
             "type": "service",
             "x": 0,
-            "y": 339,
+            "y": 315,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -149,7 +151,7 @@
             "id": "o.controller",
             "type": "component",
             "x": 291,
-            "y": 333,
+            "y": 309,
             "width": 152,
             "height": 80,
             "z": 0,
@@ -163,7 +165,7 @@
             "id": "o.place",
             "type": "component",
             "x": 562,
-            "y": 333,
+            "y": 309,
             "width": 152,
             "height": 80,
             "z": 0,
@@ -176,7 +178,7 @@
           {
             "id": "o.menus",
             "type": "component",
-            "x": 1062,
+            "x": 1026,
             "y": 0,
             "width": 152,
             "height": 134,
@@ -190,8 +192,8 @@
           {
             "id": "o.pay",
             "type": "component",
-            "x": 1062,
-            "y": 204,
+            "x": 1026,
+            "y": 188,
             "width": 152,
             "height": 134,
             "z": 0,
@@ -204,8 +206,8 @@
           {
             "id": "o.repo",
             "type": "component",
-            "x": 1062,
-            "y": 408,
+            "x": 1026,
+            "y": 376,
             "width": 152,
             "height": 134,
             "z": 0,
@@ -218,8 +220,8 @@
           {
             "id": "o.publisher",
             "type": "component",
-            "x": 1062,
-            "y": 612,
+            "x": 1026,
+            "y": 564,
             "width": 152,
             "height": 134,
             "z": 0,
@@ -232,7 +234,7 @@
           {
             "id": "o.restaurants",
             "type": "service",
-            "x": 1363,
+            "x": 1327,
             "y": 33,
             "width": 176,
             "height": 68,
@@ -245,8 +247,8 @@
           {
             "id": "o.adyen",
             "type": "service",
-            "x": 1363,
-            "y": 237,
+            "x": 1327,
+            "y": 221,
             "width": 176,
             "height": 68,
             "z": 0,
@@ -258,8 +260,8 @@
           {
             "id": "o.db",
             "type": "database",
-            "x": 1391,
-            "y": 436.1363636363636,
+            "x": 1355,
+            "y": 404.1363636363636,
             "width": 120,
             "height": 114,
             "z": 0,
@@ -271,8 +273,8 @@
           {
             "id": "o.events",
             "type": "queue",
-            "x": 1381,
-            "y": 662.25,
+            "x": 1345,
+            "y": 614.25,
             "width": 140,
             "height": 72,
             "z": 0,
@@ -367,7 +369,7 @@
             "id": "o.emit",
             "source": "o.place",
             "target": "o.publisher",
-            "label": "orderPlaced(order)",
+            "label": "publish(event)",
             "directed": true,
             "routing": "smoothstep",
             "semantic": "uses",
@@ -455,8 +457,8 @@
     {
       "id": "orders-db",
       "type": "database",
-      "x": 1158,
-      "y": 70.5,
+      "x": 1000,
+      "y": 219,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -470,8 +472,8 @@
     {
       "id": "restaurants",
       "type": "service",
-      "x": 847,
-      "y": 367,
+      "x": 972,
+      "y": -414,
       "width": 176,
       "height": 109,
       "z": 0,
@@ -486,8 +488,8 @@
     {
       "id": "menus-db",
       "type": "database",
-      "x": 1146,
-      "y": 381.5,
+      "x": 1380,
+      "y": -431,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -501,8 +503,8 @@
     {
       "id": "events",
       "type": "queue",
-      "x": 1411,
-      "y": 121,
+      "x": 1370,
+      "y": -38,
       "width": 140,
       "height": 120,
       "z": 0,
@@ -525,8 +527,8 @@
     {
       "id": "delivery",
       "type": "service",
-      "x": 1712,
-      "y": 86.25,
+      "x": 1732,
+      "y": -51,
       "width": 176,
       "height": 103,
       "z": 0,
@@ -540,8 +542,8 @@
     {
       "id": "locations",
       "type": "database",
-      "x": 2049,
-      "y": 89,
+      "x": 1740,
+      "y": 219,
       "width": 160,
       "height": 143,
       "z": 0,
@@ -551,6 +553,18 @@
       "technology": "Redis 7",
       "textOrigin": "explicit",
       "databaseKind": "cache"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "x": -60,
+      "y": -641,
+      "width": 1000,
+      "height": 110,
+      "z": 0,
+      "text": "# Food delivery services\nMicroservices: each service owns its data; calls and events connect them.",
+      "textOrigin": "explicit",
+      "textRole": "title"
     }
   ],
   "edges": [
@@ -595,12 +609,12 @@
       "routing": "smoothstep",
       "semantic": "routes",
       "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
+        "side": "top",
+        "offset": 0.5
       },
       "targetAnchor": {
         "side": "left",
-        "offset": 0.25
+        "offset": 0.5
       },
       "semanticsOrigin": "explicit"
     },
@@ -614,14 +628,6 @@
       "semantic": "grpc",
       "response": "prices",
       "hasResponse": true,
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -641,14 +647,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "readsWrites",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -669,14 +667,6 @@
       "routing": "smoothstep",
       "semantic": "publishes",
       "kind": "event",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -704,7 +694,7 @@
       "id": "nearest",
       "source": "delivery",
       "target": "locations",
-      "label": "Finds nearest couriers",
+      "label": "Nearest couriers",
       "directed": true,
       "routing": "smoothstep",
       "semantic": "readsWrites",

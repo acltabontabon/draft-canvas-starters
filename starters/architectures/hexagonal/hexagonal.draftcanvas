@@ -11,10 +11,10 @@
     {
       "id": "core",
       "type": "group",
-      "x": 483,
-      "y": 0,
-      "width": 1027,
-      "height": 742,
+      "x": 582,
+      "y": -349,
+      "width": 1096,
+      "height": 689,
       "z": -1,
       "text": "Transfers Core",
       "textOrigin": "explicit",
@@ -34,8 +34,8 @@
     {
       "id": "customer",
       "type": "actor",
-      "x": 0,
-      "y": 314.5,
+      "x": -60,
+      "y": -59,
       "width": 120,
       "height": 118,
       "z": 0,
@@ -48,8 +48,8 @@
     {
       "id": "http-adapter",
       "type": "component",
-      "x": 227,
-      "y": 316,
+      "x": 254,
+      "y": -57,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -62,8 +62,8 @@
     {
       "id": "job-adapter",
       "type": "component",
-      "x": 227,
-      "y": 487,
+      "x": 254,
+      "y": 191,
       "width": 152,
       "height": 119,
       "z": 0,
@@ -76,8 +76,8 @@
     {
       "id": "inbound-port",
       "type": "component",
-      "x": 519,
-      "y": 316,
+      "x": 614,
+      "y": -57,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -91,8 +91,8 @@
     {
       "id": "use-cases",
       "type": "component",
-      "x": 803,
-      "y": 316,
+      "x": 974,
+      "y": -57,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -116,8 +116,8 @@
     {
       "id": "domain",
       "type": "component",
-      "x": 1322,
-      "y": 56,
+      "x": 974,
+      "y": 213,
       "width": 152,
       "height": 95,
       "z": 0,
@@ -132,8 +132,8 @@
           {
             "id": "d.service",
             "type": "component",
-            "x": 222,
-            "y": 0,
+            "x": 0,
+            "y": 168.5,
             "width": 152,
             "height": 56,
             "z": 0,
@@ -145,8 +145,8 @@
           {
             "id": "d.account",
             "type": "component",
-            "x": 222,
-            "y": 150,
+            "x": 295,
+            "y": 149,
             "width": 152,
             "height": 95,
             "z": 0,
@@ -159,8 +159,8 @@
           {
             "id": "d.policy",
             "type": "component",
-            "x": 0,
-            "y": 383,
+            "x": 766,
+            "y": 0,
             "width": 152,
             "height": 95,
             "z": 0,
@@ -173,8 +173,8 @@
           {
             "id": "d.money",
             "type": "component",
-            "x": 222,
-            "y": 383,
+            "x": 766,
+            "y": 149,
             "width": 152,
             "height": 95,
             "z": 0,
@@ -187,8 +187,8 @@
           {
             "id": "d.event",
             "type": "component",
-            "x": 444,
-            "y": 383,
+            "x": 766,
+            "y": 298,
             "width": 152,
             "height": 95,
             "z": 0,
@@ -224,7 +224,7 @@
             "id": "d.subtract",
             "source": "d.account",
             "target": "d.money",
-            "label": "balance - amount",
+            "label": "debit(amount)",
             "directed": true,
             "routing": "smoothstep",
             "semantic": "uses",
@@ -280,8 +280,8 @@
     {
       "id": "accounts-port",
       "type": "component",
-      "x": 1322,
-      "y": 406,
+      "x": 1494,
+      "y": -57,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -305,8 +305,8 @@
     {
       "id": "fraud-port",
       "type": "component",
-      "x": 1322,
-      "y": 221,
+      "x": 1494,
+      "y": -297,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -330,8 +330,8 @@
     {
       "id": "events-port",
       "type": "component",
-      "x": 1322,
-      "y": 591,
+      "x": 1494,
+      "y": 183,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -345,8 +345,8 @@
     {
       "id": "persistence-adapter",
       "type": "component",
-      "x": 1642,
-      "y": 396.5,
+      "x": 1854,
+      "y": -67,
       "width": 152,
       "height": 134,
       "z": 0,
@@ -359,8 +359,8 @@
     {
       "id": "fraud-adapter",
       "type": "component",
-      "x": 1642,
-      "y": 182.75,
+      "x": 1854,
+      "y": -307,
       "width": 152,
       "height": 134,
       "z": 0,
@@ -373,8 +373,8 @@
     {
       "id": "events-adapter",
       "type": "component",
-      "x": 1642,
-      "y": 610.25,
+      "x": 1854,
+      "y": 173,
       "width": 152,
       "height": 134,
       "z": 0,
@@ -387,8 +387,8 @@
     {
       "id": "database",
       "type": "database",
-      "x": 1917,
-      "y": 423.5,
+      "x": 2180,
+      "y": -71,
       "width": 220,
       "height": 143,
       "z": 0,
@@ -401,8 +401,8 @@
     {
       "id": "fraud",
       "type": "service",
-      "x": 1939,
-      "y": 192.25,
+      "x": 2202,
+      "y": -297,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -414,8 +414,8 @@
     {
       "id": "topic",
       "type": "queue",
-      "x": 1957,
-      "y": 660.5,
+      "x": 2220,
+      "y": 188,
       "width": 140,
       "height": 104,
       "z": 0,
@@ -424,6 +424,18 @@
       "technology": "Kafka",
       "textOrigin": "explicit",
       "queueKind": "topic"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "x": -60,
+      "y": -507,
+      "width": 900,
+      "height": 110,
+      "z": 0,
+      "text": "# Bank transfers\nHexagonal: adapters on both sides of a core that owns its ports.",
+      "textOrigin": "explicit",
+      "textRole": "title"
     }
   ],
   "edges": [
@@ -445,14 +457,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "uses",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -463,14 +467,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "uses",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -529,14 +525,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "implementedBy",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -555,14 +543,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "implementedBy",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {

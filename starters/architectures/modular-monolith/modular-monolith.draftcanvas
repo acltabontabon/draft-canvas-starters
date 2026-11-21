@@ -11,10 +11,10 @@
     {
       "id": "app",
       "type": "group",
-      "x": 138,
-      "y": 190,
-      "width": 636,
-      "height": 565,
+      "x": -108,
+      "y": -109,
+      "width": 1016,
+      "height": 671,
       "z": -1,
       "text": "Course Platform",
       "textOrigin": "explicit",
@@ -23,8 +23,8 @@
     {
       "id": "learner",
       "type": "actor",
-      "x": 396,
-      "y": 0,
+      "x": 340,
+      "y": -329,
       "width": 120,
       "height": 118,
       "z": 0,
@@ -37,8 +37,8 @@
     {
       "id": "api",
       "type": "component",
-      "x": 380,
-      "y": 246,
+      "x": 324,
+      "y": -57,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -62,8 +62,8 @@
     {
       "id": "catalog",
       "type": "component",
-      "x": 174,
-      "y": 620,
+      "x": -76,
+      "y": 431,
       "width": 152,
       "height": 99,
       "z": 0,
@@ -77,8 +77,8 @@
     {
       "id": "enrollment",
       "type": "component",
-      "x": 380,
-      "y": 433,
+      "x": 324,
+      "y": 183,
       "width": 152,
       "height": 115,
       "z": 0,
@@ -314,8 +314,8 @@
     {
       "id": "billing",
       "type": "component",
-      "x": 380,
-      "y": 620,
+      "x": 724,
+      "y": 431,
       "width": 152,
       "height": 99,
       "z": 0,
@@ -339,8 +339,8 @@
     {
       "id": "notify",
       "type": "component",
-      "x": 586,
-      "y": 620,
+      "x": 324,
+      "y": 431,
       "width": 152,
       "height": 99,
       "z": 0,
@@ -354,8 +354,8 @@
     {
       "id": "t.catalog",
       "type": "database",
-      "x": 0,
-      "y": 827,
+      "x": -60,
+      "y": 669,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -368,8 +368,8 @@
     {
       "id": "t.enrollment",
       "type": "database",
-      "x": 897,
-      "y": 407.75,
+      "x": 1140,
+      "y": 169,
       "width": 120,
       "height": 143,
       "z": 0,
@@ -392,8 +392,8 @@
     {
       "id": "t.billing",
       "type": "database",
-      "x": 174,
-      "y": 827,
+      "x": 730,
+      "y": 669,
       "width": 140,
       "height": 143,
       "z": 0,
@@ -406,8 +406,8 @@
     {
       "id": "stripe",
       "type": "service",
-      "x": 368,
-      "y": 841,
+      "x": 1112,
+      "y": 423,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -420,8 +420,8 @@
     {
       "id": "mail",
       "type": "service",
-      "x": 612,
-      "y": 841,
+      "x": 312,
+      "y": 683,
       "width": 176,
       "height": 115,
       "z": 0,
@@ -430,6 +430,18 @@
       "technology": "Mailgun",
       "textOrigin": "explicit",
       "serviceKind": "external"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "x": -108,
+      "y": -487,
+      "width": 900,
+      "height": 110,
+      "z": 0,
+      "text": "# Online course platform\nA modular monolith: four modules with their own tables, one deployable.",
+      "textOrigin": "explicit",
+      "textRole": "title"
     }
   ],
   "edges": [
@@ -443,14 +455,6 @@
       "semantic": "http",
       "response": "201 Enrolled",
       "hasResponse": true,
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -461,14 +465,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "uses",
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -479,14 +475,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "uses",
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -497,14 +485,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "uses",
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.5
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -516,14 +496,6 @@
       "routing": "smoothstep",
       "semantic": "uses",
       "kind": "event",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.25
-      },
       "semanticsOrigin": "explicit",
       "attachments": [
         {
@@ -543,14 +515,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "readsWrites",
-      "sourceAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -560,14 +524,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "readsWrites",
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "left",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -577,14 +533,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "readsWrites",
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.25
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -597,14 +545,6 @@
       "semantic": "http",
       "response": "succeeded",
       "hasResponse": true,
-      "sourceAnchor": {
-        "side": "right",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.75
-      },
       "semanticsOrigin": "explicit"
     },
     {
@@ -615,14 +555,6 @@
       "directed": true,
       "routing": "smoothstep",
       "semantic": "http",
-      "sourceAnchor": {
-        "side": "bottom",
-        "offset": 0.75
-      },
-      "targetAnchor": {
-        "side": "top",
-        "offset": 0.5
-      },
       "semanticsOrigin": "explicit"
     }
   ],

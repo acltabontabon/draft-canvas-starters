@@ -37,8 +37,8 @@
       "featured": true,
       "order": 10,
       "path": "starters/architectures/monolith/monolith.draftcanvas",
-      "sha256": "0153b7d1598e960497e8ef423fa1d7197b58c974f74dc79050f438ab05076523",
-      "bytes": 16218,
+      "sha256": "3bf419391b5f146ee2fa10cf5cfd90243f5b9e26d9476c911064025500c46678",
+      "bytes": 15980,
       "formatVersion": 28,
       "updated": "2026-11-21"
     },
@@ -76,8 +76,8 @@
       "featured": false,
       "order": 20,
       "path": "starters/architectures/modular-monolith/modular-monolith.draftcanvas",
-      "sha256": "e4914d3c01fbb2dd7d05d5025f8dd4f848176edbee90efe77e6ddabef8557834",
-      "bytes": 18685,
+      "sha256": "4f45a1852e91413bc9c9cf128df133e1bd54adfd91c2dd50f8ef91e52f79480f",
+      "bytes": 17411,
       "formatVersion": 28,
       "updated": "2026-11-21"
     },
@@ -115,8 +115,8 @@
       "featured": true,
       "order": 30,
       "path": "starters/architectures/microservices/microservices.draftcanvas",
-      "sha256": "6f5bfb9591b39a39de170a058fd72d6bfa1f2158476769426617ee6ed83bd268",
-      "bytes": 22503,
+      "sha256": "bb830afec29f06cb03d7ff3fd93c0360ab0c5a125b4ad0b3a91bc0023f45cbb8",
+      "bytes": 22387,
       "formatVersion": 28,
       "updated": "2026-11-21"
     },
@@ -201,8 +201,8 @@
       "featured": false,
       "order": 50,
       "path": "starters/architectures/hexagonal/hexagonal.draftcanvas",
-      "sha256": "492c9d4ced04d17c841256a73fce034955de072661e37d2d3ed252c464f80699",
-      "bytes": 19844,
+      "sha256": "58d2d6b3da26586df2960fd354c5cedea968de3d31271f691a1855c2a7d581b5",
+      "bytes": 19496,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },
