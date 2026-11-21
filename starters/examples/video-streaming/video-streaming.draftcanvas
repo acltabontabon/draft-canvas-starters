@@ -56,6 +56,7 @@
       "parentId": "cloud",
       "text": "Discovery",
       "textOrigin": "explicit",
+      "accent": "blue",
       "boundaryPreset": "domain"
     },
     {
@@ -69,6 +70,7 @@
       "parentId": "cloud",
       "text": "Playback",
       "textOrigin": "explicit",
+      "accent": "teal",
       "boundaryPreset": "domain"
     },
     {
@@ -82,6 +84,7 @@
       "parentId": "cloud",
       "text": "Data platform",
       "textOrigin": "explicit",
+      "accent": "violet",
       "boundaryPreset": "domain"
     },
     {
@@ -94,6 +97,7 @@
       "z": -2,
       "text": "Partner ISP networks",
       "textOrigin": "explicit",
+      "accent": "amber",
       "boundaryPreset": "network"
     },
     {
@@ -162,9 +166,7 @@
       "y": 622,
       "width": 36,
       "height": 36,
-      "z": 0,
-      "text": "API calls",
-      "textOrigin": "explicit"
+      "z": 0
     },
     {
       "id": "gateway",
@@ -1231,21 +1233,45 @@
       "source": "tv",
       "target": "j-api",
       "directed": true,
-      "routing": "smoothstep"
+      "routing": "smoothstep",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "bottom",
+        "offset": 0.5
+      }
     },
     {
       "id": "mobile-api",
       "source": "mobile",
       "target": "j-api",
       "directed": true,
-      "routing": "smoothstep"
+      "routing": "smoothstep",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "left",
+        "offset": 0.5
+      }
     },
     {
       "id": "web-api",
       "source": "web",
       "target": "j-api",
       "directed": true,
-      "routing": "smoothstep"
+      "routing": "smoothstep",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "top",
+        "offset": 0.5
+      }
     },
     {
       "id": "api",

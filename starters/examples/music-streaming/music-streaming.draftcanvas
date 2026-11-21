@@ -56,6 +56,7 @@
       "parentId": "cloud",
       "text": "Library",
       "textOrigin": "explicit",
+      "accent": "blue",
       "boundaryPreset": "domain"
     },
     {
@@ -69,6 +70,7 @@
       "parentId": "cloud",
       "text": "Listening",
       "textOrigin": "explicit",
+      "accent": "teal",
       "boundaryPreset": "domain"
     },
     {
@@ -82,6 +84,7 @@
       "parentId": "cloud",
       "text": "Personalization",
       "textOrigin": "explicit",
+      "accent": "violet",
       "boundaryPreset": "domain"
     },
     {
@@ -95,6 +98,7 @@
       "parentId": "cloud",
       "text": "Insights & royalties",
       "textOrigin": "explicit",
+      "accent": "amber",
       "boundaryPreset": "domain"
     },
     {
@@ -176,9 +180,7 @@
       "y": 702,
       "width": 36,
       "height": 36,
-      "z": 0,
-      "text": "API calls",
-      "textOrigin": "explicit"
+      "z": 0
     },
     {
       "id": "gateway",
@@ -1190,21 +1192,45 @@
       "source": "speaker",
       "target": "j-api",
       "directed": true,
-      "routing": "smoothstep"
+      "routing": "smoothstep",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "top",
+        "offset": 0.5
+      }
     },
     {
       "id": "desktop-api",
       "source": "desktop",
       "target": "j-api",
       "directed": true,
-      "routing": "smoothstep"
+      "routing": "smoothstep",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "left",
+        "offset": 0.5
+      }
     },
     {
       "id": "phone-api",
       "source": "phone",
       "target": "j-api",
       "directed": true,
-      "routing": "smoothstep"
+      "routing": "smoothstep",
+      "sourceAnchor": {
+        "side": "right",
+        "offset": 0.5
+      },
+      "targetAnchor": {
+        "side": "bottom",
+        "offset": 0.5
+      }
     },
     {
       "id": "api",

@@ -7,11 +7,13 @@ Every starter is a worked example in a realistic, fictional system: named servic
 technologies, a main flow and its failure path to present, notes on the decisions and risks, and a
 drill-down view where the internals are the point. Rename the parts and keep the shape.
 
-Two whole systems show everything Draft Canvas can draw on one canvas: a
-[video streaming platform](starters/examples/video-streaming/) and a
-[music streaming service](starters/examples/music-streaming/). Each has nested boundaries,
-junctions, styled text, sketch ink, portals, native sequence diagrams, drill-down views, and a
-flow for each journey through it.
+Four whole systems show everything Draft Canvas can draw on one canvas: a
+[video streaming platform](starters/examples/video-streaming/), a
+[music streaming service](starters/examples/music-streaming/), a
+[ride-hailing platform](starters/examples/ride-hailing/) and a
+[food delivery marketplace](starters/examples/food-delivery/). Each has nested boundaries, a
+junction, styled text, sketch ink, portals, a native sequence diagram, drill-down views, and a flow
+for each journey through it.
 
 Draft Canvas lists these under **Starters**, but only after you choose to load them. Loading
 reads this repository from GitHub; nothing about your own diagrams is sent. When a starter here
@@ -22,41 +24,234 @@ it stay as they are.
 
 <!-- gallery:start -->
 
+### Whole systems and examples
+
+<table>
+<tr>
+<td width="100%" valign="top">
+<a href="starters/examples/video-streaming/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/examples/video-streaming/preview-dark.svg">
+  <img width="100%" alt="Video streaming platform starter" src="starters/examples/video-streaming/preview.svg">
+</picture>
+</a>
+<p><a href="starters/examples/video-streaming/"><b>Video streaming platform</b></a><br>
+<sub>A whole streaming service: devices, edge, playback, discovery, data and an ISP-hosted video edge</sub></p>
+</td>
+</tr>
+<tr>
+<td width="100%" valign="top">
+<a href="starters/examples/music-streaming/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/examples/music-streaming/preview-dark.svg">
+  <img width="100%" alt="Music streaming service starter" src="starters/examples/music-streaming/preview.svg">
+</picture>
+</a>
+<p><a href="starters/examples/music-streaming/"><b>Music streaming service</b></a><br>
+<sub>A whole music service: playback from a CDN, an AI DJ, weekly mixes, royalties and artist releases</sub></p>
+</td>
+</tr>
+<tr>
+<td width="100%" valign="top">
+<a href="starters/examples/ride-hailing/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/examples/ride-hailing/preview-dark.svg">
+  <img width="100%" alt="Ride-hailing platform starter" src="starters/examples/ride-hailing/preview.svg">
+</picture>
+</a>
+<p><a href="starters/examples/ride-hailing/"><b>Ride-hailing platform</b></a><br>
+<sub>A whole two-sided marketplace: live driver locations, dispatch, surge, trips, payments and payouts</sub></p>
+</td>
+</tr>
+<tr>
+<td width="100%" valign="top">
+<a href="starters/examples/food-delivery/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/examples/food-delivery/preview-dark.svg">
+  <img width="100%" alt="Food delivery marketplace starter" src="starters/examples/food-delivery/preview.svg">
+</picture>
+</a>
+<p><a href="starters/examples/food-delivery/"><b>Food delivery marketplace</b></a><br>
+<sub>A three-sided marketplace: customers, restaurants and couriers, an order saga with refunds, dispatch and payouts</sub></p>
+</td>
+</tr>
+<tr>
+<td width="100%" valign="top">
+<a href="starters/examples/order-processing/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/examples/order-processing/preview-dark.svg">
+  <img width="100%" alt="Order processing starter" src="starters/examples/order-processing/preview.svg">
+</picture>
+</a>
+<p><a href="starters/examples/order-processing/"><b>Order processing</b></a><br>
+<sub>A shop takes the payment, queues fulfilment, and parks orders the warehouse keeps refusing</sub></p>
+</td>
+</tr>
+</table>
+
 ### Architectures
 
-| Starter | Shows |
-| --- | --- |
-| [Monolith](starters/architectures/monolith/) | A clinic's booking site, staff screens and API in one Django app, deployed as one unit behind NGINX |
-| [Modular Monolith](starters/architectures/modular-monolith/) | A course platform as one Spring Boot deployable with Catalog, Enrollment, Billing and Notifications modules |
-| [Microservices](starters/architectures/microservices/) | A food-delivery platform: services behind Kong, each owning its data, talking by gRPC and Kafka events |
-| [Event-Driven](starters/architectures/event-driven/) | One event, many reactions: a topic fans out to a queue per subscriber, with a dead-letter queue for failures |
-| [Hexagonal](starters/architectures/hexagonal/) | A bank's transfers core owns its ports; REST, a job, JPA, Kafka and a fraud vendor plug in as adapters |
-| [Backend for Frontend](starters/architectures/bff/) | Web, mobile and TV each get a backend shaped for their screens, over shared platform APIs |
-| [CQRS](starters/architectures/cqrs/) | A bank's payments write events on one side; projections build balances and searchable history on the other |
+<table>
+<tr>
+<td width="50%" valign="top">
+<a href="starters/architectures/monolith/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/architectures/monolith/preview-dark.svg">
+  <img width="100%" alt="Monolith starter" src="starters/architectures/monolith/preview.svg">
+</picture>
+</a>
+<p><a href="starters/architectures/monolith/"><b>Monolith</b></a><br>
+<sub>A clinic's booking site, staff screens and API in one Django app, deployed as one unit behind NGINX</sub></p>
+</td>
+<td width="50%" valign="top">
+<a href="starters/architectures/modular-monolith/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/architectures/modular-monolith/preview-dark.svg">
+  <img width="100%" alt="Modular Monolith starter" src="starters/architectures/modular-monolith/preview.svg">
+</picture>
+</a>
+<p><a href="starters/architectures/modular-monolith/"><b>Modular Monolith</b></a><br>
+<sub>A course platform as one Spring Boot deployable with Catalog, Enrollment, Billing and Notifications modules</sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="starters/architectures/microservices/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/architectures/microservices/preview-dark.svg">
+  <img width="100%" alt="Microservices starter" src="starters/architectures/microservices/preview.svg">
+</picture>
+</a>
+<p><a href="starters/architectures/microservices/"><b>Microservices</b></a><br>
+<sub>A food-delivery platform: services behind Kong, each owning its data, talking by gRPC and Kafka events</sub></p>
+</td>
+<td width="50%" valign="top">
+<a href="starters/architectures/event-driven/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/architectures/event-driven/preview-dark.svg">
+  <img width="100%" alt="Event-Driven starter" src="starters/architectures/event-driven/preview.svg">
+</picture>
+</a>
+<p><a href="starters/architectures/event-driven/"><b>Event-Driven</b></a><br>
+<sub>One event, many reactions: a topic fans out to a queue per subscriber, with a dead-letter queue for failures</sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="starters/architectures/hexagonal/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/architectures/hexagonal/preview-dark.svg">
+  <img width="100%" alt="Hexagonal starter" src="starters/architectures/hexagonal/preview.svg">
+</picture>
+</a>
+<p><a href="starters/architectures/hexagonal/"><b>Hexagonal</b></a><br>
+<sub>A bank's transfers core owns its ports; REST, a job, JPA, Kafka and a fraud vendor plug in as adapters</sub></p>
+</td>
+<td width="50%" valign="top">
+<a href="starters/architectures/bff/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/architectures/bff/preview-dark.svg">
+  <img width="100%" alt="Backend for Frontend starter" src="starters/architectures/bff/preview.svg">
+</picture>
+</a>
+<p><a href="starters/architectures/bff/"><b>Backend for Frontend</b></a><br>
+<sub>Web, mobile and TV each get a backend shaped for their screens, over shared platform APIs</sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="starters/architectures/cqrs/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/architectures/cqrs/preview-dark.svg">
+  <img width="100%" alt="CQRS starter" src="starters/architectures/cqrs/preview.svg">
+</picture>
+</a>
+<p><a href="starters/architectures/cqrs/"><b>CQRS</b></a><br>
+<sub>A bank's payments write events on one side; projections build balances and searchable history on the other</sub></p>
+</td>
+<td width="50%"></td>
+</tr>
+</table>
 
 ### Data architectures
 
-| Starter | Shows |
-| --- | --- |
-| [Medallion](starters/data/medallion/) | A ride-hailing lakehouse refines raw trips into Bronze, Silver and Gold, and quarantines bad rows |
-| [Kappa](starters/data/kappa/) | Card fraud scoring from one durable log: live scoring, and a full replay to rebuild with new rules |
-| [Change Data Capture](starters/data/cdc/) | A marketplace streams committed listing changes from PostgreSQL to search, cache and warehouse |
+<table>
+<tr>
+<td width="50%" valign="top">
+<a href="starters/data/medallion/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/data/medallion/preview-dark.svg">
+  <img width="100%" alt="Medallion starter" src="starters/data/medallion/preview.svg">
+</picture>
+</a>
+<p><a href="starters/data/medallion/"><b>Medallion</b></a><br>
+<sub>A ride-hailing lakehouse refines raw trips into Bronze, Silver and Gold, and quarantines bad rows</sub></p>
+</td>
+<td width="50%" valign="top">
+<a href="starters/data/kappa/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/data/kappa/preview-dark.svg">
+  <img width="100%" alt="Kappa starter" src="starters/data/kappa/preview.svg">
+</picture>
+</a>
+<p><a href="starters/data/kappa/"><b>Kappa</b></a><br>
+<sub>Card fraud scoring from one durable log: live scoring, and a full replay to rebuild with new rules</sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="starters/data/cdc/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/data/cdc/preview-dark.svg">
+  <img width="100%" alt="Change Data Capture starter" src="starters/data/cdc/preview.svg">
+</picture>
+</a>
+<p><a href="starters/data/cdc/"><b>Change Data Capture</b></a><br>
+<sub>A marketplace streams committed listing changes from PostgreSQL to search, cache and warehouse</sub></p>
+</td>
+<td width="50%"></td>
+</tr>
+</table>
 
 ### Patterns
 
-| Starter | Shows |
-| --- | --- |
-| [Saga – Orchestration](starters/patterns/saga-orchestration/) | One orchestrator books a trip step by step, and cancels the done steps in reverse when the card is declined |
-| [Saga – Choreography](starters/patterns/saga-choreography/) | A food order moves through payment and kitchen by events alone, and unwinds by events when a restaurant says no |
-| [Transactional Outbox](starters/patterns/transactional-outbox/) | A bank transfer and its event commit in one transaction; Debezium publishes it after, and consumers drop duplicates |
-
-### Examples
-
-| Starter | Shows |
-| --- | --- |
-| [Video streaming platform](starters/examples/video-streaming/) | A whole streaming service: devices, edge, playback, discovery, data and an ISP-hosted video edge |
-| [Music streaming service](starters/examples/music-streaming/) | A whole music service: playback from a CDN, an AI DJ, weekly mixes, royalties and artist releases |
-| [Order processing](starters/examples/order-processing/) | A shop takes the payment, queues fulfilment, and parks orders the warehouse keeps refusing |
+<table>
+<tr>
+<td width="50%" valign="top">
+<a href="starters/patterns/saga-orchestration/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/patterns/saga-orchestration/preview-dark.svg">
+  <img width="100%" alt="Saga – Orchestration starter" src="starters/patterns/saga-orchestration/preview.svg">
+</picture>
+</a>
+<p><a href="starters/patterns/saga-orchestration/"><b>Saga – Orchestration</b></a><br>
+<sub>One orchestrator books a trip step by step, and cancels the done steps in reverse when the card is declined</sub></p>
+</td>
+<td width="50%" valign="top">
+<a href="starters/patterns/saga-choreography/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/patterns/saga-choreography/preview-dark.svg">
+  <img width="100%" alt="Saga – Choreography starter" src="starters/patterns/saga-choreography/preview.svg">
+</picture>
+</a>
+<p><a href="starters/patterns/saga-choreography/"><b>Saga – Choreography</b></a><br>
+<sub>A food order moves through payment and kitchen by events alone, and unwinds by events when a restaurant says no</sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="starters/patterns/transactional-outbox/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="starters/patterns/transactional-outbox/preview-dark.svg">
+  <img width="100%" alt="Transactional Outbox starter" src="starters/patterns/transactional-outbox/preview.svg">
+</picture>
+</a>
+<p><a href="starters/patterns/transactional-outbox/"><b>Transactional Outbox</b></a><br>
+<sub>A bank transfer and its event commit in one transaction; Debezium publishes it after, and consumers drop duplicates</sub></p>
+</td>
+<td width="50%"></td>
+</tr>
+</table>
 
 <!-- gallery:end -->
 

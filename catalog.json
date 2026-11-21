@@ -576,8 +576,8 @@
       "featured": true,
       "order": 100,
       "path": "starters/examples/video-streaming/video-streaming.draftcanvas",
-      "sha256": "2fc8cbf4398404eb29514bab38311fcb6eecbbe13dba427e390c5d18784eaa26",
-      "bytes": 47793,
+      "sha256": "1003073c36a4648c7ed1bfffb6c30881d1ea4dbe439fc1be03ca8b02815ca6fe",
+      "bytes": 48311,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },
@@ -617,8 +617,91 @@
       "featured": true,
       "order": 110,
       "path": "starters/examples/music-streaming/music-streaming.draftcanvas",
-      "sha256": "960781b5be0a40562ac19d163026987c1f8c12022559cce657e39261200a0be1",
-      "bytes": 45091,
+      "sha256": "507a94038615d1a49b9d7a656140286621b57809faedfb494b2bb46abba89b7a",
+      "bytes": 45609,
+      "formatVersion": 29,
+      "updated": "2026-11-21"
+    },
+    {
+      "id": "ride-hailing",
+      "name": "Ride-hailing platform",
+      "category": "example",
+      "summary": "A whole two-sided marketplace: live driver locations, dispatch, surge, trips, payments and payouts",
+      "aliases": [
+        "ride hailing",
+        "ride sharing",
+        "taxi app",
+        "uber-style architecture",
+        "two-sided marketplace",
+        "dispatch",
+        "surge pricing",
+        "geospatial index",
+        "h3"
+      ],
+      "tags": [
+        "example",
+        "system design",
+        "marketplace",
+        "geospatial",
+        "real-time",
+        "payments"
+      ],
+      "useWhen": [
+        "Seeing a real-time, two-sided system drawn end to end, from a driver's GPS ping to a weekly payout.",
+        "Explaining matching: H3 cells, ETA ranking, one offer at a time, and surge drawing drivers in.",
+        "Starting a system-design discussion about a marketplace with live location and money."
+      ],
+      "watchOutFor": [
+        "It is a big picture on purpose: present it flow by flow rather than all at once.",
+        "Scale numbers and surge multipliers are illustrative; replace them before you reason from them.",
+        "Dispatch is held in place and one connector is a portal, so the file is format 29 and needs a current Draft Canvas."
+      ],
+      "featured": false,
+      "order": 120,
+      "path": "starters/examples/ride-hailing/ride-hailing.draftcanvas",
+      "sha256": "1114067dc331d64a42e9113bb27493394f8a104668912102790f40f660738a2c",
+      "bytes": 52101,
+      "formatVersion": 29,
+      "updated": "2026-11-21"
+    },
+    {
+      "id": "food-delivery",
+      "name": "Food delivery marketplace",
+      "category": "example",
+      "summary": "A three-sided marketplace: customers, restaurants and couriers, an order saga with refunds, dispatch and payouts",
+      "aliases": [
+        "food delivery",
+        "delivery marketplace",
+        "doordash-style architecture",
+        "uber eats-style architecture",
+        "three-sided marketplace",
+        "order saga",
+        "courier dispatch",
+        "restaurant ordering"
+      ],
+      "tags": [
+        "example",
+        "system design",
+        "marketplace",
+        "saga",
+        "outbox",
+        "dispatch"
+      ],
+      "useWhen": [
+        "Seeing a saga, an outbox and a dead-letter queue work together in one realistic system.",
+        "Explaining how one order moves between a customer, a restaurant and a courier.",
+        "Starting a system-design discussion about a marketplace with real-time logistics."
+      ],
+      "watchOutFor": [
+        "It is a big picture on purpose: present it flow by flow rather than all at once.",
+        "Scale numbers are illustrative; replace them with your own before you reason from them.",
+        "Five connectors are portals and the file is format 29, so it needs a current Draft Canvas."
+      ],
+      "featured": false,
+      "order": 130,
+      "path": "starters/examples/food-delivery/food-delivery.draftcanvas",
+      "sha256": "f87f346b19e79e5bbebfdcb20409d919e6c855dca6cdca0e8da8d98b043d0078",
+      "bytes": 55471,
       "formatVersion": 29,
       "updated": "2026-11-21"
     },

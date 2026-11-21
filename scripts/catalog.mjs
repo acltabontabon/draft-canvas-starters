@@ -108,17 +108,40 @@ const catalog = {
 };
 const catalogText = `${JSON.stringify(catalog, null, 2)}\n`;
 
-const table = order
+// The README shows every starter as a picture: whole systems first, then the rest by category, two
+// to a row. Each picture follows the reader's light or dark theme and links to the starter's folder.
+const README_ORDER = ['example', ...order.filter((category) => category !== 'example')];
+const README_LABELS = { ...LABELS, example: 'Whole systems and examples' };
+// Whole systems are dense enough to need the full width; everything else reads two to a row.
+const README_COLUMNS = { example: 1 };
+const card = (entry, columns) => {
+  const dir = dirname(entry.path);
+  return [
+    `<td width="${Math.round(100 / columns)}%" valign="top">`,
+    `<a href="${dir}/">`,
+    '<picture>',
+    `  <source media="(prefers-color-scheme: dark)" srcset="${dir}/preview-dark.svg">`,
+    `  <img width="100%" alt="${entry.name} starter" src="${dir}/preview.svg">`,
+    '</picture>',
+    '</a>',
+    `<p><a href="${dir}/"><b>${entry.name}</b></a><br>`,
+    `<sub>${entry.summary}</sub></p>`,
+    '</td>',
+  ].join('\n');
+};
+const table = README_ORDER
   .filter((category) => entries.some((entry) => entry.category === category))
-  .map((category) => [
-    `### ${LABELS[category]}`,
-    '',
-    '| Starter | Shows |',
-    '| --- | --- |',
-    ...entries
-      .filter((entry) => entry.category === category)
-      .map((entry) => `| [${entry.name}](${dirname(entry.path)}/) | ${entry.summary} |`),
-  ].join('\n'))
+  .map((category) => {
+    const members = entries.filter((entry) => entry.category === category);
+    const columns = README_COLUMNS[category] ?? 2;
+    const rows = [];
+    for (let at = 0; at < members.length; at += columns) {
+      const cells = members.slice(at, at + columns).map((entry) => card(entry, columns));
+      while (cells.length < columns) cells.push(`<td width="${Math.round(100 / columns)}%"></td>`);
+      rows.push(['<tr>', ...cells, '</tr>'].join('\n'));
+    }
+    return [`### ${README_LABELS[category]}`, '', '<table>', ...rows, '</table>'].join('\n');
+  })
   .join('\n\n');
 const readme = readFileSync(README, 'utf8');
 const START = '<!-- gallery:start -->';
