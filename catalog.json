@@ -7,101 +7,118 @@
       "id": "monolith",
       "name": "Monolith",
       "category": "architecture",
-      "summary": "One application, built and deployed as a unit",
+      "summary": "A clinic's booking site, staff screens and API in one Django app, deployed as one unit behind NGINX",
       "aliases": [
         "monolith",
         "monolithic",
         "single deployment",
         "one application",
-        "layered"
+        "layered",
+        "majestic monolith",
+        "django app",
+        "rails app"
       ],
       "tags": [
         "layered",
         "web app",
-        "single deployable"
+        "single deployable",
+        "stateless replicas"
       ],
       "useWhen": [
         "A new product or a small team, where one deployable keeps change cheap.",
-        "Explaining where a request goes before any of it is split out."
+        "Explaining where a request goes before any of it is split out.",
+        "Scaling by running more identical copies behind a load balancer."
       ],
       "watchOutFor": [
-        "Every change ships the whole application.",
-        "Layers blur over time unless their boundaries are kept on purpose."
+        "Every change ships the whole application, and one bad release takes everything down.",
+        "Slow calls inside a request, like sending a text, slow every user; move them to a job.",
+        "Module lines inside the codebase blur unless they are kept on purpose."
       ],
       "featured": true,
       "order": 10,
       "path": "starters/architectures/monolith/monolith.draftcanvas",
-      "sha256": "00c6d7a4ce0fcee44541d0376077f517436b508c4acf6d3d3d0deab0a852c446",
-      "bytes": 5780,
-      "formatVersion": 25,
-      "updated": "2026-11-11"
+      "sha256": "0153b7d1598e960497e8ef423fa1d7197b58c974f74dc79050f438ab05076523",
+      "bytes": 16218,
+      "formatVersion": 28,
+      "updated": "2026-11-21"
     },
     {
       "id": "modular-monolith",
       "name": "Modular Monolith",
       "category": "architecture",
-      "summary": "One deployable, explicitly encapsulated modules inside",
+      "summary": "A course platform as one Spring Boot deployable with Catalog, Enrollment, Billing and Notifications modules",
       "aliases": [
         "modular monolith",
         "modular architecture",
         "modules",
         "module boundaries",
         "majestic monolith",
-        "monolith modules"
+        "monolith modules",
+        "spring modulith",
+        "bounded contexts in one app"
       ],
       "tags": [
         "modules",
         "single deployable",
-        "bounded contexts"
+        "bounded contexts",
+        "schema per module"
       ],
       "useWhen": [
         "You want clear ownership without the cost of distributed services.",
-        "Preparing a monolith to split later, one module at a time."
+        "Preparing a monolith to split later, one module at a time.",
+        "Several teams share one codebase and need lines they cannot cross by accident."
       ],
       "watchOutFor": [
-        "Module boundaries only hold if calls go through the public interface.",
-        "A shared database makes it easy to reach into another module's tables."
+        "Module boundaries only hold if calls go through the public interface; enforce it in a build test.",
+        "A shared database server makes it easy to join another module's tables; grant each module its own schema.",
+        "In-process events vanish on a crash unless they are stored before they are handled."
       ],
       "featured": false,
       "order": 20,
       "path": "starters/architectures/modular-monolith/modular-monolith.draftcanvas",
-      "sha256": "7d4b8c1a9fbeba97608514671bf837d0cb2717f643e180f4a2a6e29d6c7cc3b0",
-      "bytes": 8111,
-      "formatVersion": 25,
-      "updated": "2026-11-11"
+      "sha256": "e4914d3c01fbb2dd7d05d5025f8dd4f848176edbee90efe77e6ddabef8557834",
+      "bytes": 18685,
+      "formatVersion": 28,
+      "updated": "2026-11-21"
     },
     {
       "id": "microservices",
       "name": "Microservices",
       "category": "architecture",
-      "summary": "Independently deployed services, each owning its data",
+      "summary": "A food-delivery platform: services behind Kong, each owning its data, talking by gRPC and Kafka events",
       "aliases": [
         "microservices",
         "microservice",
         "distributed services",
         "independent services",
-        "api gateway"
+        "api gateway",
+        "database per service",
+        "service mesh"
       ],
       "tags": [
         "services",
         "api gateway",
-        "database per service"
+        "database per service",
+        "events",
+        "circuit breaker"
       ],
       "useWhen": [
         "Teams need to deploy and scale parts of the system independently.",
-        "Mapping which service owns which data."
+        "Mapping which service owns which data, and how the others reach it.",
+        "Deciding which calls must be synchronous and which can be events."
       ],
       "watchOutFor": [
-        "Calls between services fail and are slow in ways in-process calls are not.",
-        "Queries that span services need their own design."
+        "Calls between services fail and are slow in ways in-process calls are not; guard them.",
+        "Every synchronous call chains availability: one service down can stop the main path.",
+        "Queries that span services need their own design: a read model, an API composer or a BFF."
       ],
       "featured": true,
       "order": 30,
       "path": "starters/architectures/microservices/microservices.draftcanvas",
-      "sha256": "9538f5cf1dce344514f2df97691b4951fcaabe70fa1a18371ec855fed49c98c7",
-      "bytes": 9413,
-      "formatVersion": 25,
-      "updated": "2026-11-11"
+      "sha256": "6f5bfb9591b39a39de170a058fd72d6bfa1f2158476769426617ee6ed83bd268",
+      "bytes": 22503,
+      "formatVersion": 28,
+      "updated": "2026-11-21"
     },
     {
       "id": "event-driven",
@@ -152,7 +169,7 @@
       "id": "hexagonal",
       "name": "Hexagonal",
       "category": "architecture",
-      "summary": "Adapters around a core that owns its ports",
+      "summary": "A bank's transfers core owns its ports; REST, a job, JPA, Kafka and a fraud vendor plug in as adapters",
       "aliases": [
         "hexagonal",
         "hexagonal architecture",
@@ -168,23 +185,26 @@
       "tags": [
         "ports and adapters",
         "clean architecture",
-        "domain"
+        "domain",
+        "testability"
       ],
       "useWhen": [
-        "Keeping business rules independent of frameworks, databases and transports.",
-        "Testing the core without infrastructure."
+        "Keeping business rules independent of frameworks, databases and vendors.",
+        "Testing the core with in-memory adapters, without infrastructure.",
+        "The same use case is driven from several places: HTTP, a job, a message."
       ],
       "watchOutFor": [
         "More indirection than a small service may need.",
-        "Ports drift into thin wrappers if they mirror one adapter."
+        "Ports drift into thin wrappers if they mirror one adapter or one vendor's API.",
+        "Arrows here read at runtime (port, then the adapter behind it); source dependencies point the other way, inward."
       ],
       "featured": true,
       "order": 50,
       "path": "starters/architectures/hexagonal/hexagonal.draftcanvas",
-      "sha256": "3ad7e4d19354e73d3dbd13b9110526935dc4dc03296c8340848fe324a42ae317",
-      "bytes": 9616,
-      "formatVersion": 25,
-      "updated": "2026-11-11"
+      "sha256": "492c9d4ced04d17c841256a73fce034955de072661e37d2d3ed252c464f80699",
+      "bytes": 19844,
+      "formatVersion": 29,
+      "updated": "2026-11-21"
     },
     {
       "id": "bff",

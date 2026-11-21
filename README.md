@@ -20,11 +20,11 @@ it stay as they are.
 
 | Starter | Shows |
 | --- | --- |
-| [Monolith](starters/architectures/monolith/) | One application, built and deployed as a unit |
-| [Modular Monolith](starters/architectures/modular-monolith/) | One deployable, explicitly encapsulated modules inside |
-| [Microservices](starters/architectures/microservices/) | Independently deployed services, each owning its data |
+| [Monolith](starters/architectures/monolith/) | A clinic's booking site, staff screens and API in one Django app, deployed as one unit behind NGINX |
+| [Modular Monolith](starters/architectures/modular-monolith/) | A course platform as one Spring Boot deployable with Catalog, Enrollment, Billing and Notifications modules |
+| [Microservices](starters/architectures/microservices/) | A food-delivery platform: services behind Kong, each owning its data, talking by gRPC and Kafka events |
 | [Event-Driven](starters/architectures/event-driven/) | One event, many reactions: a topic fans out to a queue per subscriber, with a dead-letter queue for failures |
-| [Hexagonal](starters/architectures/hexagonal/) | Adapters around a core that owns its ports |
+| [Hexagonal](starters/architectures/hexagonal/) | A bank's transfers core owns its ports; REST, a job, JPA, Kafka and a fraud vendor plug in as adapters |
 | [Backend for Frontend](starters/architectures/bff/) | Web, mobile and TV each get a backend shaped for their screens, over shared platform APIs |
 | [CQRS](starters/architectures/cqrs/) | A bank's payments write events on one side; projections build balances and searchable history on the other |
 
