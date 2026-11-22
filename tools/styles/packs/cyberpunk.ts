@@ -116,7 +116,8 @@ export const cyberpunk: Pack = {
         rect(x + 34, 3, 60, 7, 0, paint(yellow(k))) +
         (kind === 'api'
           ? rect(3, 46, 30, 50, 0, paint(k.K, k.L, 5)) + rect(11, 57, 14, 7, 0, paint(cyan(k))) + rect(11, 78, 14, 7, 0, paint(cyan(k)))
-          : barcode(22, 100, 12, k.L, 1.5))
+          : // Nothing below the tab: a service's description is written there.
+            '')
       );
     },
 

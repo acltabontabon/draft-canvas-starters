@@ -130,8 +130,8 @@ export const geek: Pack = {
           // The same window with a three-pin socket let into its left edge, for callers to plug into.
           return window + px(k.L, [0, 38, 22, 6], [16, 38, 6, 56], [0, 88, 22, 6]) + px(k.K, [0, 44, 16, 44]) + px(k.C, [2, 50, 10, 8], [2, 62, 10, 8], [2, 74, 10, 8]);
         default:
-          // A prompt waiting in the bottom-left corner.
-          return window + px(k.C, [16, 92, 7, 7], [23, 99, 7, 7], [16, 106, 7, 7]) + px(k.C, [36, 106, 16, 7]);
+          // Nothing below the title bar: a service's description is written there.
+          return window;
       }
     },
 
