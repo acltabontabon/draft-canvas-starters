@@ -255,6 +255,103 @@ it stay as they are.
 
 <!-- gallery:end -->
 
+## Style packs
+
+A style pack changes how every shape and connector is drawn, without changing what any of them
+means: a data store drawn as a barrel is still a data store. In Draft Canvas, open **Settings →
+Appearance → Style packs**, load the gallery and choose **Add**. A pack you add becomes a style of
+your own, to change as you like. Each pack below covers every shape and every kind of it; open one
+to see them all.
+
+<!-- styles:start -->
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<a href="styles/professional/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="styles/professional/preview-dark.svg">
+  <img width="100%" alt="Professional style pack" src="styles/professional/preview.svg">
+</picture>
+</a>
+<p><a href="styles/professional/"><b>Professional</b></a><br>
+<sub>Flat and quiet in slate and navy, for documents and slides</sub></p>
+</td>
+<td width="50%" valign="top">
+<a href="styles/geek/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="styles/geek/preview-dark.svg">
+  <img width="100%" alt="Geek style pack" src="styles/geek/preview.svg">
+</picture>
+</a>
+<p><a href="styles/geek/"><b>Geek</b></a><br>
+<sub>A green-screen terminal: floppy disks, CRTs, chips and paper tape</sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="styles/arena/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="styles/arena/preview-dark.svg">
+  <img width="100%" alt="Arena style pack" src="styles/arena/preview.svg">
+</picture>
+</a>
+<p><a href="styles/arena/"><b>Arena</b></a><br>
+<sub>Navy and gold: crests, shields, gems and the lane between them</sub></p>
+</td>
+<td width="50%" valign="top">
+<a href="styles/high-seas/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="styles/high-seas/preview-dark.svg">
+  <img width="100%" alt="High seas style pack" src="styles/high-seas/preview.svg">
+</picture>
+</a>
+<p><a href="styles/high-seas/"><b>High seas</b></a><br>
+<sub>A sea chart on parchment: ships, barrels, crates and bottles</sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="styles/high-fantasy/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="styles/high-fantasy/preview-dark.svg">
+  <img width="100%" alt="High fantasy style pack" src="styles/high-fantasy/preview.svg">
+</picture>
+</a>
+<p><a href="styles/high-fantasy/"><b>High fantasy</b></a><br>
+<sub>Ink on vellum: banners, towers, rune stones and scrolls</sub></p>
+</td>
+<td width="50%" valign="top">
+<a href="styles/cyberpunk/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="styles/cyberpunk/preview-dark.svg">
+  <img width="100%" alt="Cyberpunk style pack" src="styles/cyberpunk/preview.svg">
+</picture>
+</a>
+<p><a href="styles/cyberpunk/"><b>Cyberpunk</b></a><br>
+<sub>A night city in magenta and cyan: cut corners and glitched outlines</sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="styles/cute/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="styles/cute/preview-dark.svg">
+  <img width="100%" alt="Cute style pack" src="styles/cute/preview.svg">
+</picture>
+</a>
+<p><a href="styles/cute/"><b>Cute</b></a><br>
+<sub>Soft, round and smiling: clouds, jam jars, toy blocks and a caterpillar</sub></p>
+</td>
+<td width="50%"></td>
+</tr>
+</table>
+
+<!-- styles:end -->
+
+To use one without the gallery, download its `.draftstyle` file and choose **Import style…** on
+the same page.
+
 ## Using a starter without the app's gallery
 
 Download any `.draftcanvas` file and open it in Draft Canvas (**Import** on the web, **Open** on
@@ -276,8 +373,16 @@ starters/
     README.md             what it shows, when to use it, what to watch out for
     preview.svg           light picture, drawn by Draft Canvas
     preview-dark.svg      dark picture
-scripts/catalog.mjs       builds catalog.json and the gallery above
+styles/<id>/              one style pack
+  <id>.draftstyle         the style the app reads, built by tools/styles/build.ts
+  pack.json               name, summary, author, licence, order
+  style.json              everything about the style that is not a drawing
+  art/<key>.svg           one drawing per kind of shape
+  preview.svg             a sample diagram drawn in the pack (and preview-dark.svg)
+  sheet.svg               every kind of shape drawn in the pack
+scripts/catalog.mjs       builds catalog.json and the galleries above
 tools/                    build, picture and screenshot starters with Draft Canvas itself
+tools/styles/             draw and build style packs
 ```
 
 A folder is one starter, so adding one never touches another. The app finds files only through
@@ -286,5 +391,6 @@ starter again only when it changed.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Starters are licensed under [Apache-2.0](LICENSE), like
-Draft Canvas.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Starters and the style packs here are licensed under
+[Apache-2.0](LICENSE), like Draft Canvas. Every pack is original artwork: none uses a name, a
+character or a mark that belongs to someone else.

@@ -46,3 +46,14 @@ jobs:
           npx vitest run tests/starter-files.test.ts
         env:
           STARTERS_DIR: ${{ github.workspace }}/starters
+      - name: Check every style pack against the app
+        working-directory: app
+        run: |
+          if [ ! -f tests/style-packs.test.ts ]; then
+            echo "This Draft Canvas has no style pack check yet."
+            exit 0
+          fi
+          npx tsx ../starters/tools/styles/build.ts --check
+          npx vitest run tests/style-packs.test.ts
+        env:
+          STARTERS_DIR: ${{ github.workspace }}/starters

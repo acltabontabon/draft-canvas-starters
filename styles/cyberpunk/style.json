@@ -1,0 +1,70 @@
+{
+  "hand": {
+    "base": "clean"
+  },
+  "general": {
+    "corners": "sharp",
+    "shadow": false
+  },
+  "connectors": {
+    "head": "triangle",
+    "colour": "plain"
+  },
+  "schemes": {
+    "dark": {
+      "canvas": "#120c1f",
+      "grid": "#1d1433",
+      "text": "#e6dbff",
+      "textMuted": "#a99bd6",
+      "edge": "#9a8fd0",
+      "edgeText": "#c9b8f5",
+      "edgeLabelBg": "#1a1230",
+      "codeBg": "#170f29",
+      "codeBorder": "#2c2050",
+      "accents": {
+        "neutral": {
+          "fill": "#1e1436",
+          "line": "#9a8fd0",
+          "text": "#e6dbff",
+          "chip": "#c2b5f5"
+        },
+        "teal": {
+          "fill": "#0d2a30",
+          "line": "#3de0e0",
+          "text": "#c9fbfb",
+          "chip": "#6beaea"
+        },
+        "blue": {
+          "fill": "#131f45",
+          "line": "#5b8cff",
+          "text": "#d6e2ff",
+          "chip": "#84a8ff"
+        },
+        "violet": {
+          "fill": "#2a1650",
+          "line": "#b06cff",
+          "text": "#ecd9ff",
+          "chip": "#c693ff"
+        },
+        "amber": {
+          "fill": "#2e2a0c",
+          "line": "#f7e04b",
+          "text": "#fdf6c4",
+          "chip": "#f9e86f"
+        },
+        "rose": {
+          "fill": "#3a0f2c",
+          "line": "#f0489a",
+          "text": "#ffd3ea",
+          "chip": "#f571b3"
+        },
+        "green": {
+          "fill": "#0f2e1c",
+          "line": "#39e58c",
+          "text": "#cdfbe2",
+          "chip": "#6aeda8"
+        }
+      }
+    }
+  }
+}

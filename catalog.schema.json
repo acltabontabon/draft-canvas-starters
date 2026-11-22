@@ -8,6 +8,26 @@
     "$schema": { "type": "string" },
     "schema": { "const": 1, "description": "Bumped only for a change older apps cannot read." },
     "updated": { "type": "string", "format": "date" },
+    "styles": {
+      "type": "array",
+      "description": "Style packs. An app from before style packs ignores this.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "summary", "author", "licence", "order", "path", "sha256", "bytes", "updated"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "name": { "type": "string", "minLength": 1, "maxLength": 60 },
+          "summary": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "author": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "licence": { "type": "string", "minLength": 1, "maxLength": 40 },
+          "order": { "type": "integer" },
+          "path": { "type": "string", "pattern": "^styles/[a-z0-9-]+/[a-z0-9-]+\\.draftstyle$" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "bytes": { "type": "integer", "minimum": 1, "maximum": 524288 },
+          "updated": { "type": "string", "format": "date" }
+        }
+      }
+    },
     "starters": {
       "type": "array",
       "items": {

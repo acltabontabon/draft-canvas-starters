@@ -79,6 +79,52 @@ Changing a starter changes its SHA-256, so apps that load the gallery show it as
 Keep element ids readable (`api`, `queue`, `submit`) and stable across changes: agents refer to
 starter elements by id.
 
+## Add or change a style pack
+
+A style pack is a style and a drawing for every kind of shape. It changes how a diagram looks and
+nothing about what it means, so the first rule is that each drawing still reads as the thing it
+stands for: a queue is something things pass through, a data store something that holds them.
+
+- **Original artwork only.** No names, characters, logos or marks that belong to a game, a film, a
+  company or anyone else. A pack can be set in a kind of world (pirates, fantasy, a night city); it
+  cannot be a particular one. `pack.json` says who drew it and what it may be used under.
+- **Every kind of shape.** Each service, data store, queue, actor, component and artifact kind and
+  the junction has a drawing, or the pack says on purpose that it keeps the app's own. The check
+  below fails a pack with a gap, and fails every pack when Draft Canvas gains a kind.
+- **Bold and simple.** A drawing is shown about 60 pixels across. A few shapes and a heavy line
+  read; fine detail does not.
+- **Follow the diagram's colours.** Paint a part in one of the app's light-theme colours and it
+  follows the diagram: the shape's own fill, line, name or accent colour (so it follows a recolour
+  and the pack's palette), or one of the seven named colours. `tools/styles/kit.ts` has them as
+  `F`, `L`, `T`, `C`, `K` and `A(colour, role)`. Any other colour is kept as it is, everywhere.
+- **Leave room for the name.** The plain Service, the API and the plain Component are boxes with
+  their name inside: draw a frame, not a picture. Everything else is a picture with its name
+  beneath.
+
+A drawing is an SVG file, `styles/<id>/art/<type>--<kind>.svg` (`database--cache.svg`,
+`service--load-balancer.svg`, `ellipse.svg` for the junction), drawn in any editor. Only shapes and
+their fills and strokes are kept: text, images, gradients, filters, style sheets and anything that
+refers outside the file are left out, and the build fails on a drawing that has them.
+`style.json` holds the rest of the style: its hand, line weight, corners, connectors and colours,
+as a Draft Canvas style without `shapes[...].art` or `assets`.
+
+The packs here are drawn by `tools/styles/packs/<id>.ts`, which writes their `art/` and
+`style.json`; change the definition, not the files it writes. A pack drawn by hand has no
+definition, and its files are the source.
+
+Build and check (needs a Draft Canvas checkout beside this one):
+
+```bash
+cd ../draft-canvas
+npx tsx ../draft-canvas-starters/tools/styles/build.ts
+STARTERS_DIR=../draft-canvas-starters npx vitest run tests/style-packs.test.ts
+```
+
+The build writes `<id>.draftstyle`, `preview.svg`, `preview-dark.svg` and `sheet.svg`. Look at
+`sheet.svg`: every kind should be told from its neighbours at a glance. Then run `npm run catalog`
+and commit everything.
+
 ## Checks
 
-CI runs `npm run catalog:check` and the Draft Canvas check above against the app's `main`.
+CI runs `npm run catalog:check`, and against the app's `main` the starter check and the style pack
+check above, and `tools/styles/build.ts --check`, which fails when a pack was not rebuilt.
