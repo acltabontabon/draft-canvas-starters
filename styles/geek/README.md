@@ -1,6 +1,6 @@
 # Geek
 
-A green-screen terminal: floppy disks, CRTs, chips and paper tape.
+A retro computing lab in phosphor green: every shape its own piece of pixel hardware.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

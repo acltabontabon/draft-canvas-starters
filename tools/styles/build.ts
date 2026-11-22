@@ -24,17 +24,9 @@
  * `--check` builds everything in memory and fails if a file on disk would change.
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { ACCENTS, ACTORS, ARTIFACTS, COMPONENT_GLYPHS, DATABASES, QUEUES, SERVICE_CARDS, SERVICE_GLYPHS, SIZES, type Kit, type Pack } from './kit';
-import { arena } from './packs/arena';
-import { cute } from './packs/cute';
-import { cyberpunk } from './packs/cyberpunk';
-import { geek } from './packs/geek';
-import { highFantasy } from './packs/high-fantasy';
-import { highSeas } from './packs/high-seas';
-import { professional } from './packs/professional';
 
 const APP = process.cwd();
 if (!existsSync(join(APP, 'src', 'import', 'svgArt', 'index.ts'))) {
@@ -43,16 +35,18 @@ if (!existsSync(join(APP, 'src', 'import', 'svgArt', 'index.ts'))) {
 }
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const STYLES = join(REPO, 'styles');
-const FIRST_PARTY: Pack[] = [professional, geek, arena, highSeas, highFantasy, cyberpunk, cute];
 
 const args = process.argv.slice(2);
 const CHECK = args.includes('--check');
 const only = args.filter((arg) => !arg.startsWith('--'));
 
-// The importer reads SVG with the browser's parser; here that is jsdom's, from the app's own modules.
-const appRequire = createRequire(join(APP, 'package.json'));
-const { JSDOM } = appRequire('jsdom');
-(globalThis as { DOMParser?: unknown }).DOMParser = new JSDOM('').window.DOMParser;
+// Each definition is loaded only when its pack is built, so one being redrawn cannot stop another.
+const FIRST_PARTY: Pack[] = [];
+for (const id of ['professional', 'geek', 'arena', 'high-seas', 'high-fantasy', 'cyberpunk', 'cute']) {
+  if (only.length > 0 && !only.includes(id)) continue;
+  const definition = (await import(`./packs/${id}.ts`)) as Record<string, Pack>;
+  FIRST_PARTY.push(Object.values(definition)[0]!);
+}
 
 const app = (path: string) => import(pathToFileURL(join(APP, path)).href);
 const { importSvgArt } = await app('src/import/svgArt/index.ts');
@@ -176,7 +170,7 @@ function sheet(style: unknown) {
     const kinds = (STYLE_KINDS[type] as string[]).filter((kind) => artSlotOf(type, kind) !== null);
     const row = kinds.length > 0 ? kinds : artSlotOf(type, undefined) !== null ? [undefined] : [];
     if (row.length === 0) continue;
-    row.forEach((kind, index) => nodes.push(node(`${type}-${kind ?? 'any'}`, { type, kind, text: kind ?? 'junction' }, index * 200, y)));
+    row.forEach((kind, index) => nodes.push(node(`${type}-${kind ?? 'any'}`, { type, kind, text: kind ?? 'or' }, index * 200, y)));
     y += 150;
   }
   return { ...titled('sheet', nodes), style };

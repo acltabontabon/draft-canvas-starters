@@ -1,6 +1,6 @@
 # High fantasy
 
-Ink on vellum: banners, towers, rune stones and scrolls.
+An illuminated storybook: keeps, cauldrons, rune stones and an owl familiar.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

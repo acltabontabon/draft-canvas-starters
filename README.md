@@ -275,7 +275,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/professional/"><b>Professional</b></a><br>
-<sub>Flat and quiet in slate and navy, for documents and slides</sub></p>
+<sub>Crisp duotone pictograms in slate and navy, for documents and slides</sub></p>
 </td>
 <td width="50%" valign="top">
 <a href="styles/geek/">
@@ -285,7 +285,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/geek/"><b>Geek</b></a><br>
-<sub>A green-screen terminal: floppy disks, CRTs, chips and paper tape</sub></p>
+<sub>A retro computing lab in phosphor green: every shape its own piece of pixel hardware</sub></p>
 </td>
 </tr>
 <tr>
@@ -297,7 +297,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/arena/"><b>Arena</b></a><br>
-<sub>Navy and gold: crests, shields, gems and the lane between them</sub></p>
+<sub>Navy and gold battle arena: plaques, turrets, crystals, loot and the lanes between them</sub></p>
 </td>
 <td width="50%" valign="top">
 <a href="styles/high-seas/">
@@ -307,7 +307,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/high-seas/"><b>High seas</b></a><br>
-<sub>A sea chart on parchment: ships, barrels, crates and bottles</sub></p>
+<sub>A woodcut sea chart: a lighthouse, a ledger, a powder keg, a bottle of messages</sub></p>
 </td>
 </tr>
 <tr>
@@ -319,7 +319,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/high-fantasy/"><b>High fantasy</b></a><br>
-<sub>Ink on vellum: banners, towers, rune stones and scrolls</sub></p>
+<sub>An illuminated storybook: keeps, cauldrons, rune stones and an owl familiar</sub></p>
 </td>
 <td width="50%" valign="top">
 <a href="styles/cyberpunk/">
@@ -329,7 +329,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/cyberpunk/"><b>Cyberpunk</b></a><br>
-<sub>A night city in magenta and cyan: cut corners and glitched outlines</sub></p>
+<sub>A neon night city of drones, megatowers and maglev trains, cut-cornered and glitched</sub></p>
 </td>
 </tr>
 <tr>
@@ -341,7 +341,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/cute/"><b>Cute</b></a><br>
-<sub>Soft, round and smiling: clouds, jam jars, toy blocks and a caterpillar</sub></p>
+<sub>Kawaii stationery: a busy bee, a jam jar, a caterpillar queue and bear-eared friends, each with a smile</sub></p>
 </td>
 <td width="50%"></td>
 </tr>

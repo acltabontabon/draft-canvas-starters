@@ -91,15 +91,19 @@ stands for: a queue is something things pass through, a data store something tha
 - **Every kind of shape.** Each service, data store, queue, actor, component and artifact kind and
   the junction has a drawing, or the pack says on purpose that it keeps the app's own. The check
   below fails a pack with a gap, and fails every pack when Draft Canvas gains a kind.
+- **One object per kind.** A cache and a SQL database are different things from the pack's world
+  (a powder keg and a ledger, a potion and a tome), told apart by their outline alone. One
+  container with a different small mark inside for each kind does not read on a diagram.
 - **Bold and simple.** A drawing is shown about 60 pixels across. A few shapes and a heavy line
   read; fine detail does not.
 - **Follow the diagram's colours.** Paint a part in one of the app's light-theme colours and it
   follows the diagram: the shape's own fill, line, name or accent colour (so it follows a recolour
   and the pack's palette), or one of the seven named colours. `tools/styles/kit.ts` has them as
   `F`, `L`, `T`, `C`, `K` and `A(colour, role)`. Any other colour is kept as it is, everywhere.
-- **Leave room for the name.** The plain Service, the API and the plain Component are boxes with
-  their name inside: draw a frame, not a picture. Everything else is a picture with its name
-  beneath.
+- **Leave room for the name.** The plain Service, the API, the plain Component and the junction
+  have their name inside and are stretched to whatever size the shape is: draw a frame with a calm
+  middle and ornament only at its edges, not a picture. Keep the API's bottom-right corner clear
+  for its tag. Everything else is a picture with its name beneath.
 
 A drawing is an SVG file, `styles/<id>/art/<type>--<kind>.svg` (`database--cache.svg`,
 `service--load-balancer.svg`, `ellipse.svg` for the junction), drawn in any editor. Only shapes and
@@ -116,7 +120,7 @@ Build and check (needs a Draft Canvas checkout beside this one):
 
 ```bash
 cd ../draft-canvas
-npx tsx ../draft-canvas-starters/tools/styles/build.ts
+npx tsx ../draft-canvas-starters/tools/styles/build.ts            # or one pack: build.ts cute
 STARTERS_DIR=../draft-canvas-starters npx vitest run tests/style-packs.test.ts
 ```
 

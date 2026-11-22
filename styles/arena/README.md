@@ -1,6 +1,6 @@
 # Arena
 
-Navy and gold: crests, shields, gems and the lane between them.
+Navy and gold battle arena: plaques, turrets, crystals, loot and the lanes between them.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

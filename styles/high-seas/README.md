@@ -1,6 +1,6 @@
 # High seas
 
-A sea chart on parchment: ships, barrels, crates and bottles.
+A woodcut sea chart: a lighthouse, a ledger, a powder keg, a bottle of messages.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

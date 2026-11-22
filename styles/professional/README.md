@@ -1,6 +1,6 @@
 # Professional
 
-Flat and quiet in slate and navy, for documents and slides.
+Crisp duotone pictograms in slate and navy, for documents and slides.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">
@@ -13,7 +13,8 @@ own, to change as you like.
 
 ## Every shape
 
-This pack keeps Draft Canvas’s own drawings and changes how they are coloured and finished.
+Each kind of shape has its own drawing. A shape’s name, its size and where connectors meet it are
+exactly as they are without the pack.
 
 <img width="100%" alt="Every kind of shape drawn in Professional" src="sheet.svg">
 

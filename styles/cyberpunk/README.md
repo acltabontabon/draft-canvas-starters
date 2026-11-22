@@ -1,6 +1,6 @@
 # Cyberpunk
 
-A night city in magenta and cyan: cut corners and glitched outlines.
+A neon night city of drones, megatowers and maglev trains, cut-cornered and glitched.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

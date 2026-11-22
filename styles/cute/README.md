@@ -1,6 +1,6 @@
 # Cute
 
-Soft, round and smiling: clouds, jam jars, toy blocks and a caterpillar.
+Kawaii stationery: a busy bee, a jam jar, a caterpillar queue and bear-eared friends, each with a smile.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">
