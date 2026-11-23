@@ -1,6 +1,6 @@
 # Hardwood
 
-Basketball by arena light: orange leather, maple planks, chalk court lines and steel on espresso black.
+Basketball as a bold daylight poster: ball orange, deep ink, white and court teal on warm peach.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

@@ -364,7 +364,7 @@ becomes a style of your own, to change as you like. Open a pack below to see eve
 </picture>
 </a>
 <p><a href="styles/hardwood/"><b>Hardwood</b></a><br>
-<sub>Basketball by arena light: orange leather, maple planks, chalk court lines and steel on espresso black</sub></p>
+<sub>Basketball as a bold daylight poster: ball orange, deep ink, white and court teal on warm peach</sub></p>
 </td>
 <td width="50%" valign="top">
 <a href="styles/match-point/">
@@ -374,7 +374,7 @@ becomes a style of your own, to change as you like. Open a pack below to see eve
 </picture>
 </a>
 <p><a href="styles/match-point/"><b>Match Point</b></a><br>
-<sub>A grass-court summer drawn like a vintage club poster: a ball machine, a scoreboard, a kit bag, a rally over the net</sub></p>
+<sub>A sunlit court as a bold club poster in lemon-lime, bottle green and clay: a ball machine, a scoreboard, a can of balls</sub></p>
 </td>
 </tr>
 </table>

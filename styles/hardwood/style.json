@@ -4,67 +4,66 @@
   },
   "general": {
     "weight": "bold",
-    "corners": "soft",
-    "depth": "deep"
+    "corners": "round"
   },
   "connectors": {
     "weight": "bold",
     "head": "triangle",
-    "colour": "source"
+    "colour": "plain"
   },
   "schemes": {
-    "dark": {
-      "canvas": "#1c1511",
-      "grid": "#2b211a",
-      "text": "#f8f0e4",
-      "textMuted": "#bda78c",
-      "edge": "#cf9f63",
-      "edgeText": "#ecdcc2",
-      "edgeLabelBg": "#261c16",
-      "codeBg": "#231a14",
-      "codeBorder": "#46362b",
+    "light": {
+      "canvas": "#fde8d4",
+      "grid": "#f5d6bb",
+      "text": "#231a15",
+      "textMuted": "#6b5546",
+      "edge": "#231a15",
+      "edgeText": "#231a15",
+      "edgeLabelBg": "#fde8d4",
+      "codeBg": "#fff7ef",
+      "codeBorder": "#e8c6a8",
       "accents": {
         "neutral": {
-          "fill": "#3b2a1b",
-          "line": "#d9a25b",
-          "text": "#fcf1de",
-          "chip": "#f2c079"
+          "fill": "#ffffff",
+          "line": "#231a15",
+          "text": "#231a15",
+          "chip": "#e4541a"
         },
         "teal": {
-          "fill": "#10353b",
-          "line": "#4fcbd6",
-          "text": "#d9f8fa",
-          "chip": "#86e3ea"
+          "fill": "#d8eef3",
+          "line": "#1f5f7a",
+          "text": "#0f303f",
+          "chip": "#1f7896"
         },
         "blue": {
-          "fill": "#1c3054",
-          "line": "#74a9f3",
-          "text": "#e1edfe",
-          "chip": "#9fc5fa"
+          "fill": "#dde7fc",
+          "line": "#2850b4",
+          "text": "#14234c",
+          "chip": "#3a68d2"
         },
         "violet": {
-          "fill": "#32244f",
-          "line": "#b094f3",
-          "text": "#ede5fe",
-          "chip": "#cab6fa"
+          "fill": "#ebe2fb",
+          "line": "#6539b4",
+          "text": "#2a1852",
+          "chip": "#7d52cc"
         },
         "amber": {
-          "fill": "#48270c",
-          "line": "#f0873a",
-          "text": "#ffeedb",
-          "chip": "#ffae68"
+          "fill": "#ffe7b8",
+          "line": "#a8500a",
+          "text": "#3d2003",
+          "chip": "#c96508"
         },
         "rose": {
-          "fill": "#4a181d",
-          "line": "#f06a70",
-          "text": "#fde1e1",
-          "chip": "#f8999d"
+          "fill": "#fddde0",
+          "line": "#bb2a41",
+          "text": "#480e19",
+          "chip": "#d6425a"
         },
         "green": {
-          "fill": "#18371f",
-          "line": "#64cf87",
-          "text": "#dbf7e4",
-          "chip": "#92e2aa"
+          "fill": "#d9f2df",
+          "line": "#1c7541",
+          "text": "#0e331e",
+          "chip": "#27914f"
         }
       }
     }

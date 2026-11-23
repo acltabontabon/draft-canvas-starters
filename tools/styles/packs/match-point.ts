@@ -1,64 +1,51 @@
-import { circle, ellipse, group, paint, path, poly, rect, scheme, type Kit, type Pack } from '../kit';
+import { circle, ellipse, group, paint, path, rect, scheme, type Kit, type Pack } from '../kit';
 
 /**
- * Match Point: a grass-court summer, drawn like a vintage club poster. The canvas is the lawn
- * itself, mown in stripes and ruled in chalk. Every kind of shape is something from the court or
- * the clubhouse: a service is a court plan with its net posts, a worker a ball machine, a gateway
- * the gate in the fence; a data store is a can of balls, a scoreboard, a kit bag, a row of lockers;
- * a queue is balls waiting on the baseline, a topic a loudhailer, a stream a rally over the net.
- * Each is a flat shape in the diagram's own colour with one hard shade on its lower right (the sun
- * is top left), one chalk highlight, and a touch of the club's materials: optic-yellow balls,
- * varnished wood, brass, net black and, rarely, strawberry red. The sport itself, and nobody's
- * tournament. Always dark: it is played on grass.
+ * Match Point: a sunlit court, printed like a modern sports-club poster. The page is a washed-out
+ * lemon-lime, the colour of a tennis ball left in the sun, and everything on it is big, flat and
+ * heavily outlined: a service is a white board under a band of net tape, a worker a ball machine,
+ * a gateway the gate in the court fence; a data store is a can of balls, a scoreboard, a kit bag,
+ * a row of lockers; a queue is balls waiting in a row, a topic a loudhailer, a stream a rally over
+ * the net. Each drawing is one strong silhouette in two or three blocks: the shape's own fill, a
+ * block of its accent, and white, with a single hard shade on the lower right (the sun is top
+ * left). Four inks only: ball yellow-green (always outlined, so it reads on the pale page), bottle
+ * green, white and clay red, with varnished wood kept for racket handles and the racket press.
+ * The sport itself, and nobody's tournament. Always light: it is a summer afternoon.
  */
-const W = 5; // the outline of an object
-const M = 3.5; // a mark inside it
+const W = 6; // the outline of an object
+const M = 5; // a mark inside it
 
-// The club's materials: they stay as they are whatever colour a shape is given.
-const CHALK = '#f6f1dc';
-const BALL = '#d8f03c';
-const WOOD = '#b0703c';
-const BRASS = '#dcab42';
-const NET = '#0c261b';
-const BERRY = '#dc4254';
+// The poster's inks: they stay as they are whatever colour a shape is given.
+const BALL = '#cfe82f';
+const INK = '#173f2d';
+const WHITE = '#ffffff';
+const CLAY = '#d9583b';
+const WOOD = '#b9783f'; // racket handles and the racket press only
 
 const n = (value: number) => Math.round(value * 10) / 10;
 const op = (value: number) => (value < 1 ? ` opacity="${value}"` : '');
 const flat = (colour: string, opacity = 1) => `fill="${colour}" stroke="none"${op(opacity)}`;
 const ink = (colour: string, w = M, opacity = 1) => `fill="none" stroke="${colour}" stroke-width="${w}"${op(opacity)}`;
 const body = (k: Kit, w = W) => paint(k.F, k.L, w);
-const chip = (k: Kit, w = W) => paint(k.C, k.L, w);
+const block = (k: Kit, w = W) => paint(k.C, k.L, w);
 
-/** The one hard shade: net black laid over the side away from the sun. */
-const shade = (d: string, opacity = 0.32) => path(d, flat(NET, opacity));
-/** The lit edge: a sliver of chalk. */
-const glint = (d: string, w = 3, opacity = 0.7) => path(d, ink(CHALK, w, opacity));
+/** The one hard shade: the shape's own line colour, thinned, over the side away from the sun. */
+const shade = (k: Kit, d: string, opacity = 0.2) => path(d, flat(k.L, opacity));
+/** The lit edge: a bar of white. */
+const glint = (d: string, w = 4, opacity = 0.85) => path(d, ink(WHITE, w, opacity));
 /** The shadow an object stands on. */
-const ground = (cx: number, cy: number, rx: number, ry = 3.5) => ellipse(cx, cy, rx, ry, flat(NET, 0.42));
-
-/** Part of a circle, clockwise from `from` to `to` degrees (0 is east, 90 south). */
-function arc(cx: number, cy: number, r: number, from: number, to: number): string {
-  const at = (a: number) => `${n(cx + r * Math.cos((a * Math.PI) / 180))} ${n(cy + r * Math.sin((a * Math.PI) / 180))}`;
-  return `M${at(from)}A${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${at(to)}`;
-}
-/** Round things: shade along the lower right, chalk along the upper left. */
-const roundShade = (cx: number, cy: number, r: number, w: number, opacity = 0.32) => path(arc(cx, cy, r, -25, 115), ink(NET, w, opacity));
-const roundGlint = (cx: number, cy: number, r: number, w = 3) => glint(arc(cx, cy, r, 190, 262), w);
+const ground = (k: Kit, cx: number, cy: number, rx: number, ry = 3.5) => ellipse(cx, cy, rx, ry, flat(k.L, 0.2));
 
 /** A band with only its top corners rounded: the header of a board or a sheet. */
 const band = (x: number, y: number, w: number, h: number, r: number) => `M${x} ${y + h}V${y + r}Q${x} ${y} ${x + r} ${y}H${x + w - r}Q${x + w} ${y} ${x + w} ${y + r}V${y + h}Z`;
 
-/** Several small boxes as one painted part. */
+/** Several boxes as one painted part. */
 const boxes = (list: [number, number, number, number][]) => list.map(([x, y, w, h]) => `M${x} ${y}h${w}v${h}h${-w}Z`).join('');
 
-/** A ball: optic yellow, its two seams in chalk, and (when large enough to show) its shaded side. */
-const ball = (cx: number, cy: number, r: number, opacity = 1) =>
-  circle(cx, cy, r, flat(BALL, opacity)) +
-  path(
-    `M${n(cx - r * 0.5)} ${n(cy - r * 0.84)}Q${n(cx + r * 0.1)} ${n(cy)} ${n(cx - r * 0.5)} ${n(cy + r * 0.84)}M${n(cx + r * 0.5)} ${n(cy - r * 0.84)}Q${n(cx - r * 0.1)} ${n(cy)} ${n(cx + r * 0.5)} ${n(cy + r * 0.84)}`,
-    ink(CHALK, n(Math.max(1.8, r * 0.17)), opacity < 1 ? opacity : 0.95),
-  ) +
-  (r >= 9 && opacity === 1 ? path(`M${n(cx + r * 0.87)} ${n(cy - r * 0.5)}Q${n(cx + r * 0.3)} ${n(cy + r * 0.3)} ${n(cx - r * 0.5)} ${n(cy + r * 0.87)}Q${n(cx + r * 0.9)} ${n(cy + r * 1.1)} ${n(cx + r * 0.87)} ${n(cy - r * 0.5)}Z`, flat(NET, 0.24)) : '');
+/** A ball: yellow-green, outlined in bottle green, one white seam. */
+const ball = (cx: number, cy: number, r: number) =>
+  circle(cx, cy, r, paint(BALL, INK, n(Math.max(3.5, r * 0.3)))) +
+  path(`M${n(cx - r * 0.2)} ${n(cy - r * 0.72)}Q${n(cx + r * 0.62)} ${n(cy)} ${n(cx - r * 0.2)} ${n(cy + r * 0.72)}`, ink(WHITE, n(Math.max(2.8, r * 0.24))));
 
 /** The strings of a racket head: `nx` mains and `ny` crosses, cut to the oval. */
 function strings(cx: number, cy: number, rx: number, ry: number, nx: number, ny: number): string {
@@ -76,624 +63,481 @@ function strings(cx: number, cy: number, rx: number, ry: number, nx: number, ny:
   return d;
 }
 
-/** A racket head: a dark face, ivory strings, and a frame in `frame`. */
-const head = (cx: number, cy: number, rx: number, ry: number, nx: number, ny: number, frame: string, w = 5, face = NET) =>
-  ellipse(cx, cy, rx, ry, flat(face, face === NET ? 0.55 : 1)) + path(strings(cx, cy, rx, ry, nx, ny), ink(CHALK, 1.8, 0.8)) + ellipse(cx, cy, rx, ry, ink(frame, w));
+/** A racket head: a white face, three strings each way, a heavy frame. */
+const racket = (k: Kit, cx: number, cy: number, rx: number, ry: number, w = W) =>
+  ellipse(cx, cy, rx, ry, flat(WHITE)) + path(strings(cx, cy, rx, ry, 3, 3), ink(k.C, 3)) + ellipse(cx, cy, rx, ry, ink(k.L, w));
 
-/** A point on a cubic curve. */
-const bez = (p: [number, number][], t: number): [number, number] => {
-  const u = 1 - t;
-  const at = (i: 0 | 1) => u * u * u * p[0][i] + 3 * u * u * t * p[1][i] + 3 * u * t * t * p[2][i] + t * t * t * p[3][i];
-  return [n(at(0)), n(at(1))];
-};
+/** A player, head and shoulders: a shirt in the accent, a white collar, a clay headband. 120 by 82. */
+const player = (k: Kit) =>
+  path('M16 79Q16 47 60 47Q104 47 104 79Z', block(k)) +
+  path('M64 47Q104 47 104 79H80Q88 62 64 47Z', flat(INK, 0.2)) +
+  path('M46 48L60 64L74 48Z', paint(WHITE, k.L, 4)) +
+  circle(60, 27, 17, body(k)) +
+  path('M44.5 19Q48 10 60 10Q72 10 75.5 19Q60 13 44.5 19Z', flat(k.L)) +
+  path('M43.5 22.5Q60 15 76.5 22.5', ink(CLAY, 6));
 
-/** A player, head and shoulders: whites, a headband knotted at the side. Drawn at 120 by 82. */
-const player = (k: Kit, knot = BERRY) =>
-  path('M24 78Q24 48 60 48Q96 48 96 78Z', chip(k)) +
-  shade('M62 48Q96 48 96 78H72Q80 62 62 48Z', 0.24) +
-  path('M48 49L60 63L72 49Z', paint(k.F, k.L, M)) +
-  circle(60, 30, 15, chip(k)) +
-  path('M45.6 26Q47 14 60 14Q73 14 74.4 26Q60 19 45.6 26Z', flat(k.F)) +
-  path('M45 28Q60 21 75 28', ink(knot, 5.5)) +
-  path('M76 28L86 24M76 29L86 34', ink(knot, 3.5));
+/** A partner standing behind: smaller and all in the fill, so the one in front leads. */
+const partner = (k: Kit, cx: number) =>
+  path(`M${cx - 22} 79Q${cx - 22} 54 ${cx} 54Q${cx + 22} 54 ${cx + 22} 79Z`, body(k, 5)) +
+  circle(cx, 39, 13, body(k, 5)) +
+  path(`M${cx - 12.5} 34Q${cx - 10} 26 ${cx} 26Q${cx + 10} 26 ${cx + 12.5} 34Q${cx} 29 ${cx - 12.5} 34Z`, flat(k.L));
 
-/** A partner standing behind: smaller, the shirt in the shape's fill so the one in front leads. */
-const partner = (k: Kit, cx: number, knot: string) =>
-  path(`M${cx - 20} 78Q${cx - 20} 55 ${cx} 55Q${cx + 20} 55 ${cx + 20} 78Z`, body(k, 4.5)) +
-  circle(cx, 41, 11.5, chip(k, 4.5)) +
-  path(`M${cx - 11.5} 38Q${cx - 10} 29 ${cx} 29Q${cx + 10} 29 ${cx + 11.5} 38Q${cx} 33 ${cx - 11.5} 38Z`, flat(k.F)) +
-  path(`M${cx - 11.5} 40Q${cx} 35 ${cx + 11.5} 40`, ink(knot, 4.5));
+/** A board: a white field under a band of net tape, heavily outlined. */
+const board = (k: Kit) =>
+  rect(4, 4, 340, 124, 14, flat(k.F)) +
+  path(band(4, 4, 340, 18, 14), flat(k.C)) +
+  path('M16 13H332', ink(WHITE, 3.5)) +
+  shade(k, 'M7 115H341V114Q341 125 330 125H18Q7 125 7 114Z', 0.14) +
+  rect(4, 4, 340, 124, 14, ink(k.L, W));
 
-/** A court seen from above, as the frame of a card: baselines, tramlines, the net across the alleys. */
-const court = (k: Kit) =>
-  rect(3, 3, 342, 126, 9, flat(k.F)) +
-  shade('M6 116H342V120Q342 126 336 126H12Q6 126 6 120Z', 0.36) +
-  glint('M14 8.5H334', 2.5, 0.45) +
-  rect(3, 3, 342, 126, 9, ink(k.L, W));
-
-const TW = 560;
-const TH = 420;
+const TW = 520;
+const TH = 400;
 
 export const matchPoint: Pack = {
   id: 'match-point',
   name: 'Match Point',
-  summary: 'A grass-court summer drawn like a vintage club poster: a ball machine, a scoreboard, a kit bag, a rally over the net',
+  summary: 'A sunlit court as a bold club poster in lemon-lime, bottle green and clay: a ball machine, a scoreboard, a can of balls',
   author: 'Draft Canvas',
   licence: 'Apache-2.0',
   order: 100,
   style: {
-    // The groundsman's line marker: a chalk line, laid nearly straight.
-    hand: { base: 'draft', wobble: 'calm' },
-    general: { corners: 'soft', shadow: false },
+    // The poster printer's line: clean, heavy and even, with rounded corners.
+    hand: { base: 'clean' },
+    general: { weight: 'bold', corners: 'round', shadow: false },
     connectors: { colour: 'plain' },
     schemes: {
-      dark: scheme(
-        { canvas: '#1d4a35', grid: '#245740', text: '#f6f1dc', textMuted: '#bccbab', edge: '#e6e1c8', edgeText: '#f1ecd6', edgeLabelBg: '#163c2b', codeBg: '#173e2c', codeBorder: '#32694c' },
+      light: scheme(
+        { canvas: '#f4f7d6', grid: '#e4eab8', text: '#173f2d', textMuted: '#4a6a52', edge: '#173f2d', edgeText: '#173f2d', edgeLabelBg: '#fcfdee', codeBg: '#edf2c6', codeBorder: '#cfdb95' },
         {
-          neutral: ['#143526', '#ebe6cc', '#f8f4e2', '#c3d1ac'],
-          teal: ['#0e3a3d', '#74d9cb', '#defaf4', '#96e3d6'],
-          blue: ['#16334f', '#8cc1f2', '#e3f0ff', '#a9d0f6'],
-          violet: ['#34284f', '#c4a9f3', '#f0e8ff', '#d2bdf6'],
-          amber: ['#3f300c', '#f0c64a', '#fff4d2', '#f4d777'],
-          rose: ['#511d24', '#f68d8f', '#ffe6e2', '#f8aaa5'],
-          green: ['#24390b', '#d8f03c', '#f6fcd2', '#e3f477'],
+          neutral: ['#ffffff', '#173f2d', '#10281d', '#3f8259'],
+          teal: ['#def5ee', '#0e6a61', '#06332f', '#1c9384'],
+          blue: ['#e1eefc', '#1e5ca6', '#0c2a4f', '#3a80d0'],
+          violet: ['#ece5fb', '#5a3ea6', '#2a1a57', '#7c5fcf'],
+          amber: ['#fdefc0', '#8f5c08', '#40290a', '#bd7d0c'],
+          rose: ['#fde2d9', '#ad381f', '#4f150a', '#d9583b'],
+          green: ['#ebf6a6', '#3d6710', '#1c3306', '#6b951a'],
         },
       ),
     },
   },
   draw: {
     serviceCard: (k, kind) => {
-      // A court plan: baselines top and bottom with their centre marks, the tramlines down each
-      // side, and the net crossing only the alleys between its two brass posts. The middle of the
-      // court is left clear for the name.
-      if (kind === 'generic')
-        return (
-          court(k) +
-          path('M22 17H326M22 115H326M22 17V115M37 17V115M311 17V115M326 17V115M174 17V25M174 115V107', ink(k.C, 3)) +
-          path('M13 66H37M311 66H335', ink(CHALK, 3.5)) +
-          circle(12, 66, 5, paint(BRASS, k.L, 2.5)) +
-          circle(336, 66, 5, paint(BRASS, k.L, 2.5)) +
-          ball(318.5, 100, 5.5)
-        );
-      // An API is the same court with a net-post socket let into its left edge: where others hook
-      // on. Its lines stop short of the bottom-right corner, where the app writes "API".
+      // A club board: a white field under a band of net tape, a ball resting on the tape.
+      if (kind === 'generic') return board(k) + ball(318, 15, 10);
+      // An API is the same board with a round notch bitten out of its left edge: where others
+      // hook on. Its bottom right is left clear, where the app writes "API".
       return (
-        court(k) +
-        path('M22 17H326M22 115H284M22 17V44M22 88V115M37 17V115M311 17V86M326 17V86M174 17V25M174 115V107', ink(k.C, 3)) +
-        path('M311 66H335', ink(CHALK, 3.5)) +
-        circle(336, 66, 5, paint(BRASS, k.L, 2.5)) +
-        rect(8, 45, 22, 42, 7, paint(NET, k.L, 4)) +
-        circle(19, 66, 7, ink(BRASS, 4)) +
-        path('M27 66H37', ink(CHALK, 3.5))
+        board(k) +
+        path('M0 46H4A20 20 0 0 1 4 86H0Z', flat(k.K)) +
+        path('M4 46A20 20 0 0 1 4 86', ink(k.L, W)) +
+        circle(5, 66, 7, flat(k.C))
       );
     },
 
     serviceGlyph: (k, kind) => {
       switch (kind) {
-        // A ball machine: a hopper of balls on a wheeled box, firing them out one after another.
+        // A ball machine: a hopper on a wheeled box, its barrel up, one ball just fired.
         case 'worker':
           return (
-            ground(52, 99, 50) +
-            ball(24, 15, 9) +
-            ball(45, 14, 9) +
-            ball(34, 11, 9) +
-            path('M66 54L96 26L108 38L80 64Z', chip(k, 4.5)) +
-            shade('M102 32L108 38L80 64L74 58Z', 0.26) +
-            path('M10 22H58L52 46H16Z', body(k, 4.5)) +
-            rect(8, 44, 78, 42, 9, body(k)) +
-            shade('M70 46H84V76Q84 84 76 84H12Q30 80 62 80Q70 80 70 72Z', 0.36) +
-            glint('M16 50H60', 3, 0.6) +
-            circle(30, 65, 8.5, paint(BRASS, k.L, 3)) +
-            path('M30 65L35 60', ink(NET, 3)) +
-            path('M48 60H68M48 70H68', ink(k.L, M)) +
-            circle(26, 90, 9, paint(NET, k.L, 4)) +
-            circle(68, 90, 9, paint(NET, k.L, 4)) +
-            path('M100 20L106 14M110 30L116 24', ink(CHALK, 3, 0.7)) +
-            ball(120, 12, 10)
+            ground(k, 56, 100, 54) +
+            path('M70 62L100 34L116 50L86 78Z', block(k)) +
+            path('M12 12H82L72 44H22Z', block(k)) +
+            glint('M24 21H66', 4, 0.7) +
+            rect(6, 40, 88, 46, 12, body(k)) +
+            shade(k, 'M72 43H82Q91 43 91 52V74Q91 83 82 83H18Q60 82 66 78Q72 74 72 66Z') +
+            path('M22 56H50M22 69H40', ink(k.L, M)) +
+            circle(66, 62, 8, flat(CLAY)) +
+            circle(28, 90, 11, paint(k.L, k.L, 2)) +
+            circle(72, 90, 11, paint(k.L, k.L, 2)) +
+            circle(28, 90, 4, flat(WHITE)) +
+            circle(72, 90, 4, flat(WHITE)) +
+            ball(118, 18, 14)
           );
         // The pavilion on the far side of the net: somebody else's club, seen from your own court.
         case 'external':
           return (
-            path('M68 16V3', ink(k.L, M)) +
-            path('M68 2L88 7.5L68 13Z', flat(BERRY)) +
-            rect(22, 44, 92, 36, 0, body(k, 4.5)) +
-            shade('M70 46H112V78H70Z', 0.3) +
-            rect(60, 54, 16, 26, 2, flat(NET)) +
-            path('M34 46V78M48 46V78M88 46V78M102 46V78', ink(k.L, 4)) +
-            path('M10 46L68 14L126 46Z', chip(k)) +
-            shade('M68 14L126 46H68Z', 0.24) +
-            rect(4, 80, 128, 21, 0, flat(NET, 0.62)) +
-            path('M16 82V100M30 82V100M44 82V100M58 82V100M72 82V100M86 82V100M100 82V100M114 82V100M6 91H130', ink(k.L, 1.8, 0.75)) +
-            path('M4 80H132', ink(CHALK, 5)) +
-            path('M4 76V102M132 76V102', ink(WOOD, 5))
+            path('M68 16V4', ink(k.L, M)) +
+            path('M68 2L90 8.5L68 15Z', paint(CLAY, k.L, 2)) +
+            rect(20, 44, 96, 44, 0, body(k)) +
+            shade(k, 'M72 47H113V85H72Z') +
+            rect(54, 58, 28, 30, 4, flat(k.L)) +
+            path('M4 46L68 12L132 46Z', block(k)) +
+            path('M68 12L132 46H68Z', flat(INK, 0.2)) +
+            rect(4, 84, 128, 17, 4, paint(k.L, k.L, 2)) +
+            path('M10 88H126', ink(WHITE, 4.5))
           );
-        // A stopwatch, the time played marked off in red.
+        // A stopwatch, the time played marked off in clay.
         case 'scheduler':
           return (
-            ground(68, 100, 34) +
-            path('M97 27L106 18', ink(k.L, 7)) +
-            path('M68 12V20', ink(k.L, 7)) +
-            rect(58, 2, 20, 11, 3.5, paint(BRASS, k.L, 3.5)) +
-            circle(68, 58, 39, body(k, 5.5)) +
-            roundShade(68, 58, 33.5, 6, 0.4) +
-            roundGlint(68, 58, 34, 3) +
-            circle(68, 58, 27.5, flat(k.C)) +
-            path('M68 58V33.5A24.5 24.5 0 0 1 89.2 70.2Z', flat(BERRY)) +
-            path('M68 34V39M68 82V77M44 58H49M92 58H87', ink(NET, 3.5)) +
-            path('M68 58V37M68 58L86 68.5', ink(NET, 4.5)) +
-            circle(68, 58, 5, flat(BRASS))
+            ground(k, 68, 101, 34) +
+            path('M98 28L108 18', ink(k.L, 9)) +
+            path('M68 14V22', ink(k.L, 9)) +
+            rect(55, 3, 26, 13, 5, block(k, 5)) +
+            circle(68, 60, 38, body(k, 7)) +
+            path('M68 60V30A30 30 0 0 1 94 75Z', flat(CLAY)) +
+            path('M68 60V34M68 60L88 71.5', ink(k.L, 7)) +
+            circle(68, 60, 6, flat(k.L))
           );
-        // The gate in the court fence: the only way onto the grass.
+        // The gate in the court fence: the only way onto the grass, and a ball on its way through.
         case 'gateway':
           return (
-            ground(68, 99, 60) +
-            rect(4, 36, 38, 58, 3, body(k, 4)) +
-            rect(94, 36, 38, 58, 3, body(k, 4)) +
-            path('M6 52L20 38M6 70L38 38M8 86L40 54M22 92L40 74M130 52L116 38M130 70L98 38M128 86L96 54M114 92L96 74', ink(k.L, 2, 0.7)) +
-            shade('M112 38H130V92H96L112 76Z', 0.3) +
-            poly('46,98 90,98 80,64 56,64', flat(CHALK, 0.3)) +
-            path('M58 82L68 71L78 82', ink(k.L, 5)) +
-            rect(38, 22, 11, 76, 2, paint(WOOD, k.L, M)) +
-            rect(87, 22, 11, 76, 2, paint(WOOD, k.L, M)) +
-            shade('M44 24H47V96H44ZM93 24H96V96H93Z', 0.3) +
-            path('M32 26Q68 -8 104 26L97 33Q68 5 39 33Z', chip(k, 4.5)) +
-            shade('M68 9Q88 10 104 26L97 33Q84 20 68 19Z', 0.24) +
-            circle(68, 8, 6, paint(BRASS, k.L, 3)) +
-            ball(68, 92, 6)
+            ground(k, 68, 100, 62) +
+            rect(4, 40, 40, 54, 5, body(k)) +
+            rect(92, 40, 40, 54, 5, body(k)) +
+            path('M7 66L30 43M18 91L41 68M129 66L106 43M118 91L95 68', ink(k.C, M)) +
+            rect(38, 26, 13, 70, 3, flat(k.L)) +
+            rect(85, 26, 13, 70, 3, flat(k.L)) +
+            path('M30 30Q68 -12 106 30L96 38Q68 6 40 38Z', block(k)) +
+            path('M68 9Q90 10 106 30L96 38Q84 23 68 22Z', flat(INK, 0.2)) +
+            ball(68, 78, 15)
           );
-        // One serve, three places it can land: the racket sends each ball to a different target.
+        // One ball off the racket, three places it can go.
         case 'load-balancer':
           return (
-            path('M26 70V98', ink(WOOD, 8)) +
-            path('M26 82V98', ink(k.C, 8)) +
-            path('M46 44Q84 6 110 14M46 44Q84 40 114 50M46 44Q84 84 110 86', ink(k.L, 4.5)) +
-            ellipse(26, 44, 21, 27, flat(k.F)) +
-            path(strings(26, 44, 21, 27, 4, 5), ink(k.C, 1.8, 0.85)) +
-            ellipse(26, 44, 21, 27, ink(k.L, 5.5)) +
-            path(arc(26, 44, 24, -20, 100), ink(NET, 3, 0.35)) +
-            poly('46,34 50,41 58,44 50,47 46,54 43,47 36,44 43,41', flat(CHALK)) +
-            ball(118, 14, 10) +
-            ball(124, 51, 10) +
-            ball(118, 88, 10)
+            path('M28 72V96', ink(k.L, 13)) +
+            path('M28 76V95', ink(WOOD, 7)) +
+            path('M62 48Q92 12 114 16M62 48H118M62 48Q92 86 114 86', ink(k.L, W)) +
+            racket(k, 28, 44, 23, 29, 7) +
+            circle(120, 15, 10.5, block(k, M)) +
+            circle(124, 51, 10.5, block(k, M)) +
+            circle(120, 88, 10.5, block(k, M)) +
+            ball(64, 48, 13)
           );
-        // A ball kid: takes the ball from one side and hands it on to the other.
+        // A ball kid: the ball goes from one hand, over, to the other.
         case 'proxy':
           return (
-            ground(68, 99, 40) +
-            path('M32 30Q68 0 104 30', ink(CHALK, 3, 0.65)) +
-            path('M95 20L105 30L92 33', ink(CHALK, 3, 0.65)) +
-            path('M48 74L24 54M88 74L112 54', ink(k.L, 11)) +
-            path('M48 74L24 54M88 74L112 54', ink(k.C, 5.5)) +
-            path('M36 98Q36 62 68 62Q100 62 100 98Z', chip(k)) +
-            shade('M70 62Q100 62 100 98H78Q86 78 70 62Z', 0.24) +
-            path('M58 63L68 74L78 63Z', paint(k.F, k.L, 3)) +
-            circle(68, 44, 14.5, chip(k)) +
-            path('M53 41Q53 26 68 26Q83 26 83 41Z', paint(BERRY, k.L, 3)) +
-            path('M82 40H96', ink(k.L, 5)) +
-            ball(18, 47, 11) +
-            ball(118, 47, 11)
+            ground(k, 68, 101, 44) +
+            path('M17 46Q68 -16 119 46', ink(k.C, 6)) +
+            path('M48 82L18 52M88 82L118 52', ink(k.L, 14)) +
+            path('M32 100Q32 66 68 66Q104 66 104 100Z', block(k)) +
+            path('M72 66Q104 66 104 100H84Q90 80 72 66Z', flat(INK, 0.2)) +
+            circle(68, 50, 16, body(k)) +
+            path('M52 47Q52 32 68 32Q84 32 84 47Z', paint(CLAY, k.L, 4)) +
+            path('M83 46H94', ink(k.L, W)) +
+            ball(68, 16, 13)
           );
       }
     },
 
     database: (k, kind) => {
       switch (kind) {
-        // A can of balls: three, stacked, under a pull-off lid.
+        // A can of balls: three, stacked, under its lid.
         case 'generic':
           return (
-            ground(73, 103, 38, 4) +
-            rect(41, 12, 58, 89, 9, flat(k.F)) +
-            ball(70, 37, 13.5) +
-            ball(70, 62, 13.5) +
-            ball(70, 87, 12) +
-            shade('M86 20H97V92Q97 99 90 99H82Q86 96 86 90Z', 0.4) +
-            glint('M48.5 30V84', 2.5, 0.5) +
-            rect(41, 12, 58, 89, 9, ink(k.L, W)) +
-            rect(36, 5, 68, 16, 6, chip(k, 4.5)) +
-            shade('M78 7H98Q102 7 102 11V15Q102 19 98 19H72Z', 0.24) +
-            path('M84 13H110', ink(BRASS, 4)) +
-            circle(113, 13, 5, ink(BRASS, 3.5))
+            ground(k, 74, 104, 40) +
+            rect(37, 5, 66, 98, 14, flat(k.F)) +
+            shade(k, 'M86 8H91Q100 8 100 17V91Q100 100 91 100H86Z', 0.24) +
+            ball(68, 39, 13) +
+            ball(68, 64, 13) +
+            ball(68, 88, 12) +
+            path(band(37, 5, 66, 20, 14), flat(k.C)) +
+            glint('M48 13H78', 4, 0.75) +
+            path('M37 25H103', ink(k.L, M)) +
+            rect(37, 5, 66, 98, 14, ink(k.L, W))
           );
-        // The scoreboard: a name plate to each row, a tile to each set, the ball beside who serves.
+        // The scoreboard: a name to each row, a tile to each set, the one in play lit.
         case 'sql':
           return (
-            ground(70, 104, 54, 3) +
-            path('M28 88V103M112 88V103', ink(k.L, 6)) +
-            rect(7, 7, 126, 82, 6, flat(k.F)) +
-            path(band(7, 7, 126, 20, 6), flat(k.C)) +
-            shade('M120 9H131V87H120Z', 0.3) +
-            path('M7 27H133M7 48H133M7 69H133M58 27V89', ink(k.L, M)) +
-            path(boxes([[15, 33, 30, 9], [15, 54, 30, 9], [15, 75, 22, 9]]), flat(k.C)) +
-            path(boxes([[65, 32, 12, 11], [83, 32, 12, 11], [65, 53, 12, 11], [83, 53, 12, 11], [101, 53, 12, 11], [65, 74, 12, 11]]), flat(CHALK)) +
-            path(boxes([[101, 32, 12, 11]]), flat(BALL)) +
-            path('M16 17H52', ink(NET, M, 0.6)) +
-            rect(7, 7, 126, 82, 6, ink(k.L, W)) +
-            circle(50, 37.5, 4.5, flat(BALL))
+            ground(k, 70, 104, 54, 3) +
+            path('M30 86V102M110 86V102', ink(k.L, 8)) +
+            rect(6, 6, 128, 82, 10, flat(k.F)) +
+            path(band(6, 6, 128, 22, 10), flat(k.C)) +
+            glint('M18 17H60', 4.5, 0.9) +
+            path('M6 28H134M6 58H134', ink(k.L, M)) +
+            path('M18 43H52M18 73H44', ink(k.L, 7)) +
+            path(boxes([[66, 35, 17, 16], [89, 35, 17, 16], [66, 65, 17, 16], [89, 65, 17, 16]]), flat(k.C)) +
+            rect(112, 35, 15, 16, 2, paint(BALL, INK, 3)) +
+            rect(6, 6, 128, 82, 10, ink(k.L, W))
           );
-        // A kit bag, half zipped: a racket, a bottle and a loose ball, whatever went in.
+        // A kit bag, half packed: a racket and a ball sticking out, whatever went in.
         case 'nosql':
           return (
-            ground(70, 103, 58, 4) +
-            path('M100 50L108 38', ink(WOOD, 7)) +
-            group('rotate(24 110 24)', head(110, 20, 15, 19, 3, 4, WOOD, 4.5)) +
-            rect(26, 14, 18, 36, 5, chip(k, 4)) +
-            rect(29, 6, 12, 9, 2.5, flat(BERRY)) +
-            ball(66, 36, 12) +
-            path('M12 54Q12 42 24 42H116Q128 42 128 54V88Q128 100 116 100H24Q12 100 12 88Z', body(k)) +
-            shade('M104 44H116Q126 44 126 54V88Q126 98 116 98H24Q60 96 92 94Q104 92 104 80Z', 0.38) +
-            glint('M22 48H84', 3, 0.55) +
-            path('M12 60H128', ink(k.L, M)) +
-            path('M38 60Q38 78 52 78H88Q102 78 102 60', ink(k.C, 5)) +
-            rect(60, 54, 20, 12, 3, paint(BRASS, k.L, 3)) +
-            path('M24 88H116', ink(k.C, 3))
+            ground(k, 70, 104, 60, 3.5) +
+            path('M100 46L106 34', ink(k.L, 12)) +
+            path('M100 46L106 34', ink(WOOD, 6)) +
+            group('rotate(22 110 22)', racket(k, 110, 20, 15, 19, 5.5)) +
+            ball(38, 28, 15) +
+            path('M48 44Q70 6 92 44', ink(k.L, 7)) +
+            rect(6, 38, 128, 64, 18, flat(k.F)) +
+            rect(6, 58, 128, 16, 0, flat(k.C)) +
+            shade(k, 'M108 41H116Q131 41 131 56V84Q131 99 116 99H108Z', 0.24) +
+            rect(6, 38, 128, 64, 18, ink(k.L, W)) +
+            path('M6 58H134M6 74H134', ink(k.L, 4)) +
+            rect(58, 58, 24, 16, 4, paint(WHITE, k.L, 4))
           );
-        // A ball caught on the strings and gone again in a flash: quick, and not for keeping.
+        // A bolt off the strings: caught and gone again, quick, and not for keeping.
         case 'cache':
           return (
-            path('M70 94V104', ink(WOOD, 10)) +
-            path('M48 84L70 98L92 84', ink(k.L, 6.5)) +
-            ellipse(70, 47, 49, 42, flat(k.F)) +
-            path(strings(70, 47, 49, 42, 6, 5), ink(k.C, 2, 0.75)) +
-            ellipse(70, 47, 49, 42, ink(k.L, 6.5)) +
-            path(arc(70, 47, 45, -20, 110), ink(NET, 4, 0.4)) +
-            path('M30 44L24 40M29 54H21M31 64L25 69', ink(CHALK, 3.5, 0.8)) +
-            ball(54, 52, 15) +
-            path('M100 12L74 50H89L80 86L114 42H97L106 12Z', paint(BRASS, NET, 3))
+            path('M70 92V102', ink(k.L, 16)) +
+            path('M70 94V102', ink(WOOD, 9)) +
+            path('M46 82L70 96L94 82', ink(k.L, 8)) +
+            ellipse(70, 46, 54, 41, flat(WHITE)) +
+            path(strings(70, 46, 54, 41, 4, 3), ink(k.C, 3.5)) +
+            ellipse(70, 46, 54, 41, ink(k.L, 8)) +
+            path('M82 6L52 50H69L58 88L94 40H76L88 6Z', paint(BALL, INK, 4.5))
           );
         // The locker room: a row of doors, each with its own things behind it.
         case 'file-system':
           return (
-            ground(70, 104, 60, 3) +
-            path('M20 96V103M120 96V103', ink(k.L, 6)) +
-            rect(8, 6, 124, 91, 6, flat(k.F)) +
-            path(band(8, 6, 124, 13, 6), flat(k.C)) +
-            shade('M94 21H130V95H94Z', 0.3) +
-            path('M8 19H132M49 19V97M91 19V97', ink(k.L, 4)) +
-            path('M17 31H40M17 39H40M59 31H82M59 39H82M100 31H123M100 39H123', ink(k.L, 3)) +
-            path(boxes([[19, 50, 20, 10], [61, 50, 20, 10], [102, 50, 20, 10]]), flat(CHALK, 0.9)) +
-            rect(8, 6, 124, 91, 6, ink(k.L, W)) +
-            circle(41, 74, 4.5, flat(BRASS)) +
-            circle(83, 74, 4.5, flat(BRASS)) +
-            circle(124, 74, 4.5, flat(BRASS)) +
-            poly('79,77 87,77 83,92', flat(BERRY))
+            ground(k, 70, 104, 60, 3) +
+            path('M22 94V102M118 94V102', ink(k.L, 8)) +
+            rect(6, 6, 128, 90, 10, flat(k.F)) +
+            rect(49, 6, 42, 90, 0, flat(k.C)) +
+            shade(k, 'M91 9H124Q131 9 131 16V86Q131 93 124 93H91Z', 0.14) +
+            path('M49 6V96M91 6V96', ink(k.L, M)) +
+            path('M17 24H38M59 24H81M101 24H123', ink(k.L, M)) +
+            path('M17 36H38M101 36H123', ink(k.L, M)) +
+            path('M59 36H81', ink(WHITE, M)) +
+            circle(39, 64, 5, flat(k.L)) +
+            circle(81, 64, 5, flat(WHITE)) +
+            circle(123, 64, 5, flat(k.L)) +
+            rect(6, 6, 128, 90, 10, ink(k.L, W))
           );
-        // The ball hopper: a wire basket heaped with balls, any number, kept loose.
+        // The ball hopper: a wire basket heaped with balls, kept loose.
         case 'object-storage':
           return (
-            ground(70, 104, 46, 3) +
-            path('M26 46V16Q26 7 35 7H105Q114 7 114 16V46', ink(k.L, 4.5)) +
-            ball(46, 38, 13) +
-            ball(94, 38, 13) +
-            ball(70, 31, 14.5) +
-            path('M17 46H123L110 100H30Z', flat(k.F)) +
-            ball(50, 68, 11) +
-            ball(74, 76, 11) +
-            ball(94, 64, 10) +
-            shade('M98 48H121L109 98H88Z', 0.36) +
-            path('M44 48L49 98M70 48V98M96 48L91 98M21 64H119M26 82H114', ink(k.L, 3)) +
-            path('M17 46H123L110 100H30Z', ink(k.L, W)) +
-            path('M13 46H127', ink(k.L, 7)) +
-            glint('M20 44.5H84', 2, 0.6)
+            ground(k, 70, 104, 48, 3) +
+            path('M24 50V20Q24 6 38 6H102Q116 6 116 20V50', ink(k.L, W)) +
+            ball(46, 38, 15) +
+            ball(94, 38, 15) +
+            ball(70, 28, 16) +
+            path('M14 50H126L112 100H28Z', body(k)) +
+            shade(k, 'M100 53H122L110 97H88Z', 0.24) +
+            path('M50 52L54 98M90 52L86 98M20 74H120', ink(k.C, M)) +
+            path('M14 50H126L112 100H28Z', ink(k.L, W)) +
+            path('M10 50H130', ink(k.L, 9))
           );
-        // The line call: a glass held over the chalk, and the mark the ball left on it.
+        // The line call: a glass over the chalk, and the mark the ball left on it.
         case 'search-index':
           return (
-            path('M4 86H136', ink(CHALK, 8, 0.9)) +
-            ellipse(112, 77, 13, 5.5, flat(NET, 0.6)) +
-            path('M82 72L119 100', ink(WOOD, 11)) +
-            path('M82 72L93 80.5', ink(BRASS, 11)) +
-            circle(56, 46, 37, flat(k.F)) +
-            path('M32 64H80', ink(CHALK, 13)) +
-            ellipse(60, 48, 19, 9.5, flat(BALL)) +
-            path(arc(56, 46, 29, -25, 100), ink(NET, 6, 0.3)) +
-            path('M32 36Q38 22 54 19', ink(CHALK, 4, 0.75)) +
-            circle(56, 46, 37, ink(k.L, 7))
+            path('M86 76L124 100', ink(k.L, 15)) +
+            path('M98 83.5L122 99', ink(k.C, 7)) +
+            circle(58, 50, 44, flat(k.F)) +
+            path('M24 70H92', ink(k.C, 14)) +
+            ellipse(60, 49, 24, 12, paint(BALL, INK, 4.5)) +
+            glint('M30 38Q37 22 54 17', 5, 1) +
+            circle(58, 50, 44, ink(k.L, 9))
           );
         // The draw sheet on its clipboard: four names, two matches, one winner.
         case 'table':
           return (
-            rect(17, 15, 114, 90, 5, flat(NET, 0.42)) +
-            rect(11, 9, 114, 90, 5, body(k)) +
-            path(boxes([[19, 25, 30, 10], [19, 41, 30, 10], [19, 62, 30, 10], [19, 78, 30, 10]]), flat(k.C)) +
-            path('M49 30H62V46H49M49 67H62V83H49M62 38H82V75H62M82 56.5H94', ink(k.L, M)) +
-            rect(94, 49, 24, 15, 3, flat(BALL)) +
-            path('M100 56.5H112', ink(NET, 3, 0.7)) +
-            rect(50, 2, 36, 14, 4, paint(BRASS, k.L, M)) +
-            shade('M70 4H82Q84 4 84 6V12Q84 14 82 14H66Z', 0.25)
+            rect(8, 10, 124, 92, 10, body(k)) +
+            shade(k, 'M11 90H129V89Q129 99 119 99H21Q11 99 11 89Z', 0.16) +
+            path(boxes([[18, 28, 30, 12], [18, 46, 30, 12], [18, 66, 30, 12], [18, 84, 30, 10]]), flat(k.C)) +
+            path('M48 34H62V52H48M48 72H62V89H48M62 43H80V80H62M80 61H94', ink(k.L, 4.5)) +
+            rect(94, 50, 30, 22, 5, paint(BALL, INK, 4)) +
+            rect(46, 2, 48, 18, 6, block(k, M))
           );
       }
     },
 
     queue: (k, kind) => {
       switch (kind) {
-        // Balls lined up along the baseline, waiting; the one at the front is already rolling off.
-        case 'queue': {
-          const waiting = [32, 68, 104, 140, 176].map((x) => ellipse(x + 3, 46, 12, 3, flat(NET, 0.45)) + ball(x, 32, 13)).join('');
+        // Four balls in a rack, waiting their turn; the open end shows which way they leave.
+        case 'queue':
           return (
-            rect(4, 5, 268, 54, 10, flat(k.F)) +
-            shade('M6 50H270V51Q270 57 262 57H14Q6 57 6 51Z', 0.36) +
-            path('M12 47H264', ink(k.C, 4)) +
-            waiting +
-            ellipse(243, 46, 12, 3, flat(NET, 0.45)) +
-            path('M204 24H218M200 33H216M206 42H218', ink(CHALK, 3, 0.7)) +
-            ball(240, 32, 13) +
-            rect(4, 5, 268, 54, 10, ink(k.L, W))
+            rect(4, 6, 268, 52, 26, flat(k.F)) +
+            shade(k, 'M30 46H246Q262 46 269 34Q268 55 246 55H30Q8 55 7 34Q14 46 30 46Z', 0.2) +
+            rect(4, 6, 268, 52, 26, ink(k.L, W)) +
+            ball(40, 32, 17) +
+            ball(84, 32, 17) +
+            ball(128, 32, 17) +
+            ball(172, 32, 17) +
+            path('M214 18L232 32L214 46M236 18L254 32L236 46', ink(k.C, 7))
           );
-        }
         // A loudhailer: one call, and everybody around the court hears it.
         case 'topic':
           return (
-            rect(44, 38, 15, 23, 4, body(k, 4)) +
-            path('M32 20L92 4V60L32 44Z', body(k)) +
-            shade('M32 33L92 36V60L32 44Z', 0.36) +
-            glint('M40 23L84 11.5', 3, 0.6) +
-            rect(12, 19, 21, 26, 5, chip(k, 4.5)) +
-            rect(88, 2, 10, 60, 5, paint(BRASS, k.L, M)) +
-            path('M116 16Q130 32 116 48M138 9Q158 32 138 55M160 3Q186 32 160 61', ink(k.L, 5)) +
-            ball(212, 13, 10) +
-            ball(252, 32, 10) +
-            ball(212, 51, 10)
+            rect(52, 40, 20, 22, 6, body(k, M)) +
+            path('M34 20L112 6V58L34 44Z', body(k)) +
+            shade(k, 'M37 33L109 36V54L37 42Z', 0.22) +
+            rect(10, 17, 26, 30, 8, paint(k.L, k.L, 2)) +
+            rect(106, 5, 16, 54, 8, block(k)) +
+            path('M146 17Q160 32 146 47M176 9Q198 32 176 55M208 7Q234 32 208 57', ink(k.L, 8))
           );
-        // A rally: the ball's flight over the net, and where it has just been.
-        case 'stream': {
-          const flight: [number, number][] = [[18, 36], [80, 3], [190, 3], [256, 26]];
-          const ghosts = [0.3, 0.52, 0.74].map((t, i) => circle(...bez(flight, t), 7.5 + i, flat(BALL, 0.3 + i * 0.2))).join('');
+        // A rally: the ball's flight, over the net.
+        case 'stream':
           return (
-            rect(4, 43, 268, 17, 7, body(k, 4.5)) +
-            shade('M6 53H270Q270 58 264 58H12Q6 58 6 53Z', 0.36) +
-            path('M14 50H262', ink(k.C, 3)) +
-            rect(122, 24, 32, 20, 0, flat(NET, 0.6)) +
-            path('M130 26V43M138 26V43M146 26V43M123 34.5H153', ink(k.L, 1.8, 0.75)) +
-            path('M120 24H156', ink(CHALK, 4.5)) +
-            path('M120 21V44M156 21V44', ink(WOOD, 5)) +
-            path('M18 36C80 3 190 3 256 26', ink(k.L, 4)) +
-            ghosts +
-            ball(256, 26, 12)
+            path('M26 46C86 0 176 0 240 24', ink(k.C, 8)) +
+            rect(116, 27, 44, 24, 0, paint(WHITE, k.L, 4)) +
+            path('M127 29V49M138 29V49M149 29V49M118 39H158', ink(k.C, 3)) +
+            path('M112 27H164', ink(k.L, 8)) +
+            rect(4, 50, 268, 10, 5, paint(k.L, k.L, 2)) +
+            ball(246, 25, 17)
           );
-        }
       }
     },
 
     actor: (k, kind) => {
       switch (kind) {
-        // A player in whites, the racket over one shoulder.
+        // A player, the racket over one shoulder.
         case 'human':
-          return path('M88 54L98 36', ink(WOOD, 6)) + group('rotate(30 101 22)', head(101, 19, 12.5, 16, 3, 4, WOOD, 4)) + player(k);
+          return path('M90 52L99 37', ink(k.L, 10)) + path('M90 52L99 37', ink(WOOD, 5)) + group('rotate(28 102 21)', racket(k, 102, 19, 13, 17, 5)) + player(k);
         // A doubles pair and one more: the player, and a partner at each shoulder.
         case 'group':
-          return partner(k, 24, BALL) + partner(k, 96, BRASS) + group('translate(6 7.8) scale(0.9)', player(k));
-        // The umpire: a blazer and tie, and a straw boater. Not one of the players.
+          return partner(k, 24) + partner(k, 96) + group('translate(6 7.9) scale(0.9)', player(k));
+        // The umpire: a dark blazer, a clay tie, a straw boater. Not one of the players.
         case 'thirdParty':
           return (
-            path('M20 78Q22 49 60 49Q98 49 100 78Z', body(k)) +
-            shade('M64 49Q98 49 100 78H76Q84 62 64 49Z', 0.4) +
-            path('M48 50L60 76L72 50Z', flat(CHALK)) +
-            path('M57 53H63L62.5 68L60 73L57.5 68Z', flat(BERRY)) +
-            path('M47 49L60 78L40 62ZM73 49L60 78L80 62Z', chip(k, 3)) +
-            rect(80, 64, 9, 9, 2, flat(BRASS)) +
-            circle(60, 35, 13, chip(k)) +
-            rect(45, 8, 30, 17, 3, paint(CHALK, k.L, 3)) +
-            rect(46.5, 17, 27, 6, 0, flat(NET)) +
-            ellipse(60, 25, 27, 5, paint(CHALK, k.L, 3)) +
-            path('M70 24Q80 26 85 25', ink(NET, 2.5, 0.3))
+            path('M16 79Q18 48 60 48Q102 48 104 79Z', paint(k.L, k.L, W)) +
+            path('M45 50L60 78L75 50Z', flat(WHITE)) +
+            path('M56 52H64L63 68L60 73L57 68Z', flat(CLAY)) +
+            circle(60, 34, 14.5, body(k)) +
+            rect(43, 5, 34, 18, 5, body(k, M)) +
+            rect(45.5, 14, 29, 7, 0, flat(k.C)) +
+            path('M30 23H90', ink(k.L, 8))
           );
         // The umpire's chair: the high seat the whole match is run from.
         case 'system':
           return (
-            ground(60, 80, 42, 2.5) +
-            path('M45 38L27 79M75 38L93 79', ink(k.L, 5.5)) +
-            path('M40.6 50H79.4M36 61H84M31 72H89', ink(k.L, M)) +
-            rect(44, 3, 32, 25, 5, chip(k, 4.5)) +
-            shade('M64 5H71Q74 5 74 8V26H60Z', 0.24) +
-            path('M51 11H62M51 18H58', ink(NET, 3, 0.45)) +
-            path('M36 30V22M84 30V22', ink(k.L, 4.5)) +
-            rect(34, 27, 52, 13, 4, body(k)) +
-            shade('M66 29H84V38H62Z', 0.4) +
-            circle(36, 20, 4, flat(BRASS)) +
-            circle(84, 20, 4, flat(BRASS)) +
-            rect(92, 30, 20, 26, 3, body(k, 4)) +
-            path('M97 38H107M97 45H107', ink(k.C, 3)) +
-            circle(102, 51, 2.5, flat(BALL)) +
-            path('M86 34H92', ink(k.L, 4))
+            ground(k, 60, 80, 46, 2.5) +
+            path('M42 42L24 78M78 42L96 78', ink(k.L, 8)) +
+            path('M36 55H84M30 68H90', ink(k.L, M)) +
+            rect(38, 3, 44, 30, 8, body(k)) +
+            shade(k, 'M64 6H72Q79 6 79 13V30H64Z') +
+            rect(26, 28, 68, 17, 6, block(k))
           );
         // A wristwatch: something small you wear to the court.
         case 'device':
           return (
-            rect(49, 2, 22, 78, 6, chip(k, 4)) +
-            shade('M61 4H69V78H61Z', 0.22) +
-            path('M56 9H64M56 73H64', ink(NET, 3, 0.45)) +
-            rect(77, 36.5, 6, 9, 2, flat(BRASS)) +
-            circle(60, 41, 17.5, body(k)) +
-            roundShade(60, 41, 14.5, 3, 0.4) +
-            circle(60, 41, 12, flat(CHALK)) +
-            path('M60 41V33M60 41L66.5 45', ink(NET, 3.5)) +
-            circle(60, 41, 2.6, flat(BERRY))
+            rect(47, 3, 26, 76, 8, block(k, M)) +
+            path('M62 5.5H66Q70.5 5.5 70.5 10V72Q70.5 76.5 66 76.5H62Z', flat(INK, 0.2)) +
+            circle(60, 41, 20, body(k)) +
+            path('M60 41V29M60 41L68 46', ink(k.L, M))
           );
-        // A small round helper with a ball's seams, an aerial, and a flag up to call the line.
+        // A small round helper: a ball's seam, a visor, an aerial with a ball-yellow tip.
         case 'agent':
           return (
-            ground(60, 80, 28, 2.5) +
-            path('M60 18V7', ink(k.L, 4)) +
-            circle(60, 6, 4.5, flat(BRASS)) +
-            path('M48 72V78M72 72V78', ink(k.L, 7)) +
-            path('M34 54L22 64', ink(k.L, 5.5)) +
-            path('M86 50L104 34', ink(k.L, 5.5)) +
-            path('M104 34V14', ink(k.L, 3)) +
-            path('M104 14L118 19L104 25Z', flat(BERRY)) +
-            circle(60, 47, 29, body(k)) +
-            path('M38 30Q56 47 40 66M82 30Q64 47 80 66', ink(k.C, 4)) +
-            roundShade(60, 47, 24.5, 5, 0.4) +
-            roundGlint(60, 47, 24, 3) +
-            rect(41, 37, 38, 17, 8.5, flat(NET)) +
-            circle(51, 45.5, 4.5, flat(BALL)) +
-            circle(69, 45.5, 4.5, flat(BALL))
+            ground(k, 60, 80, 30, 2.5) +
+            path('M60 16V8', ink(k.L, M)) +
+            path('M46 72V77M74 72V77', ink(k.L, 9)) +
+            path('M30 50L18 58M90 50L102 58', ink(k.L, 8)) +
+            circle(60, 46, 30, block(k)) +
+            path('M82 26Q100 46 82 68Q93 60 90 46Q93 34 82 26Z', flat(INK, 0.2)) +
+            path('M36 30Q52 20 68 24', ink(WHITE, 4.5, 0.85)) +
+            rect(38, 36, 44, 20, 10, paint(WHITE, k.L, 4.5)) +
+            circle(50, 46, 4.5, flat(k.L)) +
+            circle(70, 46, 4.5, flat(k.L)) +
+            circle(60, 7, 5.5, paint(BALL, INK, 3))
           );
       }
     },
 
-    // A racket press: a bar of the shape's colour between two varnished wooden ends, each screwed
-    // down with brass, a chalk rule above and below, the middle left clear.
+    // A racket press: a white bar between two varnished wooden ends, each with one heavy screw,
+    // the middle left clear.
     componentCard: (k) =>
-      rect(4, 4, 292, 100, 10, flat(k.F)) +
-      path('M14 4H28V104H14Q4 104 4 94V14Q4 4 14 4ZM286 4H272V104H286Q296 104 296 94V14Q296 4 286 4Z', flat(WOOD)) +
-      shade('M6 91H294V94Q294 102 286 102H14Q6 102 6 94Z', 0.36) +
-      shade('M22 6H28V102H22ZM290 8Q294 10 294 14V94Q294 100 290 101Z', 0.3) +
-      glint('M34 9.5H266', 2.5, 0.45) +
-      path('M42 20H258M42 88H258', ink(k.C, 2.8)) +
-      path('M28 4V104M272 4V104', ink(k.L, 3)) +
-      rect(4, 4, 292, 100, 10, ink(k.L, W)) +
-      circle(15.5, 24, 4.5, paint(BRASS, NET, 2)) +
-      circle(15.5, 84, 4.5, paint(BRASS, NET, 2)) +
-      circle(284.5, 24, 4.5, paint(BRASS, NET, 2)) +
-      circle(284.5, 84, 4.5, paint(BRASS, NET, 2)),
+      rect(4, 4, 292, 100, 14, flat(k.F)) +
+      path('M18 4H30V104H18Q4 104 4 90V18Q4 4 18 4ZM282 4H270V104H282Q296 104 296 90V18Q296 4 282 4Z', flat(WOOD)) +
+      shade(k, 'M7 91H293V90Q293 101 282 101H18Q7 101 7 90Z', 0.16) +
+      path('M30 4V104M270 4V104', ink(k.L, M)) +
+      rect(4, 4, 292, 100, 14, ink(k.L, W)) +
+      circle(17, 54, 6, paint(WHITE, INK, 3.5)) +
+      circle(283, 54, 6, paint(WHITE, INK, 3.5)),
 
     componentGlyph: (k, kind) => {
       switch (kind) {
-        // A stringing square: mains and crosses woven over and under, one self-contained patch.
-        case 'module': {
-          const xs = [35, 52, 68, 85];
-          const ys = [31, 45, 59, 73];
-          const over: [number, number, number, number][] = [];
-          xs.forEach((x, i) => ys.forEach((y, j) => (i + j) % 2 === 0 && over.push([x - 5, y - 5, 10, 10])));
+        // A stringing square: three mains, three crosses, woven over and under.
+        case 'module':
           return (
-            ground(62, 100, 52) +
-            rect(10, 6, 100, 92, 12, body(k)) +
-            shade('M98 10Q108 12 108 18V86Q108 96 98 96H22Q14 96 12 88H92Q98 88 98 82Z', 0.4) +
-            rect(23, 19, 74, 66, 5, flat(NET, 0.5)) +
-            path(xs.map((x) => `M${x} 19V85`).join('') + ys.map((y) => `M23 ${y}H97`).join(''), ink(k.L, 4)) +
-            path(boxes(over), flat(k.C)) +
-            rect(23, 19, 74, 66, 5, ink(k.L, M)) +
-            glint('M20 12H84', 2.5, 0.55) +
-            circle(17, 13, 3, flat(BRASS)) +
-            circle(103, 13, 3, flat(BRASS)) +
-            circle(17, 91, 3, flat(BRASS)) +
-            circle(103, 91, 3, flat(BRASS))
+            ground(k, 62, 101, 52) +
+            rect(10, 6, 100, 92, 16, body(k, 7)) +
+            shade(k, 'M92 10H96Q106 10 106 20V84Q106 94 96 94H92Z') +
+            path('M36 10V94M60 10V94M84 10V94', ink(k.C, 8)) +
+            path('M14 30H106M14 52H106M14 74H106', ink(k.L, 8)) +
+            path(boxes([[32, 24, 8, 12], [80, 24, 8, 12], [56, 46, 8, 12], [32, 68, 8, 12], [80, 68, 8, 12]]), flat(k.C)) +
+            rect(10, 6, 100, 92, 16, ink(k.L, 7))
           );
-        }
-        // The handle end of a racket, wound in overgrip with the tail of the tape still loose: the
-        // part that fits it to the hand.
+        // The net-post crank: the handle that takes up the slack between the post and the net.
         case 'adapter':
           return (
-            ground(60, 101, 30) +
-            path('M38 8V2M49 13V2M60 15V2M71 13V2M82 8V2', ink(CHALK, 2.4, 0.85)) +
-            path('M22 2Q60 30 98 2', ink(WOOD, 7)) +
-            path('M54 46L20 2M66 46L100 2', ink(WOOD, 7.5)) +
-            rect(51, 40, 18, 16, 2, paint(WOOD, k.L, M)) +
-            path('M76 62Q94 52 97 68Q99 80 113 74', ink(BERRY, 7)) +
-            rect(44, 52, 32, 40, 4, flat(k.F)) +
-            path('M44 63L76 55V64L44 72ZM44 79L76 71V80L44 88Z', flat(k.C)) +
-            shade('M67 54H74V90H67Z', 0.34) +
-            glint('M49.5 57V86', 2.5, 0.5) +
-            rect(44, 52, 32, 40, 4, ink(k.L, W)) +
-            rect(38, 88, 44, 13, 5, chip(k, 4.5)) +
-            shade('M64 90H78Q80 90 80 93V96Q80 99 78 99H60Z', 0.26)
+            ground(k, 58, 101, 50) +
+            rect(48, 18, 64, 22, 0, paint(WHITE, k.L, 4)) +
+            path('M64 20V38M80 20V38M96 20V38', ink(k.C, 3)) +
+            path('M44 18H112', ink(k.L, 8)) +
+            rect(14, 4, 36, 96, 10, body(k)) +
+            shade(k, 'M38 7H41Q47 7 47 13V91Q47 97 41 97H38Z', 0.24) +
+            path('M32 56H96', ink(k.L, 12)) +
+            rect(82, 44, 24, 54, 12, block(k)) +
+            path('M97 47Q103 49 103 56V86Q103 93 97 95Z', flat(INK, 0.2)) +
+            circle(32, 56, 14, paint(BALL, INK, 5))
           );
-        // A racket head, face on: an open ring you put the ball through, strung fine so it stays clear.
+        // A racket head, face on: an open ring you put the ball through.
         case 'port':
           return (
-            rect(53, 88, 14, 15, 2.5, paint(WOOD, k.L, M)) +
-            path('M38 76L60 92L82 76', ink(k.L, 7)) +
-            ellipse(60, 44, 40, 38, flat(k.F)) +
-            path(strings(60, 44, 40, 38, 3, 3), ink(k.C, 2.2, 0.6)) +
-            ellipse(60, 44, 40, 38, ink(k.L, 12)) +
-            ellipse(60, 44, 40, 38, ink(k.C, 5.5)) +
-            path(arc(60, 44, 39, -20, 105), ink(NET, 6, 0.3)) +
-            path('M33 16Q46 5 60 5Q74 5 87 16', ink(BRASS, 5.5)) +
-            glint('M24 36Q27 24 35 18', 3, 0.75)
+            path('M60 88V100', ink(k.L, 17)) +
+            path('M60 90V100', ink(WOOD, 10)) +
+            path('M36 76L60 92L84 76', ink(k.L, 8)) +
+            ellipse(60, 45, 44, 36, flat(k.F)) +
+            path(strings(60, 45, 44, 36, 3, 3), ink(k.C, 3.5)) +
+            ellipse(60, 45, 44, 36, ink(k.L, 13)) +
+            ellipse(60, 45, 44, 36, ink(k.C, 5))
           );
       }
     },
 
     artifact: (k, kind) => {
       switch (kind) {
-        // A scorecard: a ruled sheet, a few games already marked, and the pencil.
+        // A scorecard: a headed sheet, three lines written, one box ticked off in ball yellow.
         case 'file':
           return (
-            rect(12, 10, 64, 86, 5, flat(NET, 0.42)) +
-            rect(7, 5, 64, 86, 5, flat(k.F)) +
-            path(band(7, 5, 64, 17, 5), flat(k.C)) +
-            path('M7 22H71M7 39H71M7 56H71M7 73H71M31 22V91', ink(k.L, 3)) +
-            path(boxes([[38, 27, 8, 7], [50, 27, 8, 7], [38, 44, 8, 7], [38, 61, 8, 7], [50, 61, 8, 7]]), flat(CHALK)) +
-            path('M14 13.5H36', ink(NET, 3, 0.6)) +
-            rect(7, 5, 64, 86, 5, ink(k.L, W)) +
-            path('M80 50L68 84', ink(BRASS, 7)) +
-            path('M68 84L65.5 93L72.5 86Z', paint(CHALK, CHALK, 1.5)) +
-            path('M80 50L78 55.5', ink(BERRY, 7))
+            rect(8, 5, 70, 90, 10, flat(k.F)) +
+            path(band(8, 5, 70, 22, 10), flat(k.C)) +
+            glint('M18 16H44', 4.5, 0.9) +
+            path('M8 27H78', ink(k.L, M)) +
+            path('M19 42H50M19 57H50M19 72H40', ink(k.L, 6)) +
+            rect(57, 64, 14, 15, 3, paint(BALL, INK, 3.5)) +
+            rect(8, 5, 70, 90, 10, ink(k.L, W))
           );
-        // A stringing gauge and its slider: how tight things are set.
+        // A tension gauge and its slider: how tight things are set.
         case 'config':
           return (
-            circle(43, 37, 31, body(k)) +
-            roundShade(43, 37, 26, 5, 0.4) +
-            circle(43, 37, 20, flat(k.C)) +
-            path('M43 37L23.3 33.5A20 20 0 0 1 36.2 18.2Z', flat(BALL)) +
-            path('M43 37L57.1 22.9A20 20 0 0 1 62.7 33.5Z', flat(BERRY)) +
-            path('M43 37L52 23', ink(NET, 4.5)) +
-            circle(43, 37, 5, flat(BRASS)) +
-            roundGlint(43, 37, 26.5, 3) +
-            path('M10 86H76', ink(k.L, 5.5)) +
-            rect(46, 77, 13, 18, 4.5, chip(k, M))
+            circle(43, 38, 33, body(k, 7)) +
+            path('M43 38L20.5 49.5A25.5 25.5 0 0 1 25 20Z', flat(k.C)) +
+            path('M43 38L61 20A25.5 25.5 0 0 1 65.5 49.5Z', flat(CLAY)) +
+            path('M43 38L55 21', ink(k.L, 7)) +
+            circle(43, 38, 6, flat(k.L)) +
+            path('M8 87H78', ink(k.L, 7)) +
+            rect(46, 76, 16, 22, 6, block(k, M))
           );
         // The padlock off a locker.
         case 'secret':
           return (
-            ground(44, 96, 34, 3) +
-            path('M26 48V30Q26 11 43 11Q60 11 60 30V48', ink(k.L, 10)) +
-            path('M26 44V30Q26 11 43 11Q60 11 60 30V44', ink(k.F, 3.5)) +
-            rect(11, 44, 64, 50, 9, body(k)) +
-            shade('M60 46H66Q73 46 73 53V85Q73 92 66 92H20Q52 90 56 88Q60 86 60 80Z', 0.4) +
-            glint('M19 50H52', 2.5, 0.55) +
-            circle(43, 68, 15, paint(BRASS, k.L, 3)) +
-            circle(43, 64, 5.5, flat(NET)) +
-            path('M43 66V76', ink(NET, 5))
+            ground(k, 44, 97, 36, 3) +
+            path('M24 46V30Q24 9 43 9Q62 9 62 30V46', ink(k.L, 11)) +
+            rect(8, 42, 70, 53, 12, block(k)) +
+            path('M62 45H66Q75 45 75 54V83Q75 92 66 92H62Z', flat(INK, 0.2)) +
+            circle(43, 63, 8, flat(WHITE)) +
+            path('M43 65V78', ink(WHITE, 7))
           );
         // The club cup: a plain two-handled trophy on its plinth.
         case 'certificate':
           return (
-            ground(43, 96, 30, 3) +
-            path('M21 20Q3 20 7 36Q11 49 27 47M65 20Q83 20 79 36Q75 49 59 47', ink(k.L, 5)) +
-            path('M43 56V76', ink(k.L, 9)) +
-            path('M17 8H69Q69 56 43 60Q17 56 17 8Z', chip(k)) +
-            shade('M50 8H69Q69 56 43 60Q58 46 50 8Z', 0.24) +
-            path('M19 26Q43 34 67 26', ink(BRASS, 5)) +
-            glint('M26 14Q26 34 31 44', 3, 0.8) +
-            path('M14 8H72', ink(k.L, 6)) +
-            rect(21, 74, 44, 20, 4, body(k)) +
-            shade('M52 76H63V92H48Z', 0.4) +
-            rect(31, 80, 18, 8, 2, flat(BRASS))
+            ground(k, 43, 97, 32, 3) +
+            path('M20 20Q2 20 6 36Q10 50 28 47M66 20Q84 20 80 36Q76 50 58 47', ink(k.L, W)) +
+            path('M43 56V76', ink(k.L, 11)) +
+            path('M15 7H71Q71 56 43 60Q15 56 15 7Z', block(k)) +
+            path('M52 7H71Q71 56 43 60Q58 46 52 7Z', flat(INK, 0.2)) +
+            glint('M26 16Q26 34 31 43', 5, 0.9) +
+            path('M11 7H75', ink(k.L, 8)) +
+            rect(18, 74, 50, 21, 6, body(k))
           );
       }
     },
 
-    // The "T" where the service lines meet, set in a chalk ring: four marks outside it, the middle
-    // left empty, and a ball that has just landed on the line.
-    junction: (k) =>
-      path('M50 3V15M50 85V97M3 50H15M85 50H97', ink(k.L, 6.5)) +
-      circle(50, 50, 33, body(k)) +
-      roundShade(50, 50, 28, 5, 0.4) +
-      roundGlint(50, 50, 28.5, 3) +
-      circle(50, 50, 23.5, ink(k.C, 2.6)) +
-      ball(79, 21, 8),
+    // The "T" where the service lines meet, set in a ring: four heavy marks outside it, the
+    // middle left empty.
+    junction: (k) => path('M50 2V16M50 84V98M2 50H16M84 50H98', ink(k.L, 8)) + circle(50, 50, 34, body(k, 7)) + circle(50, 50, 25, ink(k.C, 4)),
   },
 
-  // The lawn: mown in stripes of uneven width, a baseline and the corner of a service box ruled
-  // across it in chalk, a few worn patches where the players stand, and one ball nobody fetched.
+  // The lawn in strong sun: three broad mown stripes a whisper apart in tone, and a few very
+  // large, very faint ball seams printed over them. Nothing with corners, nothing straight but
+  // the stripes themselves, which run off the page.
   backdrop: {
     tile: [TW, TH],
-    draw: () => {
-      const tufts: [number, number][] = [
-        [44, 62], [118, 196], [262, 48], [338, 150], [452, 232], [508, 108], [92, 372], [286, 348], [404, 392], [182, 254], [528, 318], [24, 236], [366, 30], [228, 150],
-      ];
-      return (
-        path(boxes([[0, 0, 80, TH], [310, 0, 88, TH]]), flat('#21513a')) +
-        path(boxes([[150, 0, 86, TH], [470, 0, 90, TH]]), flat('#1a4531')) +
-        ellipse(126, 316, 30, 7, flat('#173f2d', 0.5)) +
-        ellipse(396, 204, 16, 5, flat('#173f2d', 0.42)) +
-        ellipse(486, 66, 20, 5, flat('#173f2d', 0.38)) +
-        path('M0 300H560M200 300V420M200 0V110M200 110H560M0 110H60M60 101V119', ink(CHALK, 6, 0.075)) +
-        path(tufts.map(([x, y]) => `M${x} ${y}l-2 -6M${x + 4} ${y}l1 -7M${x + 8} ${y}l3 -5`).join(''), ink('#2c6248', 1.3, 0.8)) +
-        circle(432, 352, 5, flat(BALL, 0.11))
-      );
-    },
+    draw: () =>
+      path(boxes([[40, 0, 150, TH]]), flat('#eff3cb')) +
+      path(boxes([[300, 0, 130, TH]]), flat('#f8fae2')) +
+      path('M70 30Q270 170 130 360', ink(WHITE, 22, 0.2)) +
+      path('M480 70Q340 210 450 370', ink(WHITE, 18, 0.18)),
   },
 };

@@ -1,6 +1,6 @@
 # Match Point
 
-A grass-court summer drawn like a vintage club poster: a ball machine, a scoreboard, a kit bag, a rally over the net.
+A sunlit court as a bold club poster in lemon-lime, bottle green and clay: a ball machine, a scoreboard, a can of balls.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

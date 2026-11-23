@@ -224,16 +224,19 @@ export const weeb: Pack = {
         panel(k) +
         tone(k, 258, 11, 76, 34, (x, y) => (x - 258) / 76 > (y - 9) / 34) +
         speed(k, [
-          [6, 100, 74, 100, 5],
-          [6, 108, 104, 108, 5],
-          [6, 116, 62, 116, 4],
+          [6, 110, 44, 110, 4],
+          [6, 117, 62, 117, 4],
         ], 0.5) +
         panelEdge(k) +
         path('M3 8Q3 3 8 3H32L3 32Z', flat(k.L)) +
-        rect(12, 52, 6, 32, 0, paint(VERMILION, k.L, 2.5)) +
-        rect(27, 52, 6, 32, 0, paint(VERMILION, k.L, 2.5)) +
-        rect(8, 59, 29, 6, 0, paint(VERMILION, k.L, 2.5)) +
-        path('M4 51Q22.5 56 41 51L39 43Q22.5 48 6 43Z', paint(VERMILION, k.L, 2.5)) +
+        // Small, and hard against the edge: a long name runs the width of the card and must not meet it.
+        group(
+          'translate(1.5 26) scale(0.62)',
+          rect(12, 52, 6, 32, 0, paint(VERMILION, k.L, 3.5)) +
+            rect(27, 52, 6, 32, 0, paint(VERMILION, k.L, 3.5)) +
+            rect(8, 59, 29, 6, 0, paint(VERMILION, k.L, 3.5)) +
+            path('M4 51Q22.5 56 41 51L39 43Q22.5 48 6 43Z', paint(VERMILION, k.L, 3.5)),
+        ) +
         sparkle(318, 23, 13, VERMILION) +
         sparkle(298, 37, 6, SUN, k)
       );
