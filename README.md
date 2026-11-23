@@ -320,7 +320,7 @@ becomes a style of your own, to change as you like. Open a pack below to see eve
 </picture>
 </a>
 <p><a href="styles/high-fantasy/"><b>High fantasy</b></a><br>
-<sub>An illuminated storybook in gold leaf and lapis: keeps, cauldrons, rune stones and an owl familiar</sub></p>
+<sub>An illuminated storybook on moss-green vellum, in gold leaf and lapis: keeps, cauldrons, rune stones and an owl</sub></p>
 </td>
 <td width="50%" valign="top">
 <a href="styles/cyberpunk/">
@@ -344,7 +344,38 @@ becomes a style of your own, to change as you like. Open a pack below to see eve
 <p><a href="styles/cute/"><b>Cute</b></a><br>
 <sub>A kawaii sticker sheet: a busy bee, a jam jar, a caterpillar queue and bear-eared friends, glossy, die-cut and smiling</sub></p>
 </td>
-<td width="50%"></td>
+<td width="50%" valign="top">
+<a href="styles/weeb/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="styles/weeb/preview-dark.svg">
+  <img width="100%" alt="Weeb style pack" src="styles/weeb/preview.svg">
+</picture>
+</a>
+<p><a href="styles/weeb/"><b>Weeb</b></a><br>
+<sub>Inked manga under an after-school sky: a shrine gate, a bento box, ramen bowls in line, carp streamers in the wind</sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="styles/hardwood/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="styles/hardwood/preview-dark.svg">
+  <img width="100%" alt="Hardwood style pack" src="styles/hardwood/preview.svg">
+</picture>
+</a>
+<p><a href="styles/hardwood/"><b>Hardwood</b></a><br>
+<sub>Basketball by arena light: orange leather, maple planks, chalk court lines and steel on espresso black</sub></p>
+</td>
+<td width="50%" valign="top">
+<a href="styles/match-point/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="styles/match-point/preview-dark.svg">
+  <img width="100%" alt="Match Point style pack" src="styles/match-point/preview.svg">
+</picture>
+</a>
+<p><a href="styles/match-point/"><b>Match Point</b></a><br>
+<sub>A grass-court summer drawn like a vintage club poster: a ball machine, a scoreboard, a kit bag, a rally over the net</sub></p>
+</td>
 </tr>
 </table>
 
