@@ -100,13 +100,22 @@ stands for: a queue is something things pass through, a data store something tha
   follows the diagram: the shape's own fill, line, name or accent colour (so it follows a recolour
   and the pack's palette), or one of the seven named colours. `tools/styles/kit.ts` has them as
   `F`, `L`, `T`, `C`, `K` and `A(colour, role)`. Any other colour is kept as it is, everywhere.
+- **Illustrate, in a few tones.** A drawing is a little object with volume, not an outline: a
+  base tone, a shade (a part painted in the line colour at low opacity), a highlight on the lit
+  edge, and a spot colour or two from the pack's own short palette. Light comes from the top left
+  in every drawing. Most of each drawing still follows the shape's colour, so a recolour shows.
+- **A backdrop, if the world has one.** `art/backdrop.svg` is one tile, repeated on the canvas
+  behind the diagram, a unit to a canvas pixel. It must join itself on all four sides, avoid an
+  obvious beat when it repeats, and stay quiet: every shape, name and label on top of it has to
+  read. A pack with both a light and a dark scheme paints it in the diagram's text colour at low
+  opacity, so it follows the theme.
 - **Leave room for the name.** The plain Service, the API, the plain Component and the junction
   have their name inside and are stretched to whatever size the shape is: draw a frame with a calm
   middle and ornament only at its edges, not a picture. Keep the API's bottom-right corner clear
   for its tag. Everything else is a picture with its name beneath.
 
 A drawing is an SVG file, `styles/<id>/art/<type>--<kind>.svg` (`database--cache.svg`,
-`service--load-balancer.svg`, `ellipse.svg` for the junction), drawn in any editor. Only shapes and
+`service--load-balancer.svg`, `ellipse.svg` for the junction, `backdrop.svg` for the canvas), drawn in any editor. Only shapes and
 their fills and strokes are kept: text, images, gradients, filters, style sheets and anything that
 refers outside the file are left out, and the build fails on a drawing that has them.
 `style.json` holds the rest of the style: its hand, line weight, corners, connectors and colours,

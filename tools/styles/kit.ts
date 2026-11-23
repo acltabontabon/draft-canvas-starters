@@ -177,6 +177,11 @@ export interface Pack {
     artifact(k: Kit, kind: (typeof ARTIFACTS)[number]): string;
     junction(k: Kit): string;
   };
+  /**
+   * The canvas behind the diagram: one tile, repeated edge to edge, a unit to a canvas pixel. It
+   * must join itself on all four sides, and stay quiet enough that every shape and word reads.
+   */
+  backdrop?: { tile: readonly [number, number]; draw(k: Kit): string };
 }
 
 /** A full set of colours for one theme: the canvas's own, and the seven named colours. */

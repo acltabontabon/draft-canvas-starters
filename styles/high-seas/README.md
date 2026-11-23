@@ -1,6 +1,6 @@
 # High seas
 
-A woodcut sea chart: a lighthouse, a ledger, a powder keg, a bottle of messages.
+A hand-coloured woodcut sea chart: a lighthouse, a ledger, a powder keg, a bottle of messages.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

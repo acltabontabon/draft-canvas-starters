@@ -56,7 +56,8 @@ npx tsx ../draft-canvas-starters/tools/styles/build.ts [--check] [id...]
 in `styles/packs/<id>.ts` it first writes that pack's `art/*.svg` and `style.json` from the
 definition. Then, for every pack, each drawing goes through the app's own SVG importer (the one
 **Settings → Appearance** uses), the style is put together and read back through the app's check,
-and `<id>.draftstyle`, `preview.svg`, `preview-dark.svg` and `sheet.svg` are written. `--check`
+and `<id>.draftstyle`, `preview.svg`, `preview-dark.svg` and `sheet.svg` are written. A pack's
+`art/backdrop.svg`, when it has one, becomes the style's backdrop and is drawn behind those pictures. `--check`
 writes nothing and fails if anything on disk would change.
 
 `styles/kit.ts` is what the definitions share: the colours that make a part follow the diagram,

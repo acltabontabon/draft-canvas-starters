@@ -1,6 +1,6 @@
 # High fantasy
 
-An illuminated storybook: keeps, cauldrons, rune stones and an owl familiar.
+An illuminated storybook in gold leaf and lapis: keeps, cauldrons, rune stones and an owl familiar.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

@@ -1,6 +1,6 @@
 # Arena
 
-Navy and gold battle arena: plaques, turrets, crystals, loot and the lanes between them.
+Navy enamel and bevelled gold battle arena: plaques, turrets, cut gems, loot and the lanes between them.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

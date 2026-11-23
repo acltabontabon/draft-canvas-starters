@@ -1,6 +1,6 @@
 # Geek
 
-A retro computing lab in phosphor green: every shape its own piece of pixel hardware.
+A retro computing lab in glowing phosphor: every shape its own piece of 16-bit pixel hardware.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

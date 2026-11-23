@@ -258,10 +258,11 @@ it stay as they are.
 ## Style packs
 
 A style pack changes how every shape and connector is drawn, without changing what any of them
-means: a data store drawn as a barrel is still a data store. In Draft Canvas, open **Settings →
-Appearance → Style packs**, load the gallery and choose **Add**. A pack you add becomes a style of
-your own, to change as you like. Each pack below covers every shape and every kind of it; open one
-to see them all.
+means: a data store drawn as a barrel is still a data store. Each is a small illustrated world: a
+drawing for every shape and every kind of it, its own colours, and a backdrop printed on the canvas
+behind the diagram. In Draft Canvas, open **Appearance** (`⌘K`, then **Appearance…**), load the
+gallery under **Style packs** and choose **Add**: the pack is seen on your diagram at once, and
+becomes a style of your own, to change as you like. Open a pack below to see every shape in it.
 
 <!-- styles:start -->
 
@@ -275,7 +276,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/professional/"><b>Professional</b></a><br>
-<sub>Crisp duotone pictograms in slate and navy, for documents and slides</sub></p>
+<sub>Refined duotone product icons with quiet depth, on a drafting sheet, for documents and slides</sub></p>
 </td>
 <td width="50%" valign="top">
 <a href="styles/geek/">
@@ -285,7 +286,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/geek/"><b>Geek</b></a><br>
-<sub>A retro computing lab in phosphor green: every shape its own piece of pixel hardware</sub></p>
+<sub>A retro computing lab in glowing phosphor: every shape its own piece of 16-bit pixel hardware</sub></p>
 </td>
 </tr>
 <tr>
@@ -297,7 +298,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/arena/"><b>Arena</b></a><br>
-<sub>Navy and gold battle arena: plaques, turrets, crystals, loot and the lanes between them</sub></p>
+<sub>Navy enamel and bevelled gold battle arena: plaques, turrets, cut gems, loot and the lanes between them</sub></p>
 </td>
 <td width="50%" valign="top">
 <a href="styles/high-seas/">
@@ -307,7 +308,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/high-seas/"><b>High seas</b></a><br>
-<sub>A woodcut sea chart: a lighthouse, a ledger, a powder keg, a bottle of messages</sub></p>
+<sub>A hand-coloured woodcut sea chart: a lighthouse, a ledger, a powder keg, a bottle of messages</sub></p>
 </td>
 </tr>
 <tr>
@@ -319,7 +320,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/high-fantasy/"><b>High fantasy</b></a><br>
-<sub>An illuminated storybook: keeps, cauldrons, rune stones and an owl familiar</sub></p>
+<sub>An illuminated storybook in gold leaf and lapis: keeps, cauldrons, rune stones and an owl familiar</sub></p>
 </td>
 <td width="50%" valign="top">
 <a href="styles/cyberpunk/">
@@ -329,7 +330,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/cyberpunk/"><b>Cyberpunk</b></a><br>
-<sub>A neon night city of drones, megatowers and maglev trains, cut-cornered and glitched</sub></p>
+<sub>A neon night city of drones, megatowers and maglev trains, in glowing tube and chrome</sub></p>
 </td>
 </tr>
 <tr>
@@ -341,7 +342,7 @@ to see them all.
 </picture>
 </a>
 <p><a href="styles/cute/"><b>Cute</b></a><br>
-<sub>Kawaii stationery: a busy bee, a jam jar, a caterpillar queue and bear-eared friends, each with a smile</sub></p>
+<sub>A kawaii sticker sheet: a busy bee, a jam jar, a caterpillar queue and bear-eared friends, glossy, die-cut and smiling</sub></p>
 </td>
 <td width="50%"></td>
 </tr>

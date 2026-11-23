@@ -10,6 +10,7 @@
  *   pack.json          its name, summary, author, licence and order
  *   style.json         everything about the style that is not a drawing
  *   art/<key>.svg      one drawing per kind of shape, e.g. `database--cache.svg`
+ *   art/backdrop.svg   optional: one tile, repeated on the canvas behind the diagram
  *   <id>.draftstyle    what this writes, and the only file the app reads
  *   preview.svg        a sample diagram drawn in the pack, light and dark
  *   sheet.svg          every kind of shape drawn in the pack
@@ -81,6 +82,8 @@ ROLES.set(LIGHT.canvas.toLowerCase(), 'canvas');
 
 /* ------------------------------------------------------------ the drawings -- */
 
+/** The canvas behind the diagram: `art/backdrop.svg`, a tile and not a shape. */
+const BACKDROP = 'backdrop';
 const fileOf = (key: string) => `${key.replace(':', '--')}.svg`;
 const keyOf = (file: string) => file.replace(/\.svg$/, '').replace('--', ':');
 const svg = ([w, h]: readonly [number, number], body: string, left = 0) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${left} 0 ${w} ${h}" stroke-linecap="round" stroke-linejoin="round">${body}</svg>
@@ -101,6 +104,7 @@ function drawn(pack: Pack): Map<string, string> {
   for (const kind of COMPONENT_GLYPHS) out.set(`component:${kind}`, svg(SIZES.componentGlyph, draw.componentGlyph(kit, kind)));
   for (const kind of ARTIFACTS) out.set(`artifact:${kind}`, svg(SIZES.artifact, draw.artifact(kit, kind)));
   out.set('ellipse', svg(SIZES.junction, draw.junction(kit)));
+  if (pack.backdrop) out.set(BACKDROP, svg(pack.backdrop.tile, pack.backdrop.draw(kit)));
   return out;
 }
 
@@ -176,7 +180,7 @@ function sheet(style: unknown) {
   return { ...titled('sheet', nodes), style };
 }
 
-const picture = (doc: unknown, theme: 'light' | 'dark') => `${renderDocumentSvg(doc, { theme, includeBackground: false, openPoints: false, padding: 28 }).svg}\n`;
+const picture = (doc: unknown, theme: 'light' | 'dark') => `${renderDocumentSvg(doc, { theme, openPoints: false, padding: 40 }).svg}\n`;
 
 /** A first-party pack's own page: what it is, how to use it, and every shape drawn in it. */
 function readme(pack: Pack, drawsShapes: boolean): string {
@@ -248,12 +252,13 @@ for (const id of ids.sort()) {
   else if (existsSync(join(dir, 'art'))) for (const name of readdirSync(join(dir, 'art')).sort()) if (name.endsWith('.svg')) drawings.set(keyOf(name), readFileSync(join(dir, 'art', name), 'utf8'));
 
   const assets = new Map<string, unknown>();
+  let backdrop: Record<string, unknown> | undefined;
   const shapes: Record<string, Record<string, unknown>> = { ...((parts.shapes as Record<string, Record<string, unknown>>) ?? {}) };
   // In file-name order whichever way the drawings arrived, so the same pack is always the same bytes.
   const ordered = [...drawings].sort(([x], [y]) => (fileOf(x) < fileOf(y) ? -1 : 1));
   for (const [key, markup] of ordered) {
     const [type, kind] = key.split(':');
-    if (artSlotOf(type, kind) === null) {
+    if (key !== BACKDROP && artSlotOf(type, kind) === null) {
       fail(`art/${fileOf(key)}: no drawing can stand for "${key}"`);
       continue;
     }
@@ -273,7 +278,9 @@ for (const id of ids.sort()) {
       })),
     };
     assets.set(asset.id, asset);
-    shapes[key] = { ...(shapes[key] ?? {}), art: asset.id };
+    // The backdrop is the canvas's own drawing, not a shape's.
+    if (key === BACKDROP) backdrop = { ...((parts.backdrop as Record<string, unknown>) ?? {}), art: asset.id };
+    else shapes[key] = { ...(shapes[key] ?? {}), art: asset.id };
   }
   // A pack with no drawing for a type says so: it keeps the app's own, on purpose.
   for (const type of NODE_TYPES) {
@@ -283,7 +290,7 @@ for (const id of ids.sort()) {
     if (!covered && !shapes[type]?.art) shapes[type] = { ...(shapes[type] ?? {}), builtin: true };
   }
 
-  const raw = { v: 1, name: meta.name, ...parts, shapes, assets: [...assets.values()] };
+  const raw = { v: 1, name: meta.name, ...parts, shapes, ...(backdrop ? { backdrop } : {}), assets: [...assets.values()] };
   const { style, repairs } = normalizeStyle(raw);
   if (!style || repairs.length > 0) {
     fail(`the style does not read back cleanly: ${repairs.join(' ') || 'unreadable'}`);
@@ -301,7 +308,7 @@ for (const id of ids.sort()) {
   write(join(dir, 'preview-dark.svg'), picture(sample(back.style), 'dark'));
   write(join(dir, 'sheet.svg'), picture(sheet(back.style), resolved.pinned ?? 'light'));
   built += 1;
-  if (!CHECK) console.log(`✓ ${id}: ${assets.size} drawings, ${Math.round(Buffer.byteLength(text) / 1024)} KB`);
+  if (!CHECK) console.log(`✓ ${id}: ${assets.size - (backdrop ? 1 : 0)} drawings${backdrop ? ' and a backdrop' : ''}, ${Math.round(Buffer.byteLength(text) / 1024)} KB`);
 }
 
 if (problems.length > 0) {

@@ -12,56 +12,56 @@
   "schemes": {
     "light": {
       "canvas": "#f4ebd3",
-      "grid": "#e4d8b8",
-      "text": "#2b2118",
-      "textMuted": "#6e5a3a",
-      "edge": "#7d7462",
-      "edgeText": "#6e5a3a",
-      "edgeLabelBg": "#faf5e6",
-      "codeBg": "#efe5c9",
-      "codeBorder": "#d9cba6",
+      "grid": "#e3d6b4",
+      "text": "#2a1d14",
+      "textMuted": "#6b5434",
+      "edge": "#6f5a3c",
+      "edgeText": "#5c4628",
+      "edgeLabelBg": "#fbf5e3",
+      "codeBg": "#efe4c6",
+      "codeBorder": "#d6c69c",
       "accents": {
         "neutral": {
-          "fill": "#faf4e2",
-          "line": "#6e6a5e",
-          "text": "#2b2118",
-          "chip": "#5a5548"
+          "fill": "#fbf3dc",
+          "line": "#4e3b26",
+          "text": "#2a1d14",
+          "chip": "#7a6248"
         },
         "teal": {
-          "fill": "#e2efe6",
-          "line": "#2f6f5a",
-          "text": "#153d30",
-          "chip": "#2a6350"
+          "fill": "#cfe9dc",
+          "line": "#1c7059",
+          "text": "#0b3a2d",
+          "chip": "#2e8b6c"
         },
         "blue": {
-          "fill": "#e3e9f1",
-          "line": "#44648f",
-          "text": "#1f3352",
-          "chip": "#3a577e"
+          "fill": "#d3dff6",
+          "line": "#23449a",
+          "text": "#11245a",
+          "chip": "#3559b0"
         },
         "violet": {
-          "fill": "#ebe3f0",
-          "line": "#6f4f8f",
-          "text": "#3a2552",
-          "chip": "#5f427c"
+          "fill": "#e6d8f2",
+          "line": "#643a96",
+          "text": "#34175a",
+          "chip": "#7a4fae"
         },
         "amber": {
-          "fill": "#f6e7b6",
-          "line": "#a07d16",
-          "text": "#54400a",
-          "chip": "#8c6c10"
+          "fill": "#f9e3a0",
+          "line": "#96660a",
+          "text": "#483104",
+          "chip": "#b8860f"
         },
         "rose": {
-          "fill": "#f3dcdc",
-          "line": "#8f2c3c",
-          "text": "#561420",
-          "chip": "#7b2333"
+          "fill": "#f9d6c9",
+          "line": "#b22c1a",
+          "text": "#5a1109",
+          "chip": "#c8321f"
         },
         "green": {
-          "fill": "#e3ecd6",
-          "line": "#3f6f3a",
-          "text": "#1f3d1c",
-          "chip": "#2f5d3a"
+          "fill": "#dce9c0",
+          "line": "#44722a",
+          "text": "#213f0f",
+          "chip": "#5a8a34"
         }
       }
     }

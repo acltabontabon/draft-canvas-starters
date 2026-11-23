@@ -1,6 +1,6 @@
 # Professional
 
-Crisp duotone pictograms in slate and navy, for documents and slides.
+Refined duotone product icons with quiet depth, on a drafting sheet, for documents and slides.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="preview-dark.svg">

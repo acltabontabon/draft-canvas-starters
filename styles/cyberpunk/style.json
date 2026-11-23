@@ -8,61 +8,61 @@
   },
   "connectors": {
     "head": "triangle",
-    "colour": "plain"
+    "colour": "source"
   },
   "schemes": {
     "dark": {
-      "canvas": "#120c1f",
-      "grid": "#1d1433",
-      "text": "#e6dbff",
-      "textMuted": "#a99bd6",
-      "edge": "#9a8fd0",
-      "edgeText": "#c9b8f5",
-      "edgeLabelBg": "#1a1230",
-      "codeBg": "#170f29",
-      "codeBorder": "#2c2050",
+      "canvas": "#0e0a1f",
+      "grid": "#1a1338",
+      "text": "#ece5ff",
+      "textMuted": "#a79fd6",
+      "edge": "#9d8cff",
+      "edgeText": "#d6cdff",
+      "edgeLabelBg": "#151030",
+      "codeBg": "#130d2a",
+      "codeBorder": "#2c2260",
       "accents": {
         "neutral": {
-          "fill": "#1e1436",
-          "line": "#9a8fd0",
-          "text": "#e6dbff",
-          "chip": "#c2b5f5"
+          "fill": "#1a1338",
+          "line": "#a590ff",
+          "text": "#efe9ff",
+          "chip": "#c9bbff"
         },
         "teal": {
-          "fill": "#0d2a30",
-          "line": "#3de0e0",
-          "text": "#c9fbfb",
-          "chip": "#6beaea"
+          "fill": "#06242f",
+          "line": "#22e6ff",
+          "text": "#d4fbff",
+          "chip": "#7cf0ff"
         },
         "blue": {
-          "fill": "#131f45",
-          "line": "#5b8cff",
-          "text": "#d6e2ff",
-          "chip": "#84a8ff"
+          "fill": "#0c1a47",
+          "line": "#4f86ff",
+          "text": "#dbe6ff",
+          "chip": "#8fb0ff"
         },
         "violet": {
-          "fill": "#2a1650",
-          "line": "#b06cff",
-          "text": "#ecd9ff",
-          "chip": "#c693ff"
+          "fill": "#260f52",
+          "line": "#b65cff",
+          "text": "#f0deff",
+          "chip": "#cf99ff"
         },
         "amber": {
-          "fill": "#2e2a0c",
-          "line": "#f7e04b",
-          "text": "#fdf6c4",
-          "chip": "#f9e86f"
+          "fill": "#2b2a06",
+          "line": "#f5ff3d",
+          "text": "#fdffcf",
+          "chip": "#f8ff7a"
         },
         "rose": {
-          "fill": "#3a0f2c",
-          "line": "#f0489a",
-          "text": "#ffd3ea",
-          "chip": "#f571b3"
+          "fill": "#330a28",
+          "line": "#ff2e97",
+          "text": "#ffd9ec",
+          "chip": "#ff7abd"
         },
         "green": {
-          "fill": "#0f2e1c",
-          "line": "#39e58c",
-          "text": "#cdfbe2",
-          "chip": "#6aeda8"
+          "fill": "#07291b",
+          "line": "#2bff9a",
+          "text": "#d2ffe8",
+          "chip": "#7affc0"
         }
       }
     }
