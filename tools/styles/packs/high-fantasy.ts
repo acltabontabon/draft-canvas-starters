@@ -115,25 +115,27 @@ const rolled = (k: Kit, cx: number, cy: number, turn: number, band: string) =>
 export const highFantasy: Pack = {
   id: 'high-fantasy',
   name: 'High fantasy',
-  summary: 'An illuminated storybook in gold leaf and lapis: keeps, cauldrons, rune stones and an owl familiar',
+  summary: 'An illuminated storybook on moss-green vellum, in gold leaf and lapis: keeps, cauldrons, rune stones and an owl',
   author: 'Draft Canvas',
   licence: 'Apache-2.0',
   order: 50,
   style: {
+    // A scribe's steady hand: rounded, fine, each line in the colour of the thing it leaves.
     hand: { base: 'draft', wobble: 'calm' },
-    general: { shadow: false },
-    connectors: { weight: 'fine' },
+    general: { corners: 'round', shadow: false },
+    connectors: { weight: 'fine', colour: 'source' },
     schemes: {
       light: scheme(
-        { canvas: '#f4ebd3', grid: '#e3d6b4', text: '#2a1d14', textMuted: '#6b5434', edge: '#6f5a3c', edgeText: '#5c4628', edgeLabelBg: '#fbf5e3', codeBg: '#efe4c6', codeBorder: '#d6c69c' },
+        // Moss-green vellum, not parchment: the storybook is set in a wood, and no other pack is green.
+        { canvas: '#e9efd9', grid: '#d5dec0', text: '#1c2616', textMuted: '#55633f', edge: '#5d6d42', edgeText: '#4a5a33', edgeLabelBg: '#f4f7e9', codeBg: '#e1e8cf', codeBorder: '#c5d0a8' },
         {
-          neutral: ['#fbf3dc', '#4e3b26', '#2a1d14', '#7a6248'],
+          neutral: ['#f8f9ec', '#3f4f2c', '#1c2616', '#6f8240'],
           teal: ['#cfe9dc', '#1c7059', '#0b3a2d', '#2e8b6c'],
           blue: ['#d3dff6', '#23449a', '#11245a', '#3559b0'],
           violet: ['#e6d8f2', '#643a96', '#34175a', '#7a4fae'],
           amber: ['#f9e3a0', '#96660a', '#483104', '#b8860f'],
           rose: ['#f9d6c9', '#b22c1a', '#5a1109', '#c8321f'],
-          green: ['#dce9c0', '#44722a', '#213f0f', '#5a8a34'],
+          green: ['#cfe3b0', '#3d6b22', '#1d3a0c', '#4f8030'],
         },
       ),
     },
@@ -659,8 +661,8 @@ export const highFantasy: Pack = {
   backdrop: {
     tile: [480, 360],
     draw: () =>
-      path('M0 20H480M0 60H480M0 100H480M0 140H480M0 180H480M0 220H480M0 260H480M0 300H480M0 340H480', paint('none', '#e5d9b6', 1)) +
-      path('M92 0V360M96 0V360', paint('none', '#efd8c4', 1)) +
+      path('M0 20H480M0 60H480M0 100H480M0 140H480M0 180H480M0 220H480M0 260H480M0 300H480M0 340H480', paint('none', '#d7e0c3', 1)) +
+      path('M92 0V360M96 0V360', paint('none', '#e2d9ae', 1)) +
       path(starD(214, 78, 6) + starD(402, 44, 4) + starD(338, 236, 7) + starD(42, 204, 4.5) + starD(156, 304, 3.5) + starD(446, 318, 5) + starD(262, 164, 3), o(paint('#d2a93c'), 0.5)) +
       path('M296 118q12-12 24-2q8 9-2 15q-9 3-9-5M320 116q14-8 26 2', o(paint('none', '#b89a5c', 1.5), 0.45)) +
       path('M118 252q-10 10-22 2q-8-8 1-14q9-3 9 5M96 254q-12 8-22-1', o(paint('none', '#b89a5c', 1.5), 0.45)) +

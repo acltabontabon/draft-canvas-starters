@@ -151,9 +151,10 @@ export const professional: Pack = {
   licence: 'Apache-2.0',
   order: 10,
   style: {
+    // A ruling pen: fine, exact, and a soft shadow as on a product page.
     hand: { base: 'clean' },
-    general: { shadow: false },
-    connectors: { head: 'triangle', colour: 'plain' },
+    general: { weight: 'fine' },
+    connectors: { weight: 'fine', head: 'triangle', colour: 'plain' },
     schemes: {
       light: scheme(
         { canvas: '#f7f8fa', grid: '#e3e6eb', text: '#16202e', textMuted: '#55606f', edge: '#6b7686', edgeText: '#55606f', edgeLabelBg: '#ffffff', codeBg: '#eef0f4', codeBorder: '#dde1e7' },

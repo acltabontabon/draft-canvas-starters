@@ -187,7 +187,8 @@ export const highSeas: Pack = {
   licence: 'Apache-2.0',
   order: 40,
   style: {
-    hand: { base: 'draft' },
+    // A quill on a rolling deck: the line wanders and is gone over twice.
+    hand: { base: 'sketch', wobble: 'lively' },
     general: { shadow: false },
     connectors: { colour: 'plain' },
     schemes: {
@@ -735,19 +736,20 @@ export const highSeas: Pack = {
             [1, 2],
             [1, -2],
           ]),
-          ink('#c9ad7a', 1, 0.55),
+          ink('#c9ad7a', 1, 0.36),
         ) +
-        path(shoal, ink('#c9ad7a', 1, 0.5)) +
-        group('translate(-520 0)', path(shoal, ink('#c9ad7a', 1, 0.5))) +
-        path(island, ink('#ccb07c', 1.2, 0.75)) +
-        group('translate(-520 0)', path(island, ink('#ccb07c', 1.2, 0.75))) +
-        path('M470 318h14M474 326h20M486 334h18M500 322h12', ink('#c2a36c', 1.1, 0.7)) +
-        circle(150, 170, 26, ink('#c2a36c', 1, 0.6)) +
-        circle(150, 170, 17, paint('#f6e7c8', '#c2a36c', 1)) +
-        poly(burst(150, 170, 24, 5, 8), paint('#f1dfb8', '#c2a36c', 1)) +
+        path(shoal, ink('#c9ad7a', 1, 0.3)) +
+        group('translate(-520 0)', path(shoal, ink('#c9ad7a', 1, 0.3))) +
+        path(island, ink('#ccb07c', 1.2, 0.42)) +
+        group('translate(-520 0)', path(island, ink('#ccb07c', 1.2, 0.42))) +
+        path('M470 318h14M474 326h20M486 334h18M500 322h12', ink('#c2a36c', 1.1, 0.36)) +
+        // The rose is drawn in line only and faintly: at a distance it repeats, and must not read as a pattern of dots.
+        circle(150, 170, 26, ink('#c2a36c', 1, 0.3)) +
+        circle(150, 170, 17, ink('#c2a36c', 1, 0.3)) +
+        poly(burst(150, 170, 24, 5, 8), ink('#c2a36c', 1, 0.34)) +
         path('M150 146L150 170L146.5 166.5Z', flat('#9b2a20', 0.28)) +
         path('M150 136l-4 7h8Z', flat('#9b2a20', 0.28)) +
-        path(soundings.map(([text, x, y, size, turn]) => sounding(text, x, y, size, turn)).join(''), ink('#a98a55', 1.1, 0.42)) +
+        path(soundings.map(([text, x, y, size, turn]) => sounding(text, x, y, size, turn)).join(''), ink('#a98a55', 1.1, 0.32)) +
         path(`${waves(250, 120, 9, 4, 4)}${waves(262, 130, 9, 4, 3)}${waves(60, 330, 9, 4, 4)}${waves(48, 340, 9, 4, 3)}${waves(340, 262, 9, 4, 3)}${waves(120, 60, 9, 4, 3)}`, ink('#5f9a94', 1.3, 0.45))
       );
     },

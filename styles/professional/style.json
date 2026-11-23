@@ -3,9 +3,10 @@
     "base": "clean"
   },
   "general": {
-    "shadow": false
+    "weight": "fine"
   },
   "connectors": {
+    "weight": "fine",
     "head": "triangle",
     "colour": "plain"
   },

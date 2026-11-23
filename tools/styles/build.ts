@@ -43,8 +43,10 @@ const only = args.filter((arg) => !arg.startsWith('--'));
 
 // Each definition is loaded only when its pack is built, so one being redrawn cannot stop another.
 const FIRST_PARTY: Pack[] = [];
-for (const id of ['professional', 'geek', 'arena', 'high-seas', 'high-fantasy', 'cyberpunk', 'cute']) {
+for (const id of ['professional', 'geek', 'arena', 'high-seas', 'high-fantasy', 'cyberpunk', 'cute', 'weeb', 'hardwood', 'match-point']) {
   if (only.length > 0 && !only.includes(id)) continue;
+  // A pack still being drawn has no definition yet: the others build without it.
+  if (!existsSync(join(dirname(fileURLToPath(import.meta.url)), 'packs', `${id}.ts`))) continue;
   const definition = (await import(`./packs/${id}.ts`)) as Record<string, Pack>;
   FIRST_PARTY.push(Object.values(definition)[0]!);
 }

@@ -193,9 +193,10 @@ export const arena: Pack = {
   licence: 'Apache-2.0',
   order: 30,
   style: {
+    // Cast metal: heavy, hard-cornered, and standing well off the floor.
     hand: { base: 'clean' },
-    general: { weight: 'bold', corners: 'sharp' },
-    connectors: { weight: 'bold', head: 'triangle' },
+    general: { weight: 'bold', corners: 'sharp', depth: 'deep' },
+    connectors: { weight: 'bold', head: 'triangle', colour: 'plain' },
     schemes: {
       dark: scheme(
         { canvas: '#0e1a2b', grid: '#1a2a42', text: '#f6ead0', textMuted: '#bfa972', edge: '#c9a65a', edgeText: '#ecd9a6', edgeLabelBg: '#132238', codeBg: '#111e32', codeBorder: '#2a3d59' },

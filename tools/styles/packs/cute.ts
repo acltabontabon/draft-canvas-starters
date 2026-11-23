@@ -195,9 +195,10 @@ export const cute: Pack = {
   licence: 'Apache-2.0',
   order: 70,
   style: {
-    hand: { base: 'clean' },
+    // A felt-tip in a steady little hand: fat, round, and each line in the colour it started from.
+    hand: { base: 'draft', wobble: 'calm', retrace: false },
     general: { weight: 'bold', corners: 'round', shadow: false },
-    connectors: { weight: 'bold' },
+    connectors: { weight: 'bold', colour: 'source' },
     schemes: {
       light: scheme(
         { canvas: '#fff4f7', grid: '#f8dbe5', text: '#553730', textMuted: '#8a6460', edge: '#b3807c', edgeText: '#7d5752', edgeLabelBg: '#ffffff', codeBg: '#ffeef3', codeBorder: '#f5cddb' },

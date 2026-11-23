@@ -1,6 +1,8 @@
 {
   "hand": {
-    "base": "clean"
+    "base": "draft",
+    "wobble": "calm",
+    "retrace": false
   },
   "general": {
     "weight": "bold",
@@ -8,7 +10,8 @@
     "shadow": false
   },
   "connectors": {
-    "weight": "bold"
+    "weight": "bold",
+    "colour": "source"
   },
   "schemes": {
     "light": {

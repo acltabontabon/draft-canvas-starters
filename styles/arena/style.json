@@ -4,11 +4,13 @@
   },
   "general": {
     "weight": "bold",
-    "corners": "sharp"
+    "corners": "sharp",
+    "depth": "deep"
   },
   "connectors": {
     "weight": "bold",
-    "head": "triangle"
+    "head": "triangle",
+    "colour": "plain"
   },
   "schemes": {
     "dark": {

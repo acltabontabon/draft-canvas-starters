@@ -3,11 +3,14 @@
     "base": "clean"
   },
   "general": {
+    "weight": "bold",
     "corners": "sharp",
     "shadow": false
   },
   "connectors": {
-    "head": "triangle"
+    "weight": "bold",
+    "head": "triangle",
+    "colour": "source"
   },
   "schemes": {
     "dark": {

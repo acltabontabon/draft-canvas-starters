@@ -305,9 +305,10 @@ export const geek: Pack = {
   licence: 'Apache-2.0',
   order: 20,
   style: {
+    // A plotter: square, heavy, flat, and every trace in the colour of the part it leaves.
     hand: { base: 'clean' },
-    general: { corners: 'sharp', shadow: false },
-    connectors: { head: 'triangle' },
+    general: { weight: 'bold', corners: 'sharp', shadow: false },
+    connectors: { weight: 'bold', head: 'triangle', colour: 'source' },
     schemes: {
       dark: scheme(
         { canvas: '#0b1410', grid: '#16261f', text: '#d2fbe4', textMuted: '#7fbf9f', edge: '#46c48c', edgeText: '#a9ecd2', edgeLabelBg: '#0f1d17', codeBg: '#0e1b15', codeBorder: '#1f3a2e' },

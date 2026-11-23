@@ -126,9 +126,10 @@ export const cyberpunk: Pack = {
   licence: 'Apache-2.0',
   order: 60,
   style: {
+    // Neon tube: thin, hard-cornered, each run lit in the colour of its source.
     hand: { base: 'clean' },
-    general: { corners: 'sharp', shadow: false },
-    connectors: { head: 'triangle', colour: 'source' },
+    general: { weight: 'fine', corners: 'sharp', shadow: false },
+    connectors: { weight: 'fine', head: 'triangle', colour: 'source' },
     schemes: {
       dark: scheme(
         { canvas: '#0e0a1f', grid: '#1a1338', text: '#ece5ff', textMuted: '#a79fd6', edge: '#9d8cff', edgeText: '#d6cdff', edgeLabelBg: '#151030', codeBg: '#130d2a', codeBorder: '#2c2260' },
@@ -680,10 +681,11 @@ export const cyberpunk: Pack = {
         .map(([x, y], i) => `M${x} ${y}l${-3 - (i % 3)} ${10 + (i % 4) * 3}`)
         .join('');
       return (
-        toneD(blocks, '#191241', 0.7) +
+        // Barely lighter than the night: seen from far out the blocks repeat, and must not read as a pattern.
+        toneD(blocks, '#191241', 0.28) +
         line(streets, '#1c1440', 1) +
-        line(traces, '#34287a', 1.4, 0.8) +
-        toneD(pads, '#3a2d85', 0.8) +
+        line(traces, '#34287a', 1.4, 0.5) +
+        toneD(pads, '#3a2d85', 0.5) +
         line(rain, '#9d8cff', 1.2, 0.12) +
         circle(230, 180, 11, paint(CYN) + o(0.06)) +
         circle(230, 180, 2.6, paint(CYN) + o(0.5)) +

@@ -1,6 +1,7 @@
 {
   "hand": {
-    "base": "draft"
+    "base": "sketch",
+    "wobble": "lively"
   },
   "general": {
     "shadow": false
