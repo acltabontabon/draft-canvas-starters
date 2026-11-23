@@ -535,8 +535,9 @@ export const matchPoint: Pack = {
   backdrop: {
     tile: [TW, TH],
     draw: () =>
-      path(boxes([[40, 0, 150, TH]]), flat('#eff3cb')) +
-      path(boxes([[300, 0, 130, TH]]), flat('#f8fae2')) +
+      // Half a step from the canvas each way: mown stripes seen in passing, never bands behind the diagram.
+      path(boxes([[40, 0, 150, TH]]), flat('#f2f5d1')) +
+      path(boxes([[300, 0, 130, TH]]), flat('#f6f9dc')) +
       path('M70 30Q270 170 130 360', ink(WHITE, 22, 0.2)) +
       path('M480 70Q340 210 450 370', ink(WHITE, 18, 0.18)),
   },
