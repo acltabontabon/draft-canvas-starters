@@ -46,6 +46,25 @@ Writes `preview.svg` and `preview-dark.svg` beside each starter, as the app's
 for every drill-down view (`<id>--<owner>.png`). Look at light, dark and every drill-down against
 [LAYOUT.md](LAYOUT.md) before committing.
 
+## Draw and build style packs
+
+```bash
+npx tsx ../draft-canvas-starters/tools/styles/build.ts [--check] [id...]
+```
+
+`styles/build.ts` builds every pack under `styles/` (or the ids given). For a pack with a definition
+in `styles/packs/<id>.ts` it first writes that pack's `art/*.svg` and `style.json` from the
+definition. Then, for every pack, each drawing goes through the app's own SVG importer (the one
+**Settings → Appearance** uses), the style is put together and read back through the app's check,
+and `<id>.draftstyle`, `preview.svg`, `preview-dark.svg` and `sheet.svg` are written. A pack's
+`art/backdrop.svg`, when it has one, becomes the style's backdrop and is drawn behind those pictures. `--check`
+writes nothing and fails if anything on disk would change.
+
+`styles/kit.ts` is what the definitions share: the colours that make a part follow the diagram,
+the emblem that tells each kind from the others (a bolt for a cache, a clock for a scheduler), and
+figures for the six kinds of actor. A definition draws each family once, in its own world, and
+places the emblem; a new kind in the app needs an emblem here and nothing else.
+
 ## Take a screenshot in the editor
 
 ```bash

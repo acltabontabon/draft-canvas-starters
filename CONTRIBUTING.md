@@ -79,6 +79,65 @@ Changing a starter changes its SHA-256, so apps that load the gallery show it as
 Keep element ids readable (`api`, `queue`, `submit`) and stable across changes: agents refer to
 starter elements by id.
 
+## Add or change a style pack
+
+A style pack is a style and a drawing for every kind of shape. It changes how a diagram looks and
+nothing about what it means, so the first rule is that each drawing still reads as the thing it
+stands for: a queue is something things pass through, a data store something that holds them.
+
+- **Original artwork only.** No names, characters, logos or marks that belong to a game, a film, a
+  company or anyone else. A pack can be set in a kind of world (pirates, fantasy, a night city); it
+  cannot be a particular one. `pack.json` says who drew it and what it may be used under.
+- **Every kind of shape.** Each service, data store, queue, actor, component and artifact kind and
+  the junction has a drawing, or the pack says on purpose that it keeps the app's own. The check
+  below fails a pack with a gap, and fails every pack when Draft Canvas gains a kind.
+- **One object per kind.** A cache and a SQL database are different things from the pack's world
+  (a powder keg and a ledger, a potion and a tome), told apart by their outline alone. One
+  container with a different small mark inside for each kind does not read on a diagram.
+- **Bold and simple.** A drawing is shown about 60 pixels across. A few shapes and a heavy line
+  read; fine detail does not.
+- **Follow the diagram's colours.** Paint a part in one of the app's light-theme colours and it
+  follows the diagram: the shape's own fill, line, name or accent colour (so it follows a recolour
+  and the pack's palette), or one of the seven named colours. `tools/styles/kit.ts` has them as
+  `F`, `L`, `T`, `C`, `K` and `A(colour, role)`. Any other colour is kept as it is, everywhere.
+- **Illustrate, in a few tones.** A drawing is a little object with volume, not an outline: a
+  base tone, a shade (a part painted in the line colour at low opacity), a highlight on the lit
+  edge, and a spot colour or two from the pack's own short palette. Light comes from the top left
+  in every drawing. Most of each drawing still follows the shape's colour, so a recolour shows.
+- **A backdrop, if the world has one.** `art/backdrop.svg` is one tile, repeated on the canvas
+  behind the diagram, a unit to a canvas pixel. It must join itself on all four sides, avoid an
+  obvious beat when it repeats, and stay quiet: every shape, name and label on top of it has to
+  read. A pack with both a light and a dark scheme paints it in the diagram's text colour at low
+  opacity, so it follows the theme.
+- **Leave room for the name.** The plain Service, the API, the plain Component and the junction
+  have their name inside and are stretched to whatever size the shape is: draw a frame with a calm
+  middle and ornament only at its edges, not a picture. Keep the API's bottom-right corner clear
+  for its tag. Everything else is a picture with its name beneath.
+
+A drawing is an SVG file, `styles/<id>/art/<type>--<kind>.svg` (`database--cache.svg`,
+`service--load-balancer.svg`, `ellipse.svg` for the junction, `backdrop.svg` for the canvas), drawn in any editor. Only shapes and
+their fills and strokes are kept: text, images, gradients, filters, style sheets and anything that
+refers outside the file are left out, and the build fails on a drawing that has them.
+`style.json` holds the rest of the style: its hand, line weight, corners, connectors and colours,
+as a Draft Canvas style without `shapes[...].art` or `assets`.
+
+The packs here are drawn by `tools/styles/packs/<id>.ts`, which writes their `art/` and
+`style.json`; change the definition, not the files it writes. A pack drawn by hand has no
+definition, and its files are the source.
+
+Build and check (needs a Draft Canvas checkout beside this one):
+
+```bash
+cd ../draft-canvas
+npx tsx ../draft-canvas-starters/tools/styles/build.ts            # or one pack: build.ts cute
+STARTERS_DIR=../draft-canvas-starters npx vitest run tests/style-packs.test.ts
+```
+
+The build writes `<id>.draftstyle`, `preview.svg`, `preview-dark.svg` and `sheet.svg`. Look at
+`sheet.svg`: every kind should be told from its neighbours at a glance. Then run `npm run catalog`
+and commit everything.
+
 ## Checks
 
-CI runs `npm run catalog:check` and the Draft Canvas check above against the app's `main`.
+CI runs `npm run catalog:check`, and against the app's `main` the starter check and the style pack
+check above, and `tools/styles/build.ts --check`, which fails when a pack was not rebuilt.
