@@ -457,7 +457,19 @@
       ]
     }
   ],
-  "_patch": {},
+  "_patch": {
+    "nodes": {
+      "c.aggregate": {
+        "dy": -10.0
+      },
+      "c.repo": {
+        "dy": -28.0
+      },
+      "c.store": {
+        "dy": -28.0
+      }
+    }
+  },
   "_centers": {
     "customer": [
       70,

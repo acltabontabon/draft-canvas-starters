@@ -1042,11 +1042,29 @@
         "parentId": "insights"
       },
       "i.catalog": {
-        "dy": 17
+        "dy": -47.0
       },
       "j-api": {
         "text": null,
         "textOrigin": null
+      },
+      "i.encoders": {
+        "dy": 7.0
+      },
+      "i.loudness": {
+        "dy": 7.0
+      },
+      "i.storage": {
+        "dy": 7.0
+      },
+      "r.features": {
+        "dy": -8.0
+      },
+      "i.portal": {
+        "dy": -30.0
+      },
+      "i.api": {
+        "dy": -30.0
       }
     },
     "edges": {

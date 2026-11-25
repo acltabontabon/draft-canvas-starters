@@ -35,6 +35,9 @@ const { connectorRoutes } = await app('src/edges/connectorRoutes.ts');
 const { labelGroupPlan } = await app('src/edges/labelGroups.ts');
 const { layoutConnectorCaption, layoutEdgeLabel } = await app('src/edges/labelLayout.ts');
 const { straightenPositions } = await app('src/edges/straighten.ts');
+const { naturalArchitectureSize } = await app('src/nodes/describe.ts');
+const { measureContext } = await app('src/agent/place.ts');
+const { isC4Element } = await app('src/depth/c4.ts');
 
 /** The starters gallery's gate (tests/starter-files.test.ts), for one view. */
 function gate(doc: DraftDocument, view: { nodes: DraftNode[]; edges: DraftEdge[]; flows: any[] }, where: string): string[] {
@@ -123,6 +126,28 @@ function placeAll(list: any[], doc: DraftDocument, byId: Map<string, DraftNode>)
   }
 }
 
+/**
+ * How much wider words can come out in a browser than they measure here. The app sizes each shape
+ * to its words with the measurer it has, and under Node that is an estimate: a box it called big
+ * enough drew its description cut short with an ellipsis in the preview. The same margin the
+ * caption check below gives a connector's words.
+ */
+const WORDS_SLACK = 1.15;
+
+/** Grows each shape, in every view, until its words would fit even that much wider. Its top stays
+ *  where the layout put it; `_centers` and the placements after it move it as a whole. */
+function roomForWords(doc: DraftDocument): void {
+  const ctx = measureContext();
+  for (const g of graphs(doc)) {
+    for (const n of g.nodes as DraftNode[]) {
+      if (!isC4Element(n)) continue;
+      const narrow = Math.floor(n.width / WORDS_SLACK);
+      const need = naturalArchitectureSize({ ...n, width: narrow }, ctx, { maxWidth: narrow, maxHeight: 480, maxNameLines: 4 });
+      if (need.fits && need.height > n.height) n.height = need.height;
+    }
+  }
+}
+
 /** Patches, placements and sketches, applied to the composed document. Returns whether v29 is needed. */
 function post(doc: DraftDocument, spec: any): boolean {
   const { _patch, _place, _ink, _openPoints } = spec;
@@ -140,6 +165,8 @@ function post(doc: DraftDocument, spec: any): boolean {
       for (const [k, v] of Object.entries(rest)) if (v === null) delete (n as any)[k]; else (n as any)[k] = v;
     }
   }
+  // After the spec's own sizes, before anything is placed by its centre or fitted round it.
+  roomForWords(doc);
   const byId0 = new Map(doc.nodes.map((n) => [n.id, n]));
   // Centres, so shapes on one line are exactly level and connectors between them run straight.
   for (const [id, [cx, cy]] of Object.entries(spec._centers ?? {}) as [string, [number, number]][]) {
@@ -246,7 +273,9 @@ for (const path of specs) {
   doc.metadata = { id: `starter-${_starter.id}`, title: request.title, createdAt: STAMP, updatedAt: STAMP };
   let text = serializeDocument(doc);
   // Files stay at the oldest format that can hold them, so apps people installed a while ago open
-  // them: v29 only adds held shapes and portals.
+  // them: v29 only adds held shapes and portals. An app that writes a later format draws shapes
+  // differently from the ones before it (v30, v31 and v33 each changed which kinds are glyphs and
+  // the box they take), so its files say what it wrote.
   if (!needsV29) text = text.replace('"version": 29,', '"version": 28,');
   const again = deserializeDocument(text);
   if (!again.ok) throw new Error(again.error);
@@ -257,7 +286,7 @@ for (const path of specs) {
   }
   writeFileSync(join(dir, `${_starter.id}.draftcanvas`), text);
   const r = composed.receipt as any;
-  console.log(`✓ ${_starter.id} (format ${needsV29 ? 29 : 28})`);
+  console.log(`✓ ${_starter.id} (format ${again.document.version === undefined ? '?' : /"version": (\d+)/.exec(text)?.[1]})`);
   // What the app's layout said before the spec's own placement: often stale once `_centers` moves
   // things, so only on request. Advice and review lines are about the content and always shown.
   if (verbose) {

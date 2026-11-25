@@ -566,16 +566,16 @@
       200
     ],
     "dispatch-q": [
-      1120,
-      664
+      1120.0,
+      671.0
     ],
     "dispatch": [
-      1440,
-      664
+      1440.0,
+      671.0
     ],
     "couriers": [
-      1760,
-      664
+      1760.0,
+      671.0
     ],
     "notify-q": [
       1120,
@@ -591,7 +591,9 @@
     ]
   },
   "_clearRoutes": true,
-  "_fitGroups": {},
+  "_fitGroups": {
+    "header": 92
+  },
   "_alignCols": [
     [
       "restaurant",

@@ -294,7 +294,7 @@
         },
         "targetAnchor": {
           "side": "left",
-          "offset": 0.2
+          "offset": 0.15
         },
         "waypoints": [
           {
@@ -318,7 +318,7 @@
         },
         "targetAnchor": {
           "side": "left",
-          "offset": 0.8
+          "offset": 0.85
         },
         "waypoints": [
           {
@@ -369,6 +369,10 @@
       },
       "payouts": {
         "width": 240
+      },
+      "ingest": {
+        "height": 182,
+        "width": 200
       }
     }
   },

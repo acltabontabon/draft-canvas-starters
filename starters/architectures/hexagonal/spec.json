@@ -475,7 +475,7 @@
         },
         "targetAnchor": {
           "side": "top",
-          "offset": 0.5
+          "offset": 0.25
         }
       },
       "use-accounts-port": {
@@ -485,7 +485,7 @@
         },
         "targetAnchor": {
           "side": "top",
-          "offset": 0.5
+          "offset": 0.25
         }
       },
       "use-events-port": {
@@ -495,7 +495,7 @@
         },
         "targetAnchor": {
           "side": "top",
-          "offset": 0.5
+          "offset": 0.25
         }
       }
     }
@@ -518,8 +518,8 @@
       0
     ],
     "use-cases": [
-      1120,
-      0
+      1098.0,
+      0.0
     ],
     "domain": [
       1520,

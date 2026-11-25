@@ -1079,19 +1079,19 @@
     ],
     "web": [
       330,
-      480
+      448
     ],
     "mobile": [
       330,
-      640
+      608
     ],
     "tv": [
       330,
-      800
+      768
     ],
     "j-api": [
       560,
-      640
+      608
     ],
     "gateway": [
       780,
@@ -1102,7 +1102,7 @@
       640
     ],
     "graph": [
-      1440,
+      1410,
       270
     ],
     "recs": [
@@ -1235,6 +1235,18 @@
         "targetAnchor": {
           "side": "left",
           "offset": 0.5
+        }
+      },
+      "rank": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.75
+        }
+      },
+      "titles": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.75
         }
       }
     }

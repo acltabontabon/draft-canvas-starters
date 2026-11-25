@@ -1074,16 +1074,16 @@
       720
     ],
     "dispatch": [
-      1800,
-      720
+      1800.0,
+      695.0
     ],
     "eta": [
-      2140,
-      720
+      2140.0,
+      695.0
     ],
     "maps": [
-      2480,
-      720
+      2480.0,
+      695.0
     ],
     "rider": [
       70,
@@ -1110,7 +1110,7 @@
       1250
     ],
     "fcm": [
-      560,
+      500,
       1250
     ],
     "warehouse": [
@@ -1144,6 +1144,13 @@
       "j-api": {
         "text": null,
         "textOrigin": null
+      },
+      "t.fare": {
+        "dy": -3.0
+      },
+      "trips": {
+        "height": 214,
+        "width": 190
       }
     },
     "edges": {
@@ -1173,21 +1180,21 @@
       "hold": {
         "sourceAnchor": {
           "side": "right",
-          "offset": 0.8
+          "offset": 0.58
         },
         "targetAnchor": {
           "side": "top",
-          "offset": 0.62
+          "offset": 0.55
         }
       },
       "release": {
         "sourceAnchor": {
           "side": "right",
-          "offset": 0.97
+          "offset": 0.98
         },
         "targetAnchor": {
           "side": "top",
-          "offset": 0.85
+          "offset": 0.12
         }
       },
       "push": {
@@ -1224,6 +1231,16 @@
         "sourceAnchor": null,
         "targetAnchor": null,
         "waypoints": null
+      },
+      "match": {
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.25
+        },
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.16
+        }
       }
     }
   },
