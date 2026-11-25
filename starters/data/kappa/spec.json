@@ -29,7 +29,7 @@
   "nodes": [
     {
       "id": "gateway",
-      "type": "api",
+      "type": "gateway",
       "label": "Card Gateway",
       "technology": "Go",
       "description": "Authorizes card payments for merchants."
@@ -221,6 +221,19 @@
       "technology": "Spring Boot 3",
       "group": "fraud",
       "description": "Answers how risky a card is in under 10 ms."
+    },
+    {
+      "id": "j.score.out",
+      "type": "junction",
+      "label": "A",
+      "link": "score"
+    },
+    {
+      "id": "j.score.in",
+      "type": "junction",
+      "label": "A",
+      "link": "score",
+      "group": "fraud"
     }
   ],
   "relationships": [
@@ -287,10 +300,15 @@
     {
       "id": "score",
       "from": "gateway",
-      "to": "api",
+      "to": "j.score.out",
       "label": "GET /risk/{card}",
-      "semantic": "http",
-      "response": "0.82"
+      "semantic": "http"
+    },
+    {
+      "id": "score.in",
+      "from": "j.score.in",
+      "to": "api",
+      "semantic": "http"
     }
   ],
   "flows": [
@@ -302,6 +320,10 @@
         {
           "relationship": "score",
           "caption": "Before approving, the gateway asks how risky the card is right now."
+        },
+        {
+          "relationship": "score.in",
+          "caption": "The Risk API answers from the live view."
         },
         {
           "relationship": "serve",
@@ -411,26 +433,37 @@
       "consume-replay": {
         "cadence": "On demand"
       },
-      "score": {
-        "portal": true,
-        "sourceAnchor": {
-          "side": "top",
-          "offset": 0.5
-        },
+      "disputes": {
         "targetAnchor": {
-          "side": "top",
-          "offset": 0.5
+          "side": "left",
+          "offset": 0.85
+        },
+        "waypoints": [
+          {
+            "x": 250,
+            "y": 567
+          },
+          {
+            "x": 250,
+            "y": 405.2
+          }
+        ]
+      },
+      "publish": {
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.3
         }
       }
     }
   },
   "_centers": {
     "gateway": [
-      100,
-      397
+      20,
+      426
     ],
     "network": [
-      100,
+      20,
       567
     ],
     "log": [
@@ -460,6 +493,14 @@
     "api": [
       1600,
       445
+    ],
+    "j.score.out": [
+      20,
+      270
+    ],
+    "j.score.in": [
+      1600,
+      300
     ]
   },
   "_clearRoutes": true,

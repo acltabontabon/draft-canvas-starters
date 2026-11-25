@@ -551,47 +551,49 @@
     ],
     "dlq": [
       1120,
-      400
+      340
     ],
     "restaurant-q": [
       1120,
-      200
+      140
     ],
     "relay": [
       1440,
-      200
+      140
     ],
     "pos": [
       2080,
-      200
+      140
     ],
     "dispatch-q": [
-      1120,
-      664
+      1120.0,
+      671.0
     ],
     "dispatch": [
-      1440,
-      664
+      1440.0,
+      671.0
     ],
     "couriers": [
-      1760,
-      664
+      1760.0,
+      671.0
     ],
     "notify-q": [
       1120,
-      930
+      986
     ],
     "notifier": [
       1440,
-      930
+      986
     ],
     "twilio": [
       2080,
-      930
+      986
     ]
   },
   "_clearRoutes": true,
-  "_fitGroups": {},
+  "_fitGroups": {
+    "header": 92
+  },
   "_alignCols": [
     [
       "restaurant",

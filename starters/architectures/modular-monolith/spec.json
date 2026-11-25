@@ -433,7 +433,7 @@
     ],
     "stripe": [
       1200,
-      480
+      447
     ],
     "t.catalog": [
       0,
@@ -459,5 +459,21 @@
       "width": 900,
       "height": 110
     }
-  ]
+  ],
+  "_patch": {
+    "edges": {
+      "e.call": {
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.25
+        }
+      },
+      "e.charge": {
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.25
+        }
+      }
+    }
+  }
 }

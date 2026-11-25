@@ -569,6 +569,59 @@
       "label": "Push Service",
       "technology": "Firebase",
       "description": "Delivers push notifications to phones."
+    },
+    {
+      "id": "j.r-tickets.out",
+      "type": "junction",
+      "label": "A",
+      "link": "r-tickets",
+      "group": "edge-d"
+    },
+    {
+      "id": "j.r-tickets.in",
+      "type": "junction",
+      "label": "A",
+      "link": "r-tickets",
+      "group": "kitchen"
+    },
+    {
+      "id": "j.r-couriers.out",
+      "type": "junction",
+      "label": "B",
+      "link": "r-couriers",
+      "group": "cloud"
+    },
+    {
+      "id": "j.r-couriers.in",
+      "type": "junction",
+      "label": "B",
+      "link": "r-couriers",
+      "group": "logistics"
+    },
+    {
+      "id": "j.payout.out",
+      "type": "junction",
+      "label": "C",
+      "link": "payout",
+      "group": "data"
+    },
+    {
+      "id": "j.payout.in",
+      "type": "junction",
+      "label": "C",
+      "link": "payout"
+    },
+    {
+      "id": "j.tell.out",
+      "type": "junction",
+      "label": "D",
+      "link": "tell"
+    },
+    {
+      "id": "j.tell.in",
+      "type": "junction",
+      "label": "D",
+      "link": "tell"
     }
   ],
   "relationships": [
@@ -628,15 +681,27 @@
     {
       "id": "r-tickets",
       "from": "gateway",
-      "to": "integration",
+      "to": "j.r-tickets.out",
       "label": "/tickets",
+      "semantic": "routes"
+    },
+    {
+      "id": "r-tickets.in",
+      "from": "j.r-tickets.in",
+      "to": "integration",
       "semantic": "routes"
     },
     {
       "id": "r-couriers",
       "from": "gateway",
-      "to": "dispatch",
+      "to": "j.r-couriers.out",
       "label": "/couriers",
+      "semantic": "routes"
+    },
+    {
+      "id": "r-couriers.in",
+      "from": "j.r-couriers.in",
+      "to": "dispatch",
       "semantic": "routes"
     },
     {
@@ -670,8 +735,7 @@
       "from": "saga",
       "to": "payments",
       "label": "Authorize",
-      "semantic": "http",
-      "response": "hold id"
+      "semantic": "http"
     },
     {
       "id": "refund",
@@ -734,8 +798,7 @@
       "from": "saga",
       "to": "dispatch",
       "label": "FindCourier",
-      "semantic": "grpc",
-      "response": "courier"
+      "semantic": "grpc"
     },
     {
       "id": "near",
@@ -760,8 +823,14 @@
     {
       "id": "payout",
       "from": "payouts",
-      "to": "stripe",
+      "to": "j.payout.out",
       "label": "Payouts",
+      "semantic": "http"
+    },
+    {
+      "id": "payout.in",
+      "from": "j.payout.in",
+      "to": "stripe",
       "semantic": "http"
     },
     {
@@ -780,8 +849,14 @@
     {
       "id": "tell",
       "from": "fcm",
-      "to": "customer",
+      "to": "j.tell.out",
       "label": "Order updates",
+      "semantic": "notifies"
+    },
+    {
+      "id": "tell.in",
+      "from": "j.tell.in",
+      "to": "customer",
       "semantic": "notifies"
     }
   ],
@@ -884,6 +959,10 @@
         {
           "relationship": "tell",
           "caption": "The customer sees 'Sorry, the restaurant can't take it' and no charge."
+        },
+        {
+          "relationship": "tell.in",
+          "caption": "The push lands on the customer's phone."
         }
       ]
     },
@@ -929,6 +1008,10 @@
           "caption": "Dispatch records pickup and drop-off."
         },
         {
+          "relationship": "r-couriers.in",
+          "caption": "The courier app talks to Dispatch."
+        },
+        {
           "relationship": "near",
           "caption": "Live positions update in Redis."
         },
@@ -947,6 +1030,10 @@
         {
           "relationship": "tell",
           "caption": "“Your courier is 2 minutes away.”"
+        },
+        {
+          "relationship": "tell.in",
+          "caption": "The push lands on the customer's phone."
         }
       ]
     },
@@ -989,6 +1076,10 @@
         {
           "relationship": "payout",
           "caption": "Stripe pays each partner's bank account."
+        },
+        {
+          "relationship": "payout.in",
+          "caption": "Stripe receives the payout batch."
         }
       ]
     }
@@ -1110,8 +1201,8 @@
       240
     ],
     "tablet": [
-      330,
-      520
+      330.0,
+      496.0
     ],
     "courier-app": [
       330,
@@ -1122,8 +1213,8 @@
       800
     ],
     "j-api": [
-      560,
-      520
+      560.0,
+      496.0
     ],
     "gateway": [
       800,
@@ -1143,7 +1234,7 @@
     ],
     "saga": [
       1460,
-      520
+      459
     ],
     "orders-tbl": [
       1120,
@@ -1155,19 +1246,19 @@
     ],
     "payments": [
       1460,
-      240
+      130
     ],
     "stripe": [
       1460,
-      -90
+      -340
     ],
     "dispatch": [
-      1800,
-      240
+      1840,
+      130
     ],
     "locations": [
-      2140,
-      240
+      2180,
+      130
     ],
     "tickets": [
       1800,
@@ -1198,12 +1289,44 @@
       1140
     ],
     "notifier": [
-      1120,
+      1150,
       1140
     ],
     "fcm": [
-      1120,
+      1150,
       1400
+    ],
+    "j.r-tickets.out": [
+      800,
+      395
+    ],
+    "j.r-tickets.in": [
+      2140,
+      395
+    ],
+    "j.r-couriers.out": [
+      930,
+      666
+    ],
+    "j.r-couriers.in": [
+      1840,
+      5
+    ],
+    "j.payout.out": [
+      2345,
+      1108
+    ],
+    "j.payout.in": [
+      1640,
+      -340
+    ],
+    "j.tell.out": [
+      1380,
+      1400
+    ],
+    "j.tell.in": [
+      70,
+      380
     ]
   },
   "_clearRoutes": true,
@@ -1224,29 +1347,15 @@
       "j-api": {
         "text": null,
         "textOrigin": null
+      },
+      "d.geo": {
+        "dy": -10.0
+      },
+      "orders": {
+        "width": 190
       }
     },
     "edges": {
-      "r-tickets": {
-        "portal": true,
-        "sourceAnchor": {
-          "side": "top",
-          "offset": 0.5
-        }
-      },
-      "r-couriers": {
-        "portal": true,
-        "sourceAnchor": {
-          "side": "bottom",
-          "offset": 0.85
-        }
-      },
-      "payout": {
-        "portal": true
-      },
-      "tell": {
-        "portal": true
-      },
       "land": {
         "cadence": "Streaming"
       },
@@ -1266,8 +1375,8 @@
       },
       "assign": {
         "sourceAnchor": {
-          "side": "top",
-          "offset": 0.85
+          "side": "right",
+          "offset": 0.1
         },
         "targetAnchor": {
           "side": "bottom",
@@ -1275,14 +1384,118 @@
         },
         "waypoints": [
           {
-            "x": 1522,
-            "y": 365
+            "x": 1641,
+            "y": 423.9
           },
           {
-            "x": 1800,
-            "y": 365
+            "x": 1641,
+            "y": 282
+          },
+          {
+            "x": 1840,
+            "y": 282
           }
         ]
+      },
+      "refund": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.6987
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.8
+        }
+      },
+      "authorize": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.3013
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.2
+        }
+      },
+      "r-tickets": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        }
+      },
+      "r-tickets.in": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "r-couriers": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.85
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "r-couriers.in": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "payout": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "payout.in": {
+        "sourceAnchor": {
+          "side": "left",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "right",
+          "offset": 0.5
+        }
+      },
+      "tell": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "tell.in": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        }
       }
     }
   },

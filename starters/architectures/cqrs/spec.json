@@ -457,14 +457,26 @@
       ]
     }
   ],
-  "_patch": {},
+  "_patch": {
+    "nodes": {
+      "c.aggregate": {
+        "dy": -10.0
+      },
+      "c.repo": {
+        "dy": -28.0
+      },
+      "c.store": {
+        "dy": -28.0
+      }
+    }
+  },
   "_centers": {
     "customer": [
-      70,
+      -210,
       410
     ],
     "app": [
-      380,
+      100,
       410
     ],
     "command-api": [
@@ -493,7 +505,7 @@
     ],
     "statements": [
       1060,
-      760
+      820
     ],
     "projector": [
       1400,

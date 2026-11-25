@@ -425,7 +425,7 @@
       "release-seat": {
         "sourceAnchor": {
           "side": "right",
-          "offset": 0.68
+          "offset": 0.5789
         },
         "targetAnchor": {
           "side": "left",
@@ -445,7 +445,7 @@
       "cancel-room": {
         "sourceAnchor": {
           "side": "left",
-          "offset": 0.68
+          "offset": 0.5789
         },
         "targetAnchor": {
           "side": "right",
@@ -465,15 +465,15 @@
     ],
     "orchestrator": [
       820,
-      417
+      402
     ],
     "flights": [
-      1240,
-      420
+      1240.0,
+      428.0
     ],
     "flights-db": [
-      1600,
-      420
+      1600.0,
+      428.0
     ],
     "hotels": [
       400,
@@ -489,7 +489,7 @@
     ],
     "stripe": [
       1240,
-      720
+      686
     ]
   },
   "_clearRoutes": true,
