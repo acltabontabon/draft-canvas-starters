@@ -87,6 +87,18 @@
       "label": "Delivery Service",
       "technology": "FastAPI",
       "description": "Assigns a courier to accepted orders."
+    },
+    {
+      "id": "j.to-cancel.out",
+      "type": "junction",
+      "label": "A",
+      "link": "to-cancel"
+    },
+    {
+      "id": "j.to-cancel.in",
+      "type": "junction",
+      "label": "A",
+      "link": "to-cancel"
     }
   ],
   "relationships": [
@@ -189,10 +201,16 @@
     {
       "id": "to-cancel",
       "from": "payments-events",
-      "to": "order",
+      "to": "j.to-cancel.out",
       "label": "PaymentRefunded",
       "semantic": "deliversTo",
       "kind": "failure"
+    },
+    {
+      "id": "to-cancel.in",
+      "from": "j.to-cancel.in",
+      "to": "order",
+      "semantic": "deliversTo"
     }
   ],
   "flows": [
@@ -273,6 +291,10 @@
         {
           "relationship": "to-cancel",
           "caption": "Order Service reacts: the order is CANCELLED and the customer told."
+        },
+        {
+          "relationship": "to-cancel.in",
+          "caption": "Order Service hears that the payment was refunded."
         }
       ]
     }
@@ -428,17 +450,6 @@
           }
         ]
       },
-      "to-cancel": {
-        "portal": true,
-        "sourceAnchor": {
-          "side": "left",
-          "offset": 0.5
-        },
-        "targetAnchor": {
-          "side": "bottom",
-          "offset": 0.85
-        }
-      },
       "authorize": {
         "sourceAnchor": {
           "side": "right",
@@ -447,6 +458,16 @@
         "targetAnchor": {
           "side": "left",
           "offset": 0.5
+        }
+      },
+      "to-cancel.in": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.85
         }
       }
     },
@@ -510,6 +531,14 @@
     "delivery": [
       330.0,
       800.0
+    ],
+    "j.to-cancel.out": [
+      865,
+      454
+    ],
+    "j.to-cancel.in": [
+      365,
+      400
     ]
   },
   "_clearRoutes": true,

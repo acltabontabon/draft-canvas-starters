@@ -425,7 +425,7 @@
       "release-seat": {
         "sourceAnchor": {
           "side": "right",
-          "offset": 0.68
+          "offset": 0.5789
         },
         "targetAnchor": {
           "side": "left",
@@ -445,7 +445,7 @@
       "cancel-room": {
         "sourceAnchor": {
           "side": "left",
-          "offset": 0.68
+          "offset": 0.5789
         },
         "targetAnchor": {
           "side": "right",

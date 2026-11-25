@@ -542,6 +542,19 @@
       "technology": "Snowflake",
       "group": "data-d",
       "description": "Every trip, fare and payout, for finance."
+    },
+    {
+      "id": "j.offer.out",
+      "type": "junction",
+      "label": "A",
+      "link": "offer"
+    },
+    {
+      "id": "j.offer.in",
+      "type": "junction",
+      "label": "A",
+      "link": "offer",
+      "group": "apps"
     }
   ],
   "relationships": [
@@ -617,8 +630,7 @@
       "from": "trips",
       "to": "dispatch",
       "label": "FindDriver",
-      "semantic": "grpc",
-      "response": "matched"
+      "semantic": "grpc"
     },
     {
       "id": "nearby",
@@ -654,8 +666,7 @@
       "from": "trips",
       "to": "payments",
       "label": "HoldFare",
-      "semantic": "grpc",
-      "response": "held"
+      "semantic": "grpc"
     },
     {
       "id": "release",
@@ -705,8 +716,13 @@
     {
       "id": "offer",
       "from": "fcm",
-      "to": "driver-app",
+      "to": "j.offer.out",
       "label": "Ride offer"
+    },
+    {
+      "id": "offer.in",
+      "from": "j.offer.in",
+      "to": "driver-app"
     },
     {
       "id": "land",
@@ -786,6 +802,10 @@
         {
           "relationship": "offer",
           "caption": "The driver has 15 seconds to accept."
+        },
+        {
+          "relationship": "offer.in",
+          "caption": "The offer appears in the driver's app."
         }
       ]
     },
@@ -1124,6 +1144,14 @@
     "ledger": [
       1800,
       1280
+    ],
+    "j.offer.out": [
+      500,
+      1170
+    ],
+    "j.offer.in": [
+      330,
+      550
     ]
   },
   "_clearRoutes": true,
@@ -1172,9 +1200,6 @@
       }
     },
     "edges": {
-      "offer": {
-        "portal": true
-      },
       "ping": {
         "cadence": "Every 4 s",
         "sourceAnchor": {
@@ -1202,7 +1227,7 @@
         },
         "targetAnchor": {
           "side": "top",
-          "offset": 0.8
+          "offset": 0.65
         }
       },
       "release": {
@@ -1212,7 +1237,7 @@
         },
         "targetAnchor": {
           "side": "top",
-          "offset": 0.375
+          "offset": 0.3
         }
       },
       "push": {
@@ -1268,6 +1293,26 @@
         "targetAnchor": {
           "side": "left",
           "offset": 0.25
+        }
+      },
+      "offer": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        }
+      },
+      "offer.in": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
         }
       }
     }

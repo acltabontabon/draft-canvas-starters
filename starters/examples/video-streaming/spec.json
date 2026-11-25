@@ -612,6 +612,47 @@
         "x": 240,
         "y": 920
       }
+    },
+    {
+      "id": "j.resume.out",
+      "type": "junction",
+      "label": "A",
+      "link": "resume",
+      "group": "discovery"
+    },
+    {
+      "id": "j.resume.in",
+      "type": "junction",
+      "label": "A",
+      "link": "resume",
+      "group": "data"
+    },
+    {
+      "id": "j.launch.out",
+      "type": "junction",
+      "label": "B",
+      "link": "launch"
+    },
+    {
+      "id": "j.launch.in",
+      "type": "junction",
+      "label": "B",
+      "link": "launch",
+      "group": "discovery"
+    },
+    {
+      "id": "j.publish-model.out",
+      "type": "junction",
+      "label": "C",
+      "link": "publish-model",
+      "group": "data"
+    },
+    {
+      "id": "j.publish-model.in",
+      "type": "junction",
+      "label": "C",
+      "link": "publish-model",
+      "group": "discovery"
     }
   ],
   "relationships": [
@@ -661,8 +702,7 @@
       "from": "graph",
       "to": "recs",
       "label": "Ranks rows",
-      "semantic": "grpc",
-      "response": "rows"
+      "semantic": "grpc"
     },
     {
       "id": "feat",
@@ -676,8 +716,7 @@
       "from": "graph",
       "to": "catalog",
       "label": "Titles by id",
-      "semantic": "grpc",
-      "response": true
+      "semantic": "grpc"
     },
     {
       "id": "find",
@@ -688,8 +727,14 @@
     {
       "id": "resume",
       "from": "graph",
-      "to": "history",
+      "to": "j.resume.out",
       "label": "Continue Watching",
+      "semantic": "reads"
+    },
+    {
+      "id": "resume.in",
+      "from": "j.resume.in",
+      "to": "history",
       "semantic": "reads"
     },
     {
@@ -736,8 +781,14 @@
     {
       "id": "publish-model",
       "from": "training",
-      "to": "features",
+      "to": "j.publish-model.out",
       "label": "New features",
+      "semantic": "writes"
+    },
+    {
+      "id": "publish-model.in",
+      "from": "j.publish-model.in",
+      "to": "features",
       "semantic": "writes"
     },
     {
@@ -778,8 +829,14 @@
     {
       "id": "launch",
       "from": "pipeline",
-      "to": "catalog",
+      "to": "j.launch.out",
       "label": "Title ready",
+      "semantic": "http"
+    },
+    {
+      "id": "launch.in",
+      "from": "j.launch.in",
+      "to": "catalog",
       "semantic": "http"
     }
   ],
@@ -878,6 +935,10 @@
         {
           "relationship": "resume",
           "caption": "Continue Watching comes from the viewing history."
+        },
+        {
+          "relationship": "resume.in",
+          "caption": "Viewing History returns where each title stopped."
         }
       ]
     },
@@ -903,6 +964,10 @@
           "caption": "At launch time the title becomes available in the catalog."
         },
         {
+          "relationship": "launch.in",
+          "caption": "The Catalog marks the title as available."
+        },
+        {
           "relationship": "find",
           "caption": "It is indexed, so viewers can find it by name."
         }
@@ -924,6 +989,10 @@
         {
           "relationship": "publish-model",
           "caption": "Fresh features go live without a deploy."
+        },
+        {
+          "relationship": "publish-model.in",
+          "caption": "The Feature Store serves the new features."
         }
       ]
     }
@@ -1160,6 +1229,30 @@
     "drm": [
       1100,
       1190
+    ],
+    "j.resume.out": [
+      1705,
+      168
+    ],
+    "j.resume.in": [
+      2345,
+      591
+    ],
+    "j.launch.out": [
+      330,
+      1320
+    ],
+    "j.launch.in": [
+      1910,
+      216
+    ],
+    "j.publish-model.out": [
+      2100,
+      848
+    ],
+    "j.publish-model.in": [
+      2250,
+      -45
     ]
   },
   "_clearRoutes": true,
@@ -1175,19 +1268,6 @@
       }
     },
     "edges": {
-      "resume": {
-        "portal": true
-      },
-      "launch": {
-        "portal": true,
-        "sourceAnchor": {
-          "side": "bottom",
-          "offset": 0.5
-        }
-      },
-      "publish-model": {
-        "portal": true
-      },
       "fill": {
         "cadence": "Nightly 02:00",
         "sourceAnchor": {
@@ -1292,6 +1372,66 @@
         },
         "targetAnchor": {
           "side": "left",
+          "offset": 0.5
+        }
+      },
+      "resume": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "resume.in": {
+        "sourceAnchor": {
+          "side": "left",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "right",
+          "offset": 0.5
+        }
+      },
+      "launch": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "launch.in": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
+      },
+      "publish-model": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "publish-model.in": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
           "offset": 0.5
         }
       }

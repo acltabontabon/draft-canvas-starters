@@ -254,6 +254,20 @@
       "technology": "Rust",
       "group": "platform",
       "description": "Checks rights and signs stream URLs."
+    },
+    {
+      "id": "j.mobile-profiles.out",
+      "type": "junction",
+      "label": "A",
+      "link": "mobile-profiles",
+      "group": "mobile-team"
+    },
+    {
+      "id": "j.mobile-profiles.in",
+      "type": "junction",
+      "label": "A",
+      "link": "mobile-profiles",
+      "group": "platform"
     }
   ],
   "relationships": [
@@ -316,8 +330,14 @@
     {
       "id": "mobile-profiles",
       "from": "mobile-bff",
-      "to": "profiles",
+      "to": "j.mobile-profiles.out",
       "label": "Watch history",
+      "semantic": "http"
+    },
+    {
+      "id": "mobile-profiles.in",
+      "from": "j.mobile-profiles.in",
+      "to": "profiles",
       "semantic": "http"
     },
     {
@@ -360,6 +380,10 @@
         {
           "relationship": "mobile-profiles",
           "caption": "The Mobile BFF reads watch history for 'Continue watching'."
+        },
+        {
+          "relationship": "mobile-profiles.in",
+          "caption": "Profiles returns the watch history, or times out."
         },
         {
           "relationship": "mobile-catalog",
@@ -431,6 +455,10 @@
           ]
         },
         {
+          "relationship": "mobile-profiles.in",
+          "caption": "Profiles returns the watch history, or times out."
+        },
+        {
           "relationship": "mobile-catalog",
           "caption": "The screen ships without 'Continue watching' instead of failing whole."
         }
@@ -484,17 +512,6 @@
   ],
   "_patch": {
     "edges": {
-      "mobile-profiles": {
-        "portal": true,
-        "sourceAnchor": {
-          "side": "top",
-          "offset": 0.5
-        },
-        "targetAnchor": {
-          "side": "bottom",
-          "offset": 0.5
-        }
-      },
       "use-web": {
         "sourceAnchor": {
           "side": "right",
@@ -567,11 +584,11 @@
         "waypoints": [
           {
             "x": 1240,
-            "y": 181.46
+            "y": 121.46000000000001
           },
           {
             "x": 1240,
-            "y": 436.98
+            "y": 486.98
           }
         ]
       },
@@ -597,11 +614,11 @@
         "waypoints": [
           {
             "x": 1240,
-            "y": 714.26
+            "y": 824.26
           },
           {
             "x": 1240,
-            "y": 458.74
+            "y": 508.74
           }
         ]
       },
@@ -614,49 +631,77 @@
           "side": "left",
           "offset": 0.7
         }
+      },
+      "mobile-profiles": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        }
+      },
+      "mobile-profiles.in": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        }
       }
     }
   },
   "_centers": {
     "viewer": [
       70,
-      480
+      497.5
     ],
     "web": [
       540,
-      167
+      107
     ],
     "mobile": [
       540,
-      447
+      497
     ],
     "tv": [
       540,
-      727
+      837
     ],
     "web-bff": [
       900,
-      200
+      140
     ],
     "mobile-bff": [
       900,
-      480
+      530
     ],
     "tv-bff": [
       900,
-      760
+      870
     ],
     "profiles": [
       1460,
-      200
+      140
     ],
     "catalog": [
       1460,
-      480
+      530
     ],
     "playback": [
       1460.0,
-      752.0
+      862.0
+    ],
+    "j.mobile-profiles.out": [
+      900,
+      370
+    ],
+    "j.mobile-profiles.in": [
+      1460,
+      330
     ]
   },
   "_clearRoutes": true,

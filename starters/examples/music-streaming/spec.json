@@ -507,6 +507,34 @@
           }
         ]
       }
+    },
+    {
+      "id": "j.publish.out",
+      "type": "junction",
+      "label": "A",
+      "link": "publish",
+      "group": "cloud"
+    },
+    {
+      "id": "j.publish.in",
+      "type": "junction",
+      "label": "A",
+      "link": "publish",
+      "group": "library"
+    },
+    {
+      "id": "j.mix.out",
+      "type": "junction",
+      "label": "B",
+      "link": "mix",
+      "group": "insights"
+    },
+    {
+      "id": "j.mix.in",
+      "type": "junction",
+      "label": "B",
+      "link": "mix",
+      "group": "library"
     }
   ],
   "relationships": [
@@ -623,8 +651,14 @@
     {
       "id": "mix",
       "from": "weekly",
-      "to": "playlists",
+      "to": "j.mix.out",
       "label": "Weekly mixes",
+      "semantic": "http"
+    },
+    {
+      "id": "mix.in",
+      "from": "j.mix.in",
+      "to": "playlists",
       "semantic": "http"
     },
     {
@@ -665,8 +699,14 @@
     {
       "id": "publish",
       "from": "ingestion",
-      "to": "index",
+      "to": "j.publish.out",
       "label": "New tracks",
+      "semantic": "indexes"
+    },
+    {
+      "id": "publish.in",
+      "from": "j.publish.in",
+      "to": "index",
       "semantic": "indexes"
     }
   ],
@@ -791,6 +831,10 @@
         {
           "relationship": "mix",
           "caption": "600M personal playlists are written before Monday morning."
+        },
+        {
+          "relationship": "mix.in",
+          "caption": "Playlists stores each listener's new mix."
         }
       ]
     },
@@ -833,6 +877,10 @@
         {
           "relationship": "publish",
           "caption": "On release day the tracks become searchable."
+        },
+        {
+          "relationship": "publish.in",
+          "caption": "The Track Index takes the new tracks."
         }
       ]
     }
@@ -1027,6 +1075,22 @@
     "ingestion": [
       800,
       1410
+    ],
+    "j.publish.out": [
+      1010,
+      1410
+    ],
+    "j.publish.in": [
+      1630,
+      449
+    ],
+    "j.mix.out": [
+      2060,
+      258
+    ],
+    "j.mix.in": [
+      1180,
+      160
     ]
   },
   "_clearRoutes": true,
@@ -1081,13 +1145,6 @@
       }
     },
     "edges": {
-      "publish": {
-        "portal": true,
-        "targetAnchor": {
-          "side": "right",
-          "offset": 0.5
-        }
-      },
       "land": {
         "cadence": "Streaming"
       },
@@ -1099,13 +1156,6 @@
       },
       "pay": {
         "cadence": "Monthly"
-      },
-      "mix": {
-        "portal": true,
-        "sourceAnchor": {
-          "side": "bottom",
-          "offset": 0.2
-        }
       },
       "speaker-api": {
         "sourceAnchor": {
@@ -1178,6 +1228,46 @@
             "y": 221.75
           }
         ]
+      },
+      "publish": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "publish.in": {
+        "sourceAnchor": {
+          "side": "left",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "right",
+          "offset": 0.5
+        }
+      },
+      "mix": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "mix.in": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "top",
+          "offset": 0.5
+        }
       }
     }
   },
@@ -1203,7 +1293,7 @@
       "side": "right",
       "gap": 66,
       "align": "start",
-      "height": 1162
+      "height": 1230
     },
     {
       "id": "money",
