@@ -1143,7 +1143,7 @@
     ],
     "saga": [
       1460,
-      484
+      459
     ],
     "orders-tbl": [
       1120,
@@ -1155,19 +1155,19 @@
     ],
     "payments": [
       1460,
-      240
+      130
     ],
     "stripe": [
       1460,
-      -90
+      -278
     ],
     "dispatch": [
-      1800,
-      240
+      1840,
+      130
     ],
     "locations": [
-      2140,
-      240
+      2180,
+      130
     ],
     "tickets": [
       1800,
@@ -1198,11 +1198,11 @@
       1140
     ],
     "notifier": [
-      1120,
+      1150,
       1140
     ],
     "fcm": [
-      1120,
+      1150,
       1400
     ]
   },
@@ -1272,8 +1272,8 @@
       },
       "assign": {
         "sourceAnchor": {
-          "side": "top",
-          "offset": 0.85
+          "side": "right",
+          "offset": 0.1
         },
         "targetAnchor": {
           "side": "bottom",
@@ -1281,14 +1281,38 @@
         },
         "waypoints": [
           {
-            "x": 1522,
-            "y": 365
+            "x": 1641,
+            "y": 423.9
           },
           {
-            "x": 1800,
-            "y": 365
+            "x": 1641,
+            "y": 282
+          },
+          {
+            "x": 1840,
+            "y": 282
           }
         ]
+      },
+      "refund": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.6987
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.8
+        }
+      },
+      "authorize": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.3013
+        },
+        "targetAnchor": {
+          "side": "bottom",
+          "offset": 0.2
+        }
       }
     }
   },

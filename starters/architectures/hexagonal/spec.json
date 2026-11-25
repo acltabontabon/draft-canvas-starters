@@ -465,6 +465,15 @@
     "nodes": {
       "core": {
         "held": true
+      },
+      "d.policy": {
+        "dx": 50
+      },
+      "d.money": {
+        "dx": 50
+      },
+      "d.event": {
+        "dx": 50
       }
     },
     "edges": {
@@ -476,7 +485,17 @@
         "targetAnchor": {
           "side": "top",
           "offset": 0.25
-        }
+        },
+        "waypoints": [
+          {
+            "x": 1052.4,
+            "y": 110
+          },
+          {
+            "x": 737.77,
+            "y": 110
+          }
+        ]
       },
       "use-accounts-port": {
         "sourceAnchor": {
@@ -496,7 +515,17 @@
         "targetAnchor": {
           "side": "top",
           "offset": 0.25
-        }
+        },
+        "waypoints": [
+          {
+            "x": 1143.6,
+            "y": 110
+          },
+          {
+            "x": 1457.77,
+            "y": 110
+          }
+        ]
       }
     }
   },

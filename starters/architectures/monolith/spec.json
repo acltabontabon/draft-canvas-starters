@@ -381,7 +381,7 @@
     ],
     "cache": [
       760,
-      -270
+      -310
     ],
     "db": [
       1160,
@@ -407,5 +407,29 @@
       "width": 1000,
       "height": 110
     }
-  ]
+  ],
+  "_patch": {
+    "edges": {
+      "c.save": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "c.lookup": {
+        "sourceAnchor": {
+          "side": "top",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      }
+    }
+  }
 }

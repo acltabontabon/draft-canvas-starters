@@ -421,16 +421,38 @@
           "side": "top",
           "offset": 0.5
         }
+      },
+      "disputes": {
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.85
+        },
+        "waypoints": [
+          {
+            "x": 250,
+            "y": 567
+          },
+          {
+            "x": 250,
+            "y": 405.2
+          }
+        ]
+      },
+      "publish": {
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.3
+        }
       }
     }
   },
   "_centers": {
     "gateway": [
-      100,
+      20,
       426
     ],
     "network": [
-      100,
+      20,
       567
     ],
     "log": [

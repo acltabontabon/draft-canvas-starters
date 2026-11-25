@@ -1107,23 +1107,23 @@
     ],
     "notify": [
       800,
-      1250
+      1280
     ],
     "fcm": [
       500,
-      1250
+      1280
     ],
     "warehouse": [
       1120,
-      1250
+      1280
     ],
     "payouts": [
       1460,
-      1250
+      1280
     ],
     "ledger": [
       1800,
-      1250
+      1280
     ]
   },
   "_clearRoutes": true,
@@ -1151,6 +1151,24 @@
       "trips": {
         "height": 214,
         "width": 190
+      },
+      "d.search": {
+        "dx": 60
+      },
+      "d.scorer": {
+        "dx": 60
+      },
+      "d.sequencer": {
+        "dx": 60
+      },
+      "d.geo": {
+        "dx": 60
+      },
+      "d.eta": {
+        "dx": 60
+      },
+      "d.timer": {
+        "dx": 60
       }
     },
     "edges": {
@@ -1184,7 +1202,7 @@
         },
         "targetAnchor": {
           "side": "top",
-          "offset": 0.55
+          "offset": 0.8
         }
       },
       "release": {
@@ -1194,7 +1212,7 @@
         },
         "targetAnchor": {
           "side": "top",
-          "offset": 0.12
+          "offset": 0.375
         }
       },
       "push": {
@@ -1240,6 +1258,16 @@
         "sourceAnchor": {
           "side": "right",
           "offset": 0.16
+        }
+      },
+      "t.save": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.8707
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.25
         }
       }
     }

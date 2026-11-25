@@ -1027,7 +1027,7 @@
         "data"
       ],
       "side": "left",
-      "gap": 378,
+      "gap": 488,
       "align": "start",
       "height": 230
     },
@@ -1037,7 +1037,7 @@
         "data"
       ],
       "side": "left",
-      "gap": 58,
+      "gap": 168,
       "align": "start",
       "height": 230
     },
@@ -1047,7 +1047,7 @@
         "discovery"
       ],
       "side": "left",
-      "gap": 288,
+      "gap": 398,
       "align": "start",
       "width": 330
     },
@@ -1102,43 +1102,43 @@
       640
     ],
     "graph": [
-      1410,
-      270
+      1520,
+      200
     ],
     "recs": [
-      1800,
-      170
+      1910,
+      100
     ],
     "catalog": [
-      1800,
-      370
+      1910,
+      340
     ],
     "features": [
-      2140,
-      170
+      2250,
+      100
     ],
     "search": [
-      2140,
-      370
+      2250,
+      340
     ],
     "events": [
-      1440,
+      1550,
       640
     ],
     "aggregator": [
-      1800,
+      1910,
       640
     ],
     "history": [
-      2140,
+      2250,
       640
     ],
     "lake": [
-      1440,
+      1550,
       880
     ],
     "training": [
-      1800,
+      1910,
       880
     ],
     "edge": [
@@ -1189,7 +1189,11 @@
         "portal": true
       },
       "fill": {
-        "cadence": "Nightly 02:00"
+        "cadence": "Nightly 02:00",
+        "sourceAnchor": {
+          "side": "left",
+          "offset": 0.12
+        }
       },
       "archive": {
         "cadence": "Hourly"
@@ -1247,6 +1251,48 @@
         "sourceAnchor": {
           "side": "bottom",
           "offset": 0.75
+        }
+      },
+      "miss": {
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.28
+        }
+      },
+      "encode": {
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.85
+        }
+      },
+      "c.store": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.25
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "c.split": {
+        "sourceAnchor": {
+          "side": "right",
+          "offset": 0.75
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
+        }
+      },
+      "c.park": {
+        "sourceAnchor": {
+          "side": "bottom",
+          "offset": 0.5
+        },
+        "targetAnchor": {
+          "side": "left",
+          "offset": 0.5
         }
       }
     }
