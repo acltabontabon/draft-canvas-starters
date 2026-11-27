@@ -260,7 +260,10 @@ for (const id of ids.sort()) {
   const ordered = [...drawings].sort(([x], [y]) => (fileOf(x) < fileOf(y) ? -1 : 1));
   for (const [key, markup] of ordered) {
     const [type, kind] = key.split(':');
-    if (key !== BACKDROP && artSlotOf(type, kind) === null) {
+    // External was a glyph before Draft Canvas format 33 and is a dashed card since, which takes no
+    // drawing. The packs keep its old glyph for the apps that still draw one, as the app itself keeps
+    // it in a style it reads (`KEPT_UNDRAWN` in its document/style.ts).
+    if (key !== BACKDROP && key !== 'service:external' && artSlotOf(type, kind) === null) {
       fail(`art/${fileOf(key)}: no drawing can stand for "${key}"`);
       continue;
     }
